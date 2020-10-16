@@ -2,20 +2,13 @@
 <html lang="en">
 
 <head>
-    <title>three.js webgl - glTF loader</title>
+    <title>Psyche 3D Model</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <link type="text/css" rel="stylesheet" href="main.css">
 </head>
 
 <body>
-    <div id="info">
-        <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - GLTFLoader<br />
-        Battle Damaged Sci-fi Helmet by
-        <a href="https://sketchfab.com/theblueturtle_" target="_blank" rel="noopener">theblueturtle_</a><br />
-        <a href="https://hdrihaven.com/hdri/?h=royal_esplanade" target="_blank" rel="noopener">Royal Esplanade</a> by <a
-            href="https://hdrihaven.com/" target="_blank" rel="noopener">HDRI Haven</a>
-    </div>
 
     <script type="module">
 
@@ -26,64 +19,35 @@
         import { RGBELoader } from './jsm/loaders/RGBELoader.js';
         import { RoughnessMipmapper } from './jsm/utils/RoughnessMipmapper.js';
 
-        let camera, scene, renderer;
+        var camera, scene, renderer, dirLight, asteroid;
 
         init();
-        render();
+        animate();
 
         function init() {
 
             const container = document.createElement('div');
             document.body.appendChild(container);
 
-            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.25, 20);
-            camera.position.set(- 1.8, 0.6, 2.7);
+            camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 100);
+            camera.position.set(5, 2, 8);
 
             scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000000);
+            scene.add(new THREE.HemisphereLight(0x190B28, 0x685762, .5));
 
-            new RGBELoader()
-                .setDataType(THREE.UnsignedByteType)
-                .setPath('textures/equirectangular/')
-                .load('royal_esplanade_1k.hdr', function (texture) {
+            dirLight = new THREE.DirectionalLight(0xE55381, .5);
+            dirLight.position.set(5, 2, 8);
+            scene.add(dirLight);
 
-                    const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+            const loader = new GLTFLoader().setPath('models/');
+            loader.load('psyche-test.glb', function (gltf) {
 
-                    scene.background = envMap;
-                    scene.environment = envMap;
+                asteroid = gltf.scene
+                scene.add(gltf.scene);
+                animate()
 
-                    texture.dispose();
-                    pmremGenerator.dispose();
-
-                    render();
-
-                    // model
-
-                    // use of RoughnessMipmapper is optional
-                    // const roughnessMipmapper = new RoughnessMipmapper(renderer);
-
-                    const loader = new GLTFLoader().setPath('models/');
-                    loader.load('psyche-test.glb', function (gltf) {
-
-                        gltf.scene.traverse(function (child) {
-
-                            if (child.isMesh) {
-
-                                // TOFIX RoughnessMipmapper seems to be broken with WebGL 2.0
-                                // roughnessMipmapper.generateMipmaps( child.material );
-
-                            }
-
-                        });
-
-                        scene.add(gltf.scene);
-
-                        // roughnessMipmapper.dispose();
-
-                        render();
-
-                    });
-
-                });
+            });
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setPixelRatio(window.devicePixelRatio);
@@ -98,10 +62,11 @@
 
             const controls = new OrbitControls(camera, renderer.domElement);
             controls.addEventListener('change', render); // use if there is no animation loop
-            controls.minDistance = 20;
+            controls.minDistance = 40;
             controls.maxDistance = 100;
             controls.target.set(0, 0, - 0.2);
             controls.update();
+            animate()
 
             window.addEventListener('resize', onWindowResize, false);
 
@@ -111,18 +76,22 @@
 
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
-
             renderer.setSize(window.innerWidth, window.innerHeight);
-
             render();
 
         }
 
-        //
 
         function render() {
 
             renderer.render(scene, camera);
+
+        }
+
+        function animate() {
+
+            requestAnimationFrame(animate);
+            render()
 
         }
 

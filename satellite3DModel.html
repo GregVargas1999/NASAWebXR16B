@@ -24,24 +24,26 @@
 </head>
 
 <body>
-	<script src="js/vendor/three/three.js"></script>
-	<script src="js/vendor/three/OrbitControls.js"></script>
-	<script src="js/vendor/three/GLTFLoader.js"></script>
 
-	<script>
+	<script type="module">
+		import * as THREE from '../build/three.module.js';
+
+		import { OrbitControls } from './jsm/controls/OrbitControls.js';
+		import { GLTFLoader } from './jsm/loaders/GLTFLoader.js';
+
 		var scene = new THREE.Scene();
 		var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 80000);
 		var renderer = new THREE.WebGLRenderer();
 		renderer.setSize(window.innerWidth, window.innerHeight);
 		document.body.appendChild(renderer.domElement);
 
-		var controls = new THREE.OrbitControls(camera, renderer.domElement);
-		var loader = new THREE.GLTFLoader();
+		var controls = new OrbitControls(camera, renderer.domElement);
+		var loader = new GLTFLoader();
 
 		loader.load('models/satellite1.glb', function (gltf) {
-			satellite = gltf.scene.children[0];
-			scene.add(satellite);
-			animate();
+
+			scene.add(gltf.scene);
+
 		}, undefined, function (error) {
 			console.error(error);
 		});
