@@ -2,65 +2,62 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
-    <title>Show Image</title>
-    <style>
-        body {
-            margin: 0;
-        }
 
-        canvas {
-            display: block;
-        }
+    <title>Psyche 3D Model Test</title>
 
-        #c {
-            width: 100vw;
-            height: 100vh;
-            display: block;
-            background: url(images/facepalm.png) no-repeat center center;
-            background-size: cover;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8" />
+
+    <link rel="icon" href="https://discoverthreejs.com/favicon.ico" type="image/x-icon">
+
+    <link href="styles/main.css" rel="stylesheet" type="text/css">
+
+    <!--
+
+      Include the main three.js script.
+
+      The global variable THREE will be
+      available for use in any scripts
+      loaded after this one.
+
+    -->
+
+    <script src="js/vendor/three/three.js"></script>
+
+    <!--
+
+      Include the OrbitControls script.
+
+      This must be included AFTER the three.js script as it
+      needs to use the global THREE variable
+
+    -->
+
+    <script src="js/vendor/three/OrbitControls.js"></script>
+
+    <!--
+
+			Include the GLTFLoader script. This also needs to be loaded after the three.js script
+
+		-->
+
+    <script src="js/vendor/three/GLTFLoader.js"></script>
+
 </head>
 
 <body>
-    <script src="js/three.js"></script>
-    <script src="js/OrbitControls.js"></script>
-    <script src="js/GLTFLoader.js"></script>
 
-    <script>
-        var scene = new THREE.Scene();
-        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 80000);
-        var renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
+    <div id="scene-container">
+        <!-- This div will hold our scene-->
+    </div>
 
-        var controls = new THREE.OrbitControls(camera, renderer.domElement);
-        var loader = new THREE.GLTFLoader();
+    <!--
+			Finally, include the script that
+			runs your three.js app.
+		-->
 
-        loader.load('models/psyche-test.glb', function (gltf) {
-            satellite = gltf.scene.children[0];
-            scene.add(satellite);
-            animate();
-        }, undefined, function (error) {
-            console.error(error);
-        });
+    <script src="js/psyche-test-app.js"></script>
 
-        var ambientLight = new THREE.AmbientLight(0xBBBBBB, 4);
-        scene.add(ambientLight);
-
-        camera.position.x = 4000;
-        camera.position.y = 500;
-        camera.position.z = 5000;
-
-        var animate = function () {
-            requestAnimationFrame(animate);
-            controls.update();
-            renderer.render(scene, camera);
-        };
-
-        animate();
-    </script>
 </body>
 
 </html>
