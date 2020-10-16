@@ -1,62 +1,132 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-
-    <title>Psyche 3D Model Test</title>
-
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta charset="UTF-8" />
-
-    <link rel="icon" href="https://discoverthreejs.com/favicon.ico" type="image/x-icon">
-
-    <link href="styles/main.css" rel="stylesheet" type="text/css">
-
-    <!--
-
-      Include the main three.js script.
-
-      The global variable THREE will be
-      available for use in any scripts
-      loaded after this one.
-
-    -->
-
-    <script src="js/vendor/three/three.js"></script>
-
-    <!--
-
-      Include the OrbitControls script.
-
-      This must be included AFTER the three.js script as it
-      needs to use the global THREE variable
-
-    -->
-
-    <script src="js/vendor/three/OrbitControls.js"></script>
-
-    <!--
-
-			Include the GLTFLoader script. This also needs to be loaded after the three.js script
-
-		-->
-
-    <script src="js/vendor/three/GLTFLoader.js"></script>
-
+    <title>three.js webgl - glTF loader</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="main.css">
 </head>
 
 <body>
-
-    <div id="scene-container">
-        <!-- This div will hold our scene-->
+    <div id="info">
+        <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - GLTFLoader<br />
+        Battle Damaged Sci-fi Helmet by
+        <a href="https://sketchfab.com/theblueturtle_" target="_blank" rel="noopener">theblueturtle_</a><br />
+        <a href="https://hdrihaven.com/hdri/?h=royal_esplanade" target="_blank" rel="noopener">Royal Esplanade</a> by <a
+            href="https://hdrihaven.com/" target="_blank" rel="noopener">HDRI Haven</a>
     </div>
 
-    <!--
-			Finally, include the script that
-			runs your three.js app.
-		-->
+    <script type="module">
 
-    <script src="js/psyche-test-app.js"></script>
+        import * as THREE from '../build/three.module.js';
+
+        import { OrbitControls } from './jsm/controls/OrbitControls.js';
+        import { GLTFLoader } from './jsm/loaders/GLTFLoader.js';
+        import { RGBELoader } from './jsm/loaders/RGBELoader.js';
+        import { RoughnessMipmapper } from './jsm/utils/RoughnessMipmapper.js';
+
+        let camera, scene, renderer;
+
+        init();
+        render();
+
+        function init() {
+
+            const container = document.createElement('div');
+            document.body.appendChild(container);
+
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.25, 20);
+            camera.position.set(- 1.8, 0.6, 2.7);
+
+            scene = new THREE.Scene();
+
+            new RGBELoader()
+                .setDataType(THREE.UnsignedByteType)
+                .setPath('textures/equirectangular/')
+                .load('royal_esplanade_1k.hdr', function (texture) {
+
+                    const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+
+                    scene.background = envMap;
+                    scene.environment = envMap;
+
+                    texture.dispose();
+                    pmremGenerator.dispose();
+
+                    render();
+
+                    // model
+
+                    // use of RoughnessMipmapper is optional
+                    // const roughnessMipmapper = new RoughnessMipmapper(renderer);
+
+                    const loader = new GLTFLoader().setPath('models/');
+                    loader.load('psyche-test.glb', function (gltf) {
+
+                        gltf.scene.traverse(function (child) {
+
+                            if (child.isMesh) {
+
+                                // TOFIX RoughnessMipmapper seems to be broken with WebGL 2.0
+                                // roughnessMipmapper.generateMipmaps( child.material );
+
+                            }
+
+                        });
+
+                        scene.add(gltf.scene);
+
+                        // roughnessMipmapper.dispose();
+
+                        render();
+
+                    });
+
+                });
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1;
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            container.appendChild(renderer.domElement);
+
+            const pmremGenerator = new THREE.PMREMGenerator(renderer);
+            pmremGenerator.compileEquirectangularShader();
+
+            const controls = new OrbitControls(camera, renderer.domElement);
+            controls.addEventListener('change', render); // use if there is no animation loop
+            controls.minDistance = 20;
+            controls.maxDistance = 100;
+            controls.target.set(0, 0, - 0.2);
+            controls.update();
+
+            window.addEventListener('resize', onWindowResize, false);
+
+        }
+
+        function onWindowResize() {
+
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            render();
+
+        }
+
+        //
+
+        function render() {
+
+            renderer.render(scene, camera);
+
+        }
+
+    </script>
 
 </body>
 
