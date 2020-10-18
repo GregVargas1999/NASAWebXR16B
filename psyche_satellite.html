@@ -39,11 +39,13 @@
 		document.body.appendChild(renderer.domElement);
 
 		var controls = new OrbitControls(camera, renderer.domElement);
-		var loader = new GLTFLoader();
+        var loader = new GLTFLoader();
+        
+        var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
 
 		loader.load('models/psyche_satellite.glb', function (gltf) {
-
-			scene.add(gltf.scene);
+            var satellite = new THREE.Mesh(gltf.scene, material);
+			scene.add(satellite);
 
 		}, undefined, function (error) {
 			console.error(error);
