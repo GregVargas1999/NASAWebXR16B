@@ -28,10 +28,10 @@
 
 	<script type="module">
 
-	import * as THREE from '../build/three.module.js';
+	import * as THREE from 'https://unpkg.com/three@0.121.1/build/three.module.js';
 
-	import {OrbitControls} from './jsm/controls/OrbitControls.js';
-	import {GLTFLoader} from './jsm/loaders/GLTFLoader.js';
+	import { OrbitControls } from 'https://unpkg.com/three@0.121.1/examples/jsm/controls/OrbitControls.js';
+	import { GLTFLoader } from 'https://unpkg.com/three@0.121.1/examples/jsm/loaders/GLTFLoader.js';
 
 	var container, controls;
 	var camera, scene, renderer;
@@ -55,7 +55,7 @@
 		var particleMaterial = new THREE.PointsMaterial({
 			color: 'rgb(80, 130, 255)',
 			size: 50,
-			map: new THREE.TextureLoader().load('textures/lensflare/lensflare0.png'),
+			map: new THREE.TextureLoader().load('textures/lensflare0.png'),
 			transparent: true,
 			blending: THREE.AdditiveBlending,
 		});
