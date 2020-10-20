@@ -35,7 +35,7 @@
 
 	var container, controls;
 	var camera, scene, renderer;
-	var model;
+	var model, newMin;
 
 	init();
 	animate();
@@ -50,28 +50,27 @@
 
 		scene = new THREE.Scene();
 		scene.add(new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 0.5));
-		scene.add(new THREE.DirectionalLight(0xffe3ab, 0.25));
+		//scene.add(new THREE.DirectionalLight(0xffe3ab, 0.25));
 
 		var particleGeom = new THREE.Geometry();
 		var particleMaterial = new THREE.PointsMaterial({
 			color: 'rgb(80, 130, 255)',
-			size: 100,
+			size: 50,
 			map: new THREE.TextureLoader().load('textures/lensflare0.png'),
 			transparent: true,
 			blending: THREE.AdditiveBlending,
 		});
 
-		let particleCount = 50000;
-		let min = 50000;
-		let max = 90000;
-		let theta = THREE.Math.randFloatSpread(360);
-		let phi = THREE.Math.randFloatSpread(360);
+		// Plotting particles at -(min to max) and (min to max)
+		let particleCount = 10000;
+		let min = 100;
+		let max = 10000;
 
 		for (var i = 0; i < particleCount; i++) 
 		{
-			let posX = min + ((Math.random() - 0.99) * max);
-			let posY = min + ((Math.random() - 0.99) * max);
-			let posZ = min + ((Math.random() - 0.99) * max);
+			let posX = (getRandom(min) * (2 * (max - min))) + newMin;
+			let posY = (getRandom(min) * (2 * (max - min))) + newMin;
+			let posZ = (getRandom(min) * (2 * (max - min))) + newMin;
 			
 			let particle = new THREE.Vector3(posX, posY, posZ);
 			particleGeom.vertices.push(particle);
@@ -82,7 +81,7 @@
 		scene.add(particleSys);
 
 		var loader = new GLTFLoader().setPath('models/');
-		loader.load( 'asteroid.glb', function (gltf) 
+		loader.load('asteroid.glb', function (gltf) 
 		{
 			model = gltf.scene
 			scene.add(model);
@@ -107,6 +106,19 @@
 		window.addEventListener('resize', onWindowResize, false);
 	}
 
+	function getRandom(number)
+	{
+		let rand = (Math.random() - 0.5);
+		newMin = number;
+
+		if(rand < 0)
+		{
+			newMin *= -1;
+		}
+
+		return rand;
+	}
+
 	function onWindowResize() 
 	{
 		camera.aspect = window.innerWidth / window.innerHeight;
@@ -120,13 +132,16 @@
 	function animate() 
 	{
 		var rotSpeed = 0.001;
-
+		/*
 		let x = camera.position.x;
 		let z = camera.position.z;
 		camera.position.x = x * Math.cos(rotSpeed) + z * Math.sin(rotSpeed);
 		camera.position.z = z * Math.cos(rotSpeed) - x * Math.sin(rotSpeed);
 		camera.lookAt(scene.position);
+		*/
+
 		model.rotation.x += rotSpeed;
+		model.rotation.y += rotSpeed;
 
 		requestAnimationFrame(animate);
 		renderer.render(scene, camera);
