@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<base href="./">
+	<meta charset="utf-8">
+	<title>psyche_asteroid</title>
+	<style>
+		body {
+			margin: 0;
+		}
+
+		canvas {
+			display: block;
+		}
+		#info {
+			background-color: #ff0000;
+			width: 100px;
+			height: 100px;
+			position: absolute;
+			top: 0;
+			left: 10;
+		}
+	</style>
+</head>
+
+<body>
+	
+	<div id="info">haha rainbow asteroid<br/>
+		click to make go pretty color<br/>
+	</div>
+
+	<script type="module">
+
+	import * as THREE from 'https://unpkg.com/three@0.121.1/build/three.module.js';
+	
+	import { Vector3 } from 'https://unpkg.com/three@0.121.1/src/math/Vector3.js';
+	import { Raycaster } from 'https://unpkg.com/three@0.121.1/src/core/Raycaster.js';
+	import { OrbitControls } from 'https://unpkg.com/three@0.121.1/examples/jsm/controls/OrbitControls.js';
+	import { GLTFLoader } from 'https://unpkg.com/three@0.121.1/examples/jsm/loaders/GLTFLoader.js';
+
+	var container, controls;
+	var camera, scene, renderer; 
+	var raycaster, projector, mouseVector, intersects;
+	var model, newMin;
+	var col_i = 1.0; 
+	var col_j = 0.0; 
+	var col_k = 0.0;
+	var temp = 0.0;
+
+	init();
+	animate();
+
+	function init() 
+	{
+		container = document.createElement('div');
+		document.body.appendChild(container);
+
+		camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
+		camera.position.set(3, 0, 3);
+
+		scene = new THREE.Scene();
+		scene.add(new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 0.5));
+		//scene.add(new THREE.DirectionalLight(0xffe3ab, 0.25));
+
+		var particleGeom = new THREE.Geometry();
+		var particleMaterial = new THREE.PointsMaterial({
+			color: 'rgb(80, 130, 255)',
+			size: 50,
+			map: new THREE.TextureLoader().load('textures/lensflare0.png'),
+			transparent: true,
+			blending: THREE.AdditiveBlending,
+		});
+
+		// Plotting particles at -(min to max) and (min to max)
+		let particleCount = 10000;
+		let min = 100;
+		let max = 10000;
+
+		for (var i = 0; i < particleCount; i++) 
+		{
+			let posX = (getRandom(min) * (2 * (max - min))) + newMin;
+			let posY = (getRandom(min) * (2 * (max - min))) + newMin;
+			let posZ = (getRandom(min) * (2 * (max - min))) + newMin;
+			
+			let particle = new THREE.Vector3(posX, posY, posZ);
+			particleGeom.vertices.push(particle);
+		}
+
+		let particleSys = new THREE.Points(particleGeom, particleMaterial);
+		particleSys.name = 'particleSys';
+		scene.add(particleSys);
+
+		var loader = new GLTFLoader().setPath('models/');
+		loader.load('asteroid.glb', function (gltf) 
+		{
+			model = gltf.scene
+			scene.add(model);
+			model.scale.set(0.3,0.3,0.3)
+			animate();
+		});
+		
+		renderer = new THREE.WebGLRenderer({antialias: true});
+		renderer.setPixelRatio(window.devicePixelRatio);
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		renderer.toneMapping = THREE.ACESFilmicToneMapping;
+		renderer.toneMappingExposure = 1;
+		renderer.outputEncoding = THREE.sRGBEncoding;
+		container.appendChild(renderer.domElement);
+		
+		var pmremGenerator = new THREE.PMREMGenerator(renderer);
+		pmremGenerator.compileEquirectangularShader();
+		
+		controls = new OrbitControls(camera, renderer.domElement);
+		mouseVector = new THREE.Vector3();
+		container.addEventListener('click', onClick, false);
+	}
+
+	function getRandom(number)
+	{
+		let rand = (Math.random() - 0.5);
+		newMin = number;
+
+		if(rand < 0)
+		{
+			newMin *= -1;
+		}
+
+		return rand;
+	}
+	
+	function onClick( event ) {
+		var mouse = new THREE.Vector3();                  
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY  / window.innerHeight) * 2 + 1;
+                      
+        var raycaster = new THREE.Raycaster();                       
+        raycaster.setFromCamera(mouse, camera);
+
+		var intersects = raycaster.intersectObjects(scene.children, true);
+		if (intersects.length != 0)	{
+			var intersection = intersects[ 0 ],
+			obj = intersection.object;
+			
+			obj.material.color.setRGB( col_i, col_j, col_k );
+			temp = col_k;
+			col_k = col_j;
+			col_j = col_i;
+			col_i = temp;
+		}
+	}
+
+	function onWindowResize() 
+	{
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+
+		renderer.setSize( window.innerWidth, window.innerHeight );
+
+		animate();
+	}
+
+	function animate() 
+	{
+		var rotSpeed = 0.001;
+
+		model.rotation.x += rotSpeed;
+		model.rotation.y += rotSpeed;
+
+		requestAnimationFrame(animate);
+		renderer.render(scene, camera);
+	}
+	</script>
+</body>
+
+</html>
