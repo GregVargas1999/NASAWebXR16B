@@ -51,6 +51,7 @@
 	var camera, scene, renderer; 
 	var raycaster, projector, mouseVector, intersects;
 	var model, newMin;
+	var intersection, intersects;
 	var col_i = 1.0; 
 	var col_j = 0.0; 
 	var col_k = 0.0;
@@ -121,6 +122,7 @@
 		
 		controls = new OrbitControls(camera, renderer.domElement);
 		mouseVector = new THREE.Vector3();
+		raycaster = new THREE.Raycaster();
 		container.addEventListener('touchend', onClick, false);
 		container.addEventListener('click', onClick, false);
 	}
@@ -138,24 +140,22 @@
 		return rand;
 	}
 	
-	function onClick( event ) {                 
+	function onClick( event ) {                  
         mouseVector.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouseVector.y = -(event.clientY  / window.innerHeight) * 2 + 1;
-                      
-        var raycaster = new THREE.Raycaster();                       
+                                           
         raycaster.setFromCamera(mouseVector, camera);
-
-		var intersects = raycaster.intersectObjects(scene.children, true);
+		intersects = raycaster.intersectObjects(scene.children, true);
+		
 		if (intersects.length != 0)	{
-			var intersection = intersects[ 0 ],
-			obj = intersection.object;
-			
-			obj.material.color.setRGB( col_i, col_j, col_k );
+			intersection = intersects[ 0 ],
+			intersection.object.material.color.setRGB( col_i, col_j, col_k );
 			temp = col_k;
 			col_k = col_j;
 			col_j = col_i;
 			col_i = temp;
 		}
+		
 	}
 
 	function onWindowResize() 
