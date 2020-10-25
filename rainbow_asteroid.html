@@ -121,8 +121,8 @@
 		
 		controls = new OrbitControls(camera, renderer.domElement);
 		mouseVector = new THREE.Vector3();
-		container.addEventListener('click', onClick, false);
 		container.addEventListener('touchend', onClick, false);
+		container.addEventListener('click', onClick, false);
 	}
 
 	function getRandom(number)
@@ -138,10 +138,9 @@
 		return rand;
 	}
 	
-	function onClick( event ) {
-		var mouse = new THREE.Vector3();                  
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(event.clientY  / window.innerHeight) * 2 + 1;
+	function onClick( event ) {                 
+        mouseVector.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouseVector.y = -(event.clientY  / window.innerHeight) * 2 + 1;
                       
         var raycaster = new THREE.Raycaster();                       
         raycaster.setFromCamera(mouse, camera);
