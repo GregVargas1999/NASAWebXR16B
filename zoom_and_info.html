@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<base href="./">
+	<meta charset="utf-8">
+	<title>psyche_asteroid</title>
+	<style>
+		body {
+			margin: 0;
+		}
+
+		canvas {
+			display: block;
+		}
+		#card {
+			background-color: #ffffff;
+  			width: 50%;
+			margin: auto;
+			position: absolute;
+			top: 0; left: 0; right: 0;
+		}
+        #info   {
+            font-size: 30px;
+            font-weight: 600;
+            line-height: 40px;
+            text-align: center;
+            transform: translate
+        }
+        #button {
+			justify-content: center;
+			margin: auto;
+			height: 30px;
+			font-size: large;
+        }
+	</style>
+</head>
+
+<body>
+	<div id ='card' style='visibility: hidden;'>
+		<div id='info'>Click on one of the objects to see more information</div>
+		<button id="button" style="display: none;">Back</button>
+	</div>
+
+	<script type='module'>
+
+    import * as THREE from 'https://unpkg.com/three@0.121.1/build/three.module.js';
+	import { Vector3 } from 'https://unpkg.com/three@0.121.1/src/math/Vector3.js';
+	import { Raycaster } from 'https://unpkg.com/three@0.121.1/src/core/Raycaster.js';
+    import { GLTFLoader } from 'https://unpkg.com/three@0.121.1/examples/jsm/loaders/GLTFLoader.js';
+
+    import TWEEN from 'https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@18.5.0/dist/tween.esm.js';
+
+	var container, controls;
+	var camera, scene, renderer; 
+	var raycaster, projector, mouseVector, intersects, intersection, obj;
+    var asteroid, satellite, newMin;
+    var targetPosition = new THREE.Vector3();
+    var position = new THREE.Vector3();
+	var backButton, infoText, canvasCard;
+	var rotSpeed = 0.001;
+    var rotSpeed2 = 0.002;
+
+	init();
+	animate();
+
+	function init() 
+	{
+		canvasCard = document.getElementById('card');
+		infoText = document.getElementById('info');
+		backButton = document.getElementById('button');
+		backButton.addEventListener('click', backFunction, false);
+		
+		container = document.createElement('div');
+		document.body.appendChild(container);
+
+		camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
+        camera.position.set(6, 0, 15);
+        position.copy(camera.position)
+        camera.lookAt( new THREE.Vector3(6, 0, 0 ));
+
+		scene = new THREE.Scene();
+		scene.add(new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 0.5));
+		//scene.add(new THREE.DirectionalLight(0xffe3ab, 0.25));
+
+		var particleGeom = new THREE.Geometry();
+		var particleMaterial = new THREE.PointsMaterial({
+			color: 'rgb(80, 130, 255)',
+			size: 50,
+			map: new THREE.TextureLoader().load('textures/lensflare0.png'),
+			transparent: true,
+			blending: THREE.AdditiveBlending,
+		});
+
+		// Plotting particles at -(min to max) and (min to max)
+		let particleCount = 10000;
+		let min = 100;
+		let max = 10000;
+
+		for (var i = 0; i < particleCount; i++) 
+		{
+			let posX = (getRandom(min) * (2 * (max - min))) + newMin;
+			let posY = (getRandom(min) * (2 * (max - min))) + newMin;
+			let posZ = (getRandom(min) * (2 * (max - min))) + newMin;
+			
+			let particle = new THREE.Vector3(posX, posY, posZ);
+			particleGeom.vertices.push(particle);
+		}
+
+		let particleSys = new THREE.Points(particleGeom, particleMaterial);
+		particleSys.name = 'particleSys';
+		scene.add(particleSys);
+
+		var loader = new GLTFLoader().setPath('models/');
+		loader.load('asteroid.glb', function (gltf) 
+		{
+            asteroid = gltf.scene;
+			scene.add(asteroid);
+			animate();
+        });
+        
+        
+         loader.load('satellite.glb', function (gltf) 
+		{
+			satellite = gltf.scene;
+            satellite.scale.set(0.01,0.01,0.01);
+            satellite.position.set(12,0,0);
+            scene.add(satellite);
+			animate();
+        });
+
+		renderer = new THREE.WebGLRenderer({antialias: true});
+		renderer.setPixelRatio(window.devicePixelRatio);
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		renderer.toneMapping = THREE.ACESFilmicToneMapping;
+		renderer.toneMappingExposure = 1;
+		renderer.outputEncoding = THREE.sRGBEncoding;
+		container.appendChild(renderer.domElement);
+		
+		var pmremGenerator = new THREE.PMREMGenerator(renderer);
+		pmremGenerator.compileEquirectangularShader();
+		
+        mouseVector = new THREE.Vector3();
+        container.addEventListener('touchend', onClick, false);
+        container.addEventListener('click', onClick, false);
+
+		canvasCard.style.visibility = "visible";
+	}
+
+	function getRandom(number)
+	{
+		let rand = (Math.random() - 0.5);
+		newMin = number;
+
+		if(rand < 0)
+		{
+			newMin *= -1;
+		}
+
+		return rand;
+	}
+	
+	function onClick( event ) {
+		mouseVector = new THREE.Vector3();                  
+        mouseVector.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouseVector.y = -(event.clientY  / window.innerHeight) * 2 + 1;
+                      
+        raycaster = new THREE.Raycaster();                       
+        raycaster.setFromCamera(mouseVector, camera);
+
+		intersects = raycaster.intersectObjects(scene.children, true);
+		if (intersects.length != 0)	{
+			container.removeEventListener('touchend', onClick, false);
+        	container.removeEventListener('click', onClick, false);
+
+			intersection = intersects[0];
+            obj = intersection.object;
+            obj.getWorldPosition( targetPosition );
+            targetPosition.z = 6;
+            
+			var tween = new TWEEN.Tween( position )
+                .to( targetPosition, 2000 )
+                .easing( TWEEN.Easing.Sinusoidal.InOut)
+                .onUpdate( function () {
+                   camera.position.copy( position );
+                } )
+				.onComplete( function () {
+					backButton.style.display = "block";
+					container.addEventListener('touchend', onClick, false);
+        			container.addEventListener('click', onClick, false);
+					infoText.innerHTML = getDescription(obj.name);
+                } )
+                .start();
+        }
+    }
+
+    function backFunction() {
+		backButton.style.display = "none";
+		container.removeEventListener('touchend', onClick, false);
+        container.removeEventListener('click', onClick, false);
+
+        targetPosition.x = 6;
+        targetPosition.y = 0;
+        targetPosition.z = 15;
+            
+		var tween = new TWEEN.Tween( position )
+            .to( targetPosition, 2000 )
+            .easing( TWEEN.Easing.Sinusoidal.InOut)
+            .onUpdate( function () {
+                camera.position.copy( position );
+            } )
+			.onComplete( function () {
+					container.addEventListener('touchend', onClick, false);
+        			container.addEventListener('click', onClick, false);
+                } )
+            .start();
+         
+        infoText.innerHTML = "Click on one of the objects to see more information";
+    }
+
+    function getDescription(name)
+    {
+        if (name == 'PSYCHE_20170116_DEC') 
+        {
+            return "I lied, we didn't upload any information yet";
+        }
+
+        if (name == 'Psyche')
+        {
+            return "I lied, we didn't upload any information yet";
+        }    
+
+        return name;
+    }
+
+	function onWindowResize() 
+	{
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+
+		renderer.setSize( window.innerWidth, window.innerHeight );
+
+		animate();
+	}
+
+	function animate() 
+	{
+        requestAnimationFrame(animate);
+
+		asteroid.rotation.x += rotSpeed;
+        asteroid.rotation.y += rotSpeed;
+        
+        satellite.rotation.x += rotSpeed2;
+		satellite.rotation.z += rotSpeed2;
+
+        TWEEN.update();
+		renderer.render(scene, camera);
+    }
+    
+	</script>
+</body>
+
+</html>
