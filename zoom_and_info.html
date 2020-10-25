@@ -75,9 +75,9 @@
 		document.body.appendChild(container);
 
 		camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
-        camera.position.set(6, 0, 22);
+        camera.position.set(3, 0, 22);
         position.copy(camera.position)
-        camera.lookAt( new THREE.Vector3(6, 0, 0 ));
+        camera.lookAt( new THREE.Vector3(3, 0, 0 ));
 
 		scene = new THREE.Scene();
 		scene.add(new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 0.5));
@@ -124,7 +124,7 @@
 		{
 			satellite = gltf.scene;
             satellite.scale.set(0.01,0.01,0.01);
-            satellite.position.set(12,0,0);
+            satellite.position.set(6,0,0);
             scene.add(satellite);
 			animate();
         });
@@ -199,7 +199,7 @@
 		container.removeEventListener('touchend', onClick, false);
         container.removeEventListener('click', onClick, false);
 
-        targetPosition.x = 6;
+        targetPosition.x = 3;
         targetPosition.y = 0;
         targetPosition.z = 22;
             
