@@ -38,7 +38,7 @@
 
 <body>
 	<div id ='card' style='visibility: hidden;'>
-		<div id='info'>Click on one of the objects to see more information</div>
+		<div id='info'>Click or touch one of the objects to see more information</div>
 		<button id="button" style="display: none;">Back</button>
 	</div>
 
@@ -75,7 +75,7 @@
 		document.body.appendChild(container);
 
 		camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
-        camera.position.set(6, 0, 15);
+        camera.position.set(6, 0, 22);
         position.copy(camera.position)
         camera.lookAt( new THREE.Vector3(6, 0, 0 ));
 
@@ -201,7 +201,7 @@
 
         targetPosition.x = 6;
         targetPosition.y = 0;
-        targetPosition.z = 15;
+        targetPosition.z = 22;
             
 		var tween = new TWEEN.Tween( position )
             .to( targetPosition, 2000 )
@@ -215,7 +215,7 @@
                 } )
             .start();
          
-        infoText.innerHTML = "Click on one of the objects to see more information";
+        infoText.innerHTML = "Click or touch one of the objects to see more information";
     }
 
     function getDescription(name)
