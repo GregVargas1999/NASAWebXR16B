@@ -41,6 +41,7 @@
 	var container, controls;
 	var camera, scene, renderer;
 	var model, newMin;
+	var ambientLight, pointLight;
 
 	init();
 	animate();
@@ -53,9 +54,16 @@
 		camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
 		camera.position.set(3, 0, 3);
 
+		// This creates a soft light so that shadows are less harsh
 		scene = new THREE.Scene();
-		scene.add(new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 0.5));
-		//scene.add(new THREE.DirectionalLight(0xffe3ab, 0.25));
+		ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.05);
+		scene.add(ambientLight);
+		
+		// Point light is similar to directional light, I'm using realistic setting for light falloff
+		// PointLight( color : Integer, intensity : Float, distance : Number, decay : Float )
+		pointLight = new THREE.PointLight(0xFFFFFF, 1, 0, 2);
+		pointLight.position.set(-3,6,-3);
+		scene.add(pointLight);
 
 		var particleGeom = new THREE.Geometry();
 		var particleMaterial = new THREE.PointsMaterial({
@@ -94,10 +102,16 @@
 		});
 
 		renderer = new THREE.WebGLRenderer({antialias: true});
+
 		renderer.setPixelRatio(window.devicePixelRatio);
 		renderer.setSize(window.innerWidth, window.innerHeight);
+
 		renderer.toneMapping = THREE.ACESFilmicToneMapping;
 		renderer.toneMappingExposure = 1;
+
+		renderer.shadowMap.enabled = true;
+		renderer.shadowMap.type = THREE.BasicShadowMap;
+
 		renderer.outputEncoding = THREE.sRGBEncoding;
 		container.appendChild(renderer.domElement);
 
@@ -137,13 +151,6 @@
 	function animate() 
 	{
 		var rotSpeed = 0.001;
-		/*
-		let x = camera.position.x;
-		let z = camera.position.z;
-		camera.position.x = x * Math.cos(rotSpeed) + z * Math.sin(rotSpeed);
-		camera.position.z = z * Math.cos(rotSpeed) - x * Math.sin(rotSpeed);
-		camera.lookAt(scene.position);
-		*/
 
 		model.rotation.x += rotSpeed;
 		model.rotation.y += rotSpeed;
