@@ -38,14 +38,15 @@
 
         const params = {
             povCameraActive: false,
-            orbitDistance: 5
+            orbitDistance: 5,
+            orbitSpeed: 1
         };
 
         var container, controls;
         var normalCamera, scene, renderer, povCamera;
         var model, newMin, satellite;
         var ambientLight, pointLight;
-        var tween;
+        var tween, orbit;
 
         init();
         animate();
@@ -135,12 +136,21 @@
             onWindowResize();
             document.body.appendChild(renderer.domElement);
 
+            makeGUI();
+
+        }
+
+        function makeGUI() {
             const gui = new GUI();
             gui.add(params, 'povCameraActive').name('Enable POV camera');
             gui.add(params, 'orbitDistance', 3, 25, 1).name('Orbit Radius').listen().onChange(function (orbitDistance) {
                 povCamera.position.set(orbitDistance, 0, 0);
                 satellite.position.set(orbitDistance, 0, 0);
-
+            });
+            gui.add(params, 'orbitSpeed', 0, 5, 0.1).name('Orbit Speed').listen().onChange(function (speed) {
+                tween = new TWEEN.Tween(orbit.rotation).to({ y: '+' + (Math.PI * 2) }, 10000 / speed);
+                tween.start();
+                tween.repeat(Infinity);
             });
         }
 
@@ -178,7 +188,7 @@
             var orbitContainer = new THREE.Object3D();
             orbitContainer.rotation.x = tilt;
 
-            var orbit = new THREE.Object3D();
+            orbit = new THREE.Object3D();
 
             var planet = objectToMod;
             planet.position.set(distance, 0.0, 0.0);
