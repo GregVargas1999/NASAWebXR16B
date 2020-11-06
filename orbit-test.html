@@ -37,13 +37,15 @@
         import { GUI } from 'https://unpkg.com/three@0.122.0/examples/jsm/libs/dat.gui.module.js';
 
         const params = {
-            povCameraActive: false
+            povCameraActive: false,
+            orbitDistance: 5
         };
 
         var container, controls;
         var normalCamera, scene, renderer, povCamera;
         var model, newMin, satellite;
         var ambientLight, pointLight;
+        var tween;
 
         init();
         animate();
@@ -104,7 +106,7 @@
                 satellite.scale.set(0.0025, 0.0025, 0.0025);
                 satellite.rotation.z = 180;
                 satellite.rotation.y = 45;
-                modifyOrbit(satellite, 3, 1, 1);
+                modifyOrbit(satellite, params.orbitDistance, 1, 1);
             });
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -135,6 +137,11 @@
 
             const gui = new GUI();
             gui.add(params, 'povCameraActive').name('Enable POV camera');
+            gui.add(params, 'orbitDistance', 3, 25, 1).name('Orbit Radius').listen().onChange(function (orbitDistance) {
+                povCamera.position.set(orbitDistance, 0, 0);
+                satellite.position.set(orbitDistance, 0, 0);
+
+            });
         }
 
         function getRandom(number) {
@@ -182,7 +189,7 @@
             povCamera.lookAt(model.position);
             orbit.add(povCamera);
 
-            var tween = new TWEEN.Tween(orbit.rotation).to({ y: '+' + (Math.PI * 2) }, 10000 / speed);
+            tween = new TWEEN.Tween(orbit.rotation).to({ y: '+' + (Math.PI * 2) }, 10000 / speed);
             tween.start();
             tween.repeat(Infinity);
 
