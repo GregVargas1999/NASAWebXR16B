@@ -25,19 +25,32 @@
 </head>
 
 <body>
+
     <!---Div to implement scene transition controls-->
     <script type="module">
 
-        import * as THREE from 'https://unpkg.com/three@0.121.1/build/three.module.js';
+        import * as THREE from 'https://unpkg.com/three@0.122.0/build/three.module.js';
 
-        import { OrbitControls } from 'https://unpkg.com/three@0.121.1/examples/jsm/controls/OrbitControls.js';
-        import { GLTFLoader } from 'https://unpkg.com/three@0.121.1/examples/jsm/loaders/GLTFLoader.js';
-        import TWEEN from 'https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@18.5.0/dist/tween.esm.js';
+        import { OrbitControls } from 'https://unpkg.com/three@0.122.0/examples/jsm/controls/OrbitControls.js';
+        import { GLTFLoader } from 'https://unpkg.com/three@0.122.0/examples/jsm/loaders/GLTFLoader.js';
+        import TWEEN from 'https://unpkg.com/@tweenjs/tween.js@18.6.4/dist/tween.esm.js';
+        import { GUI } from 'https://unpkg.com/three@0.122.0/examples/jsm/libs/dat.gui.module.js';
+
+        const params = {
+            povCameraActive: false,
+            orbitDistance: 5,
+            orbitSpeed: 1,
+            orbitTiltX: 0,
+            orbitTiltY: 0,
+            orbitTiltZ: 0,
+            cameraFOV: 45
+        };
 
         var container, controls;
-        var camera, scene, renderer;
+        var normalCamera, scene, renderer, povCamera;
         var model, newMin, satellite;
         var ambientLight, pointLight;
+        var tween, orbit, orbitContainer;
 
         init();
         animate();
@@ -46,8 +59,8 @@
             container = document.createElement('div');
             document.body.appendChild(container);
 
-            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
-            camera.position.set(3, 0, 10);
+            normalCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
+            normalCamera.position.set(3, 0, 10);
 
             // This creates a soft light so that shadows are less harsh
             scene = new THREE.Scene();
@@ -98,7 +111,7 @@
                 satellite.scale.set(0.0025, 0.0025, 0.0025);
                 satellite.rotation.z = 180;
                 satellite.rotation.y = 45;
-                modifyOrbit(satellite, 3, 1, 2.5);
+                modifyOrbit(satellite, params.orbitDistance, params.orbitTiltX, params.orbitTiltY, params.orbitTiltZ, params.orbitSpeed);
             });
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -118,7 +131,7 @@
             var pmremGenerator = new THREE.PMREMGenerator(renderer);
             pmremGenerator.compileEquirectangularShader();
 
-            controls = new OrbitControls(camera, renderer.domElement);
+            controls = new OrbitControls(normalCamera, renderer.domElement);
             controls.minDistance = 5;
             controls.maxDistance = 40;
             controls.update();
@@ -126,6 +139,36 @@
             window.addEventListener('resize', onWindowResize, false);
             onWindowResize();
             document.body.appendChild(renderer.domElement);
+
+            makeGUI();
+
+        }
+
+        function makeGUI() {
+            const gui = new GUI({ width: 420 });
+            gui.add(params, 'povCameraActive').name('Enable POV camera');
+            gui.add(params, 'orbitDistance', 3, 15, 0.1).name('Orbit Radius').listen().onChange(function (orbitDistance) {
+                povCamera.position.set(orbitDistance, 0, 0);
+                satellite.position.set(orbitDistance, 0, 0);
+            });
+            gui.add(params, 'orbitSpeed', 0, 5, 0.1).name('Orbit Speed').listen().onChange(function (speed) {
+                tween = new TWEEN.Tween(orbit.rotation).to({ y: '+' + (Math.PI * 2) }, 10000 / speed);
+                tween.start();
+                tween.repeat(Infinity);
+            });
+            gui.add(params, 'orbitTiltX', 0, 2 * Math.PI, 0.001).name('Orbit Tilt X').listen().onChange(function (tilt) {
+                orbitContainer.rotation.x = tilt;
+            });
+            gui.add(params, 'orbitTiltY', 0, 2 * Math.PI, 0.001).name('Orbit Tilt Y').listen().onChange(function (tilt) {
+                orbitContainer.rotation.y = tilt;
+            });
+            gui.add(params, 'orbitTiltZ', 0, 2 * Math.PI, 0.001).name('Orbit Tilt Z').listen().onChange(function (tilt) {
+                orbitContainer.rotation.z = tilt;
+            });
+            gui.add(params, 'cameraFOV', 10, 90, 1).name('POV Camera FOV').listen().onChange(function (newFOV) {
+                povCamera.fov = newFOV;
+                povCamera.updateProjectionMatrix();
+            });
         }
 
         function getRandom(number) {
@@ -140,8 +183,8 @@
         }
 
         function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
+            normalCamera.aspect = window.innerWidth / window.innerHeight;
+            normalCamera.updateProjectionMatrix();
 
             renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -151,21 +194,31 @@
         function animate(time) {
             TWEEN.update(time);
             controls.update();
-            renderer.render(scene, camera);
             requestAnimationFrame(animate);
+            if (params.povCameraActive) { renderer.render(scene, povCamera); }
+            else {
+                renderer.render(scene, normalCamera);
+            }
         }
 
-        function modifyOrbit(objectToMod, distance, tilt, speed) {
-            var orbitContainer = new THREE.Object3D();
-            orbitContainer.rotation.x = tilt;
+        function modifyOrbit(objectToMod, distance, xTilt, yTilt, zTilt, speed) {
+            orbitContainer = new THREE.Object3D();
+            orbitContainer.rotation.x = xTilt;
+            orbitContainer.rotation.y = yTilt;
+            orbitContainer.rotation.z = zTilt;
 
-            var orbit = new THREE.Object3D();
+            orbit = new THREE.Object3D();
 
             var planet = objectToMod;
             planet.position.set(distance, 0.0, 0.0);
             orbit.add(planet);
 
-            var tween = new TWEEN.Tween(orbit.rotation).to({ y: '+' + (Math.PI * 2) }, 10000 / speed);
+            povCamera = new THREE.PerspectiveCamera(params.cameraFOV, window.innerWidth / window.innerHeight, 1, 100000);
+            povCamera.position.set(distance, 0, 0);
+            povCamera.lookAt(model.position);
+            orbit.add(povCamera);
+
+            tween = new TWEEN.Tween(orbit.rotation).to({ y: '+' + (Math.PI * 2) }, 10000 / speed);
             tween.start();
             tween.repeat(Infinity);
 
