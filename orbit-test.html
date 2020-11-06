@@ -42,7 +42,8 @@
             orbitSpeed: 1,
             orbitTiltX: 0,
             orbitTiltY: 0,
-            orbitTiltZ: 0
+            orbitTiltZ: 0,
+            cameraFOV: 45
         };
 
         var container, controls;
@@ -144,9 +145,9 @@
         }
 
         function makeGUI() {
-            const gui = new GUI();
+            const gui = new GUI({ width: 420 });
             gui.add(params, 'povCameraActive').name('Enable POV camera');
-            gui.add(params, 'orbitDistance', 3, 15, 1).name('Orbit Radius').listen().onChange(function (orbitDistance) {
+            gui.add(params, 'orbitDistance', 3, 15, 0.1).name('Orbit Radius').listen().onChange(function (orbitDistance) {
                 povCamera.position.set(orbitDistance, 0, 0);
                 satellite.position.set(orbitDistance, 0, 0);
             });
@@ -155,14 +156,18 @@
                 tween.start();
                 tween.repeat(Infinity);
             });
-            gui.add(params, 'orbitTiltX', 0, Math.PI, 0.001).name('Orbit Tilt X').listen().onChange(function (tilt) {
+            gui.add(params, 'orbitTiltX', 0, 2 * Math.PI, 0.001).name('Orbit Tilt X').listen().onChange(function (tilt) {
                 orbitContainer.rotation.x = tilt;
             });
-            gui.add(params, 'orbitTiltY', 0, Math.PI, 0.001).name('Orbit Tilt Y').listen().onChange(function (tilt) {
+            gui.add(params, 'orbitTiltY', 0, 2 * Math.PI, 0.001).name('Orbit Tilt Y').listen().onChange(function (tilt) {
                 orbitContainer.rotation.y = tilt;
             });
-            gui.add(params, 'orbitTiltZ', 0, Math.PI, 0.001).name('Orbit Tilt Z').listen().onChange(function (tilt) {
+            gui.add(params, 'orbitTiltZ', 0, 2 * Math.PI, 0.001).name('Orbit Tilt Z').listen().onChange(function (tilt) {
                 orbitContainer.rotation.z = tilt;
+            });
+            gui.add(params, 'cameraFOV', 10, 90, 1).name('POV Camera FOV').listen().onChange(function (newFOV) {
+                povCamera.fov = newFOV;
+                povCamera.updateProjectionMatrix();
             });
         }
 
@@ -196,11 +201,11 @@
             }
         }
 
-        function modifyOrbit(objectToMod, distance, xtilt, ytilt, ztilt, speed) {
+        function modifyOrbit(objectToMod, distance, xTilt, yTilt, zTilt, speed) {
             orbitContainer = new THREE.Object3D();
-            orbitContainer.rotation.x = xtilt;
-            orbitContainer.rotation.y = ytilt;
-            orbitContainer.rotation.z = ztilt;
+            orbitContainer.rotation.x = xTilt;
+            orbitContainer.rotation.y = yTilt;
+            orbitContainer.rotation.z = zTilt;
 
             orbit = new THREE.Object3D();
 
@@ -208,7 +213,7 @@
             planet.position.set(distance, 0.0, 0.0);
             orbit.add(planet);
 
-            povCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
+            povCamera = new THREE.PerspectiveCamera(params.cameraFOV, window.innerWidth / window.innerHeight, 1, 100000);
             povCamera.position.set(distance, 0, 0);
             povCamera.lookAt(model.position);
             orbit.add(povCamera);
