@@ -111,9 +111,6 @@
                 satellite.scale.set(0.0025, 0.0025, 0.0025);
                 satellite.rotation.z = 180;
                 satellite.rotation.y = 45;
-                while (!model) {
-
-                }
                 modifyOrbit(satellite, params.orbitDistance, params.orbitTiltX, params.orbitTiltY, params.orbitTiltZ, params.orbitSpeed);
             });
 
@@ -218,7 +215,7 @@
 
             povCamera = new THREE.PerspectiveCamera(params.cameraFOV, window.innerWidth / window.innerHeight, 1, 100000);
             povCamera.position.set(distance, 0, 0);
-            povCamera.lookAt(model.position);
+            povCamera.lookAt(0, 0, 0);
             orbit.add(povCamera);
 
             tween = new TWEEN.Tween(orbit.rotation).to({ y: '+' + (Math.PI * 2) }, 10000 / speed);
