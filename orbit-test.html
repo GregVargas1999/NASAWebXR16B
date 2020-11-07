@@ -111,7 +111,9 @@
                 satellite.scale.set(0.0025, 0.0025, 0.0025);
                 satellite.rotation.z = 180;
                 satellite.rotation.y = 45;
-                modifyOrbit(satellite, params.orbitDistance, params.orbitTiltX, params.orbitTiltY, params.orbitTiltZ, params.orbitSpeed);
+                setTimeout(function () {
+                    modifyOrbit(satellite, params.orbitDistance, params.orbitTiltX, params.orbitTiltY, params.orbitTiltZ, params.orbitSpeed);
+                }, 500);
             });
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
