@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<base href="./">
+	<meta charset="utf-8">
+	<title>psyche_asteroid</title>
+	<style>
+		body {
+			margin: 0;
+		}
+
+		canvas {
+			display: block;
+		}
+		#card {
+			background: transparent;
+  			width: 50%;
+			margin: auto;
+			position: absolute;
+			top: 0; left: 0; right: 0;
+		}
+        #info   {
+            font-size: 40px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-style: "Lucida Console", Monaco, monospace;
+            line-height: 40px;
+            color: rgb(7, 147, 228);
+            text-align: center;
+            transform: translate
+        }
+        .button  {
+            position: absolute;
+			margin: auto;
+			height: 40px;
+			font-size: 24px;
+            background:  transparent;
+            /*height:  38px;
+            line-height:  40px;*/
+            border:  3px solid white;
+            /*display:  inline-block;*/
+            float:  none;
+            text-align:  center;
+            width:  220px;
+            /*padding:  0px!important;
+            /*font-size:  14px;*/
+            color:  #fff;
+        }
+        .button:hover  {
+            color:  #fff;
+            background:  rgba(255, 255, 255, 0.2);
+        }
+        #beginButton    {
+            left: 0; right: 0;
+        }
+        #prevButton    {
+            left: 0; right: 30;
+        }
+        #nextButton    {
+            left: 30; right: 0;
+        }
+
+	</style>
+</head>
+
+<body>
+	<div id ='card'>
+		<div id='info'>The Psyche Asteroid Mission</div>
+        <button class="button" id='beginButton'>Begin Journey</button>
+        <div>
+            <button class="button" id='prevButton' style='visibility: hidden;'>Previous Stage</button>
+            <button class="button" id='nextButton' style='visibility: hidden;'>Next Stage</button>
+        </div>
+	</div>
+
+	<script type='module'>
+
+    import * as THREE from 'https://unpkg.com/three@0.121.1/build/three.module.js';
+	import { Vector3 } from 'https://unpkg.com/three@0.121.1/src/math/Vector3.js';
+	import { Raycaster } from 'https://unpkg.com/three@0.121.1/src/core/Raycaster.js';
+    import { GLTFLoader } from 'https://unpkg.com/three@0.121.1/examples/jsm/loaders/GLTFLoader.js';
+
+    import TWEEN from 'https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@18.5.0/dist/tween.esm.js';
+
+	var container, controls;
+	var camera, povCamera, scene, renderer; 
+	var raycaster, projector, mouseVector, intersects, intersection, obj;
+    var asteroid, satellite, orbiter, newMin;
+    var targetPosition = new THREE.Vector3();
+    var position = new THREE.Vector3();
+	var beginButton, nextButton, prevButton, infoText, canvasCard;
+    const params = {
+            orbitDistance: 5,
+            orbitSpeed: 1,
+            orbitTiltX: 0,
+            orbitTiltY: 0,
+            orbitTiltZ: 0,
+            cameraFOV: 45
+    };
+    var tween, orbit, orbitContainer;
+	var rotSpeed = 0.0001;
+    var rotSpeed2 = 0.002;
+
+	init();
+	animate();
+
+	function init() 
+	{
+		canvasCard = document.getElementById('card');
+		infoText = document.getElementById('info');
+		beginButton = document.getElementById('beginButton');
+        prevButton = document.getElementById('prevButton');
+        nextButton = document.getElementById('nextButton');
+		beginButton.addEventListener('click', arrivalPhase, false);
+        orbitContainer = new THREE.Object3D();
+		
+		container = document.createElement('div');
+		document.body.appendChild(container);
+
+		camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
+        camera.position.set(-197, 0, 22);
+        position.copy(camera.position)
+        camera.lookAt( new THREE.Vector3(-197, 0, 0 ));
+
+		scene = new THREE.Scene();
+		
+        //scene.add(new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 0.5));
+		// This creates a soft light so that shadows are less harsh
+		var ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.2);
+		scene.add(ambientLight);
+		
+		// Point light is similar to directional light, I'm using realistic setting for light falloff
+		// PointLight( color : Integer, intensity : Float, distance : Number, decay : Float )
+		var pointLight = new THREE.PointLight(0xFFFFFF, 1, 0, 2);
+		pointLight.position.set(-1200,1000,-10000);
+		scene.add(pointLight);
+        
+        // Build sphere mesh
+		// SphereGeometry(radius : Float, widthSegments : Integer, heightSegments : Integer)
+		var geometry = new THREE.SphereGeometry(20, 30, 30);
+		var material = new THREE.MeshLambertMaterial(
+		{
+			color: 0xFC9601,
+			emissive: 0xFC9601,
+			emissiveIntensity: 1000
+		});
+		var mesh = new THREE.Mesh(geometry,material);
+		mesh.position.set(-1000,1000,-10000);
+		scene.add(mesh);
+		
+		// Build glow effect
+		// Using png sprite blending
+		var spriteMaterial = new THREE.SpriteMaterial( 
+		{ 
+			map: new THREE.TextureLoader().load('textures/orange glow.png'), 
+			color: 0xFFCC33, 
+			transparent: true, 
+			blending: THREE.AdditiveBlending
+		});
+		var sprite = new THREE.Sprite(spriteMaterial);
+		sprite.scale.set(200, 200, 1.0);
+		mesh.add(sprite); // this centers the glow at the mesh
+
+		var particleGeom = new THREE.Geometry();
+		var particleMaterial = new THREE.PointsMaterial({
+			color: 'rgb(80, 130, 255)',
+			size: 50,
+			map: new THREE.TextureLoader().load('textures/lensflare0.png'),
+			transparent: true,
+			blending: THREE.AdditiveBlending,
+		});
+
+		// Plotting particles at -(min to max) and (min to max)
+		let particleCount = 10000;
+		let min = 100;
+		let max = 10000;
+
+		for (var i = 0; i < particleCount; i++) 
+		{
+			let posX = (getRandom(min) * (2 * (max - min))) + newMin;
+			let posY = (getRandom(min) * (2 * (max - min))) + newMin;
+			let posZ = (getRandom(min) * (2 * (max - min))) + newMin;
+			
+			let particle = new THREE.Vector3(posX, posY, posZ);
+			particleGeom.vertices.push(particle);
+		}
+
+		let particleSys = new THREE.Points(particleGeom, particleMaterial);
+		particleSys.name = 'particleSys';
+		scene.add(particleSys);
+
+		var loader = new GLTFLoader().setPath('models/');
+		loader.load('asteroid.glb', function (gltf) 
+		{
+            asteroid = gltf.scene;
+            asteroid.scale.set(2,2,2);
+            asteroid.position.set(-150,0,0);
+            asteroid.rotation.y += 25;
+			scene.add(asteroid);
+			animate();
+        });
+        
+        
+         loader.load('satellite.glb', function (gltf) 
+		{
+			satellite = gltf.scene;
+            satellite.scale.set(0.01,0.01,0.01);
+            satellite.position.set(-196,0,18);
+            scene.add(satellite);
+			animate();
+        });
+
+        loader.load('satellite.glb', function (gltf) {
+            orbiter = gltf.scene;
+            orbiter.scale.set(0.0025, 0.0025, 0.0025);
+            orbiter.rotation.z = 180;
+            orbiter.rotation.y = 45;
+            scene.add(orbiter);
+            //animate();
+            orbitAnimation(orbiter, params.orbitDistance, params.orbitTiltX, params.orbitTiltY, params.orbitTiltZ, params.orbitSpeed);
+         });
+
+		renderer = new THREE.WebGLRenderer({antialias: true});
+		renderer.setPixelRatio(window.devicePixelRatio);
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		renderer.toneMapping = THREE.ACESFilmicToneMapping;
+		renderer.toneMappingExposure = 1;
+		renderer.outputEncoding = THREE.sRGBEncoding;
+		container.appendChild(renderer.domElement);
+		
+		var pmremGenerator = new THREE.PMREMGenerator(renderer);
+		pmremGenerator.compileEquirectangularShader();
+		
+        mouseVector = new THREE.Vector3();
+        //container.addEventListener('touchend', onClick, false);
+        //container.addEventListener('click', onClick, false);
+	}
+
+	function getRandom(number)
+	{
+		let rand = (Math.random() - 0.5);
+		newMin = number;
+
+		if(rand < 0)
+		{
+			newMin *= -1;
+		}
+
+		return rand;
+	}
+	
+	/*function onClick( event ) {                  
+        mouseVector.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouseVector.y = -(event.clientY  / window.innerHeight) * 2 + 1;
+                      
+        raycaster = new THREE.Raycaster();                       
+        raycaster.setFromCamera(mouseVector, camera);
+
+		intersects = raycaster.intersectObjects(scene.children, true);
+		if (intersects.length != 0)	{
+			container.removeEventListener('touchend', onClick, false);
+        	container.removeEventListener('click', onClick, false);
+
+			intersection = intersects[0];
+            obj = intersection.object;
+            obj.getWorldPosition( targetPosition );
+            targetPosition.z = 6;
+            
+			var tween = new TWEEN.Tween( position )
+                .to( targetPosition, 2000 )
+                .easing( TWEEN.Easing.Sinusoidal.InOut)
+                .onUpdate( function () {
+                   camera.position.copy( position );
+                } )
+				.onComplete( function () {
+					backButton.style.display = "block";
+					container.addEventListener('touchend', onClick, false);
+        			container.addEventListener('click', onClick, false);
+					infoText.innerHTML = getDescription(obj.name);
+                } )
+                .start();
+        }
+    }*/
+
+    function arrivalPhase() {
+
+        canvasCard.style.display = "none";
+        asteroid.position.set(-100,0,-50);
+        satellite.position.set(-100,0,12);
+
+        targetPosition.x = -97;
+        targetPosition.y = 0;
+        targetPosition.z = 22;
+            
+		var tween = new TWEEN.Tween( position )
+            .to( targetPosition, 2500 )
+            .easing( TWEEN.Easing.Sinusoidal.InOut)
+            .onUpdate( function () {
+                camera.position.copy( position );
+            } )
+			.onComplete( function () {
+                infoText.innerHTML = "Phase #?? - Arrival at Psyche"
+                beginButton.style.visibility = "hidden";
+                prevButton.style.visibility = "visible";
+                nextButton.style.visibility = "visible";
+                canvasCard.style.display = "block";
+                nextButton.removeEventListener('click', arrivalPhase, false);
+                nextButton.addEventListener('click', orbitalPhase, false);
+                } )
+            .start();
+         
+    }
+
+    function orbitalPhase() {
+
+        canvasCard.style.display = "none";
+        asteroid.position.set(0,0,0);
+        satellite.position.set(200,200,12);
+
+        targetPosition.x = 0;
+        targetPosition.y = 0;
+        targetPosition.z = 22;
+            
+        var tween = new TWEEN.Tween( position )
+            .to( targetPosition, 2500 )
+            .easing( TWEEN.Easing.Sinusoidal.InOut)
+            .onUpdate( function () {
+                camera.position.copy( position );
+            } )
+            .onComplete( function () {
+                infoText.innerHTML = "Phase #?? - Orbiting Psyche"
+                prevButton.addEventListener('click', arrivalPhase, false);
+                nextButton.removeEventListener('click', orbitalPhase, false);
+                canvasCard.style.display = "block";
+                } )
+            .start();
+    
+    }
+
+    function getDescription(name)
+    {
+        if (name == 'PSYCHE_20170116_DEC') 
+        {
+            return "I lied, we didn't upload any information yet";
+        }
+
+        if (name == 'Psyche')
+        {
+            return "I lied, we didn't upload any information yet";
+        }    
+
+        return name;
+    }
+
+    function orbitAnimation(objectToMod, distance, xTilt, yTilt, zTilt, speed) {
+            orbitContainer.rotation.x = xTilt;
+            orbitContainer.rotation.y = yTilt;
+            orbitContainer.rotation.z = zTilt;
+
+            orbit = new THREE.Object3D();
+
+            var planet = objectToMod;
+            planet.position.set(distance, 0, 0.0);
+            orbit.add(planet);
+
+            tween = new TWEEN.Tween(orbit.rotation).to({ z: '+' + (Math.PI * 2) }, 10000 / speed);
+            
+            tween.start();
+            tween.repeat(Infinity);
+
+            orbitContainer.add(orbit);
+            scene.add(orbitContainer);
+            return orbitContainer;
+    }
+
+	function onWindowResize() 
+	{
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+
+		renderer.setSize( window.innerWidth, window.innerHeight );
+
+		animate();
+	}
+
+	function animate() 
+	{
+        requestAnimationFrame(animate);
+
+		asteroid.rotation.z += rotSpeed;
+        asteroid.rotation.y += rotSpeed;
+        
+        satellite.rotation.x += rotSpeed2;
+		satellite.rotation.z += rotSpeed2;
+
+        orbiter.rotation.x -= rotSpeed2;
+		orbiter.rotation.z += rotSpeed2;
+
+        TWEEN.update();
+		renderer.render(scene, camera);
+    }
+    
+	</script>
+</body>
+
+</html>
