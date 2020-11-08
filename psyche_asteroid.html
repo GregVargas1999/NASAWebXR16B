@@ -40,7 +40,7 @@
 
 	var container, controls;
 	var camera, scene, renderer;
-	var model, newMin;
+	var model, newMin, mesh;
 	var ambientLight, pointLight;
 
 	init();
@@ -62,7 +62,7 @@
 		// Point light is similar to directional light, I'm using realistic setting for light falloff
 		// PointLight( color : Integer, intensity : Float, distance : Number, decay : Float )
 		pointLight = new THREE.PointLight(0xFFFFFF, 1, 0, 2);
-		pointLight.position.set(-3,6,-3);
+		pointLight.position.set(10000,0,0);
 		scene.add(pointLight);
 
 		var particleGeom = new THREE.Geometry();
@@ -93,6 +93,33 @@
 		particleSys.name = 'particleSys';
 		scene.add(particleSys);
 
+		// Build sphere mesh
+		// SphereGeometry(radius : Float, widthSegments : Integer, heightSegments : Integer)
+		var geometry = new THREE.SphereGeometry(20, 30, 30);
+		var material = new THREE.MeshLambertMaterial(
+		{
+			color: 0xFC9601,
+			emissive: 0xFC9601,
+			emissiveIntensity: 1000
+		});
+		mesh = new THREE.Mesh(geometry,material);
+		mesh.position.set(10000,0,0);
+		scene.add(mesh);
+		
+		// Build glow effect
+		// Using png sprite blending
+		var spriteMaterial = new THREE.SpriteMaterial( 
+		{ 
+			map: new THREE.TextureLoader().load('textures/orange glow.png'), 
+			color: 0xFFCC33, 
+			transparent: true, 
+			blending: THREE.AdditiveBlending
+		});
+		var sprite = new THREE.Sprite(spriteMaterial);
+		sprite.scale.set(200, 200, 1.0);
+		mesh.add(sprite); // this centers the glow at the mesh
+
+		// Load blender model
 		var loader = new GLTFLoader().setPath('models/');
 		loader.load('asteroid.glb', function (gltf) 
 		{
@@ -119,7 +146,7 @@
 		pmremGenerator.compileEquirectangularShader();
 
 		controls = new OrbitControls(camera, renderer.domElement);
-		controls.addEventListener('change', render); // use if there is no animation loop
+		//controls.addEventListener('change', render); // use if there is no animation loop
 		controls.update();
 
 		window.addEventListener('resize', onWindowResize, false);

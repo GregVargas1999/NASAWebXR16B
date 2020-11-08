@@ -39,7 +39,8 @@
 
 	var container, controls;
 	var camera, scene, renderer;
-	var model, newMin;
+	var model, newMin, mesh;
+	var ambientLight, pointLight;
 
 	init();
 	animate();
@@ -52,9 +53,16 @@
 		camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
 		camera.position.set(200, 0, 200);
 
+		// This creates a soft light so that shadows are less harsh
 		scene = new THREE.Scene();
-		scene.add(new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 0.5));
-		//scene.add(new THREE.DirectionalLight(0xffe3ab, 0.25));
+		ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.05);
+		scene.add(ambientLight);
+		
+		// Point light is similar to directional light, I'm using realistic setting for light falloff
+		// PointLight( color : Integer, intensity : Float, distance : Number, decay : Float )
+		pointLight = new THREE.PointLight(0xFFFFFF, 1, 0, 2);
+		pointLight.position.set(10000,0,0);
+		scene.add(pointLight);
 
 		var particleGeom = new THREE.Geometry();
 		var particleMaterial = new THREE.PointsMaterial({
@@ -84,10 +92,38 @@
 		particleSys.name = 'particleSys';
 		scene.add(particleSys);
 
+		// Build sphere mesh
+		// SphereGeometry(radius : Float, widthSegments : Integer, heightSegments : Integer)
+		var geometry = new THREE.SphereGeometry(20, 30, 30);
+		var material = new THREE.MeshLambertMaterial(
+		{
+			color: 0xFC9601,
+			emissive: 0xFC9601,
+			emissiveIntensity: 1000
+		});
+		mesh = new THREE.Mesh(geometry,material);
+		mesh.position.set(10000,0,0);
+		scene.add(mesh);
+		
+		// Build glow effect
+		// Using png sprite blending
+		var spriteMaterial = new THREE.SpriteMaterial( 
+		{ 
+			map: new THREE.TextureLoader().load('textures/orange glow.png'), 
+			color: 0xFFCC33, 
+			transparent: true, 
+			blending: THREE.AdditiveBlending
+		});
+		var sprite = new THREE.Sprite(spriteMaterial);
+		sprite.scale.set(200, 200, 1.0);
+		mesh.add(sprite); // this centers the glow at the mesh
+
+		// Load blender model
 		var loader = new GLTFLoader().setPath('models/');
 		loader.load('satellite.glb', function (gltf) 
 		{
 			model = gltf.scene
+			model.scale.multiplyScalar(1/100); // scale model 1/100th original size
 			scene.add(model);
 			animate();
 		});
