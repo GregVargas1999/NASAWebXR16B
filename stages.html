@@ -15,6 +15,7 @@
 		}
 		#card {
 			background: transparent;
+            height: 100%;
   			width: 50%;
 			margin: auto;
 			position: absolute;
@@ -60,6 +61,17 @@
         #nextButton    {
             left: 30; right: 0;
         }
+        #description    {
+            width: 65%;
+            font-size: 30px;
+            font-weight: 600;
+            font-style: "Courier New", Courier, monospace;
+            line-height: 40px;
+            color: rgb(228, 213, 7);
+            margin-top:30%;
+            margin-left:65%;
+            text-align: left;
+        }
 
 	</style>
 </head>
@@ -72,7 +84,8 @@
             <button class="button" id='prevButton' style='visibility: hidden;'>Previous Stage</button>
             <button class="button" id='nextButton' style='visibility: hidden;'>Next Stage</button>
         </div>
-	</div>
+        <div id='description'></div>
+    </div>
 
 	<script type='module'>
 
@@ -89,7 +102,7 @@
     var asteroid, satellite, orbiter, newMin;
     var targetPosition = new THREE.Vector3();
     var position = new THREE.Vector3();
-	var beginButton, nextButton, prevButton, infoText, canvasCard;
+	var beginButton, nextButton, prevButton, infoText, canvasCard, description;
     const params = {
             orbitDistance: 5,
             orbitSpeed: 1,
@@ -112,6 +125,7 @@
 		beginButton = document.getElementById('beginButton');
         prevButton = document.getElementById('prevButton');
         nextButton = document.getElementById('nextButton');
+        description = document.getElementById('description');
 		beginButton.addEventListener('click', arrivalPhase, false);
         orbitContainer = new THREE.Object3D();
 		
@@ -217,7 +231,6 @@
             orbiter.rotation.z = 180;
             orbiter.rotation.y = 45;
             scene.add(orbiter);
-            //animate();
             orbitAnimation(orbiter, params.orbitDistance, params.orbitTiltX, params.orbitTiltY, params.orbitTiltZ, params.orbitSpeed);
          });
 
@@ -233,8 +246,6 @@
 		pmremGenerator.compileEquirectangularShader();
 		
         mouseVector = new THREE.Vector3();
-        //container.addEventListener('touchend', onClick, false);
-        //container.addEventListener('click', onClick, false);
 	}
 
 	function getRandom(number)
@@ -249,39 +260,6 @@
 
 		return rand;
 	}
-	
-	/*function onClick( event ) {                  
-        mouseVector.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouseVector.y = -(event.clientY  / window.innerHeight) * 2 + 1;
-                      
-        raycaster = new THREE.Raycaster();                       
-        raycaster.setFromCamera(mouseVector, camera);
-
-		intersects = raycaster.intersectObjects(scene.children, true);
-		if (intersects.length != 0)	{
-			container.removeEventListener('touchend', onClick, false);
-        	container.removeEventListener('click', onClick, false);
-
-			intersection = intersects[0];
-            obj = intersection.object;
-            obj.getWorldPosition( targetPosition );
-            targetPosition.z = 6;
-            
-			var tween = new TWEEN.Tween( position )
-                .to( targetPosition, 2000 )
-                .easing( TWEEN.Easing.Sinusoidal.InOut)
-                .onUpdate( function () {
-                   camera.position.copy( position );
-                } )
-				.onComplete( function () {
-					backButton.style.display = "block";
-					container.addEventListener('touchend', onClick, false);
-        			container.addEventListener('click', onClick, false);
-					infoText.innerHTML = getDescription(obj.name);
-                } )
-                .start();
-        }
-    }*/
 
     function arrivalPhase() {
 
@@ -304,8 +282,10 @@
                 beginButton.style.visibility = "hidden";
                 prevButton.style.visibility = "visible";
                 nextButton.style.visibility = "visible";
+                description.innerHTML = "After spending around 100 days in the approach phase, "+
+                                        "the satellite finally arrives at its destination";
                 canvasCard.style.display = "block";
-                nextButton.removeEventListener('click', arrivalPhase, false);
+                prevButton.removeEventListener('click', arrivalPhase, false);
                 nextButton.addEventListener('click', orbitalPhase, false);
                 } )
             .start();
@@ -318,7 +298,7 @@
         asteroid.position.set(0,0,0);
         satellite.position.set(200,200,12);
 
-        targetPosition.x = 0;
+        targetPosition.x = 5;
         targetPosition.y = 0;
         targetPosition.z = 22;
             
@@ -332,6 +312,8 @@
                 infoText.innerHTML = "Phase #?? - Orbiting Psyche"
                 prevButton.addEventListener('click', arrivalPhase, false);
                 nextButton.removeEventListener('click', orbitalPhase, false);
+                description.innerHTML = "The satellite will orbit Psyche for about 21 months,"+
+                                        " where it can take measurements and send the data back to earth";
                 canvasCard.style.display = "block";
                 } )
             .start();
