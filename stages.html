@@ -97,12 +97,13 @@
     import TWEEN from 'https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@18.5.0/dist/tween.esm.js';
 
 	var container, controls;
-	var camera, povCamera, scene, renderer; 
+	var camera, povCamera, scene, renderer, tween; 
 	var raycaster, projector, mouseVector, intersects, intersection, obj;
-    var asteroid, satellite, orbiter, newMin;
+    var asteroid, satellite, asteroid2, satellite2, mars, orbiter, newMin;
     var targetPosition = new THREE.Vector3();
     var position = new THREE.Vector3();
-	var beginButton, nextButton, prevButton, infoText, canvasCard, description;
+    var beginButton, nextButton, prevButton, infoText, canvasCard, description;
+    var set2Idle = true;
     const params = {
             orbitDistance: 5,
             orbitSpeed: 1,
@@ -126,16 +127,17 @@
         prevButton = document.getElementById('prevButton');
         nextButton = document.getElementById('nextButton');
         description = document.getElementById('description');
-		beginButton.addEventListener('click', arrivalPhase, false);
+        beginButton.addEventListener('click', marsAssist, false);
+        beginButton.addEventListener('touchend', marsAssist, false);
         orbitContainer = new THREE.Object3D();
 		
 		container = document.createElement('div');
 		document.body.appendChild(container);
 
 		camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
-        camera.position.set(-197, 0, 22);
+        camera.position.set(-297, 0, 22);
         position.copy(camera.position)
-        camera.lookAt( new THREE.Vector3(-197, 0, 0 ));
+        camera.lookAt( new THREE.Vector3(-297, 0, 0 ));
 
 		scene = new THREE.Scene();
 		
@@ -186,7 +188,7 @@
 		});
 
 		// Plotting particles at -(min to max) and (min to max)
-		let particleCount = 10000;
+		let particleCount = 5000;
 		let min = 100;
 		let max = 10000;
 
@@ -202,37 +204,61 @@
 
 		let particleSys = new THREE.Points(particleGeom, particleMaterial);
 		particleSys.name = 'particleSys';
-		scene.add(particleSys);
-
-		var loader = new GLTFLoader().setPath('models/');
-		loader.load('asteroid.glb', function (gltf) 
+        scene.add(particleSys);
+        
+        var loader = new GLTFLoader().setPath('models/');
+        loader.load('satellite.glb', function (gltf) 
+		{
+			satellite = gltf.scene;
+            satellite.scale.set(0.01,0.01,0.01);
+            satellite.position.set(-296,0,18);
+            scene.add(satellite);
+			animate();
+        });
+        loader.load('mars.glb', function (gltf) 
+		{
+			mars = gltf.scene;
+            mars.scale.set(0.01,0.01,0.01);
+            mars.position.set(-200,0,-50);
+            scene.add(mars);
+			animate();
+        });
+        loader.load('asteroid.glb', function (gltf) 
 		{
             asteroid = gltf.scene;
             asteroid.scale.set(2,2,2);
-            asteroid.position.set(-150,0,0);
+            asteroid.position.set(-100,0,-50);
             asteroid.rotation.y += 25;
 			scene.add(asteroid);
 			animate();
         });
-        
-        
-         loader.load('satellite.glb', function (gltf) 
-		{
-			satellite = gltf.scene;
-            satellite.scale.set(0.01,0.01,0.01);
-            satellite.position.set(-196,0,18);
-            scene.add(satellite);
-			animate();
-        });
-
-        loader.load('satellite.glb', function (gltf) {
+        loader.load('satellite.glb', function (gltf) 
+        {
             orbiter = gltf.scene;
             orbiter.scale.set(0.0025, 0.0025, 0.0025);
             orbiter.rotation.z = 180;
             orbiter.rotation.y = 45;
             scene.add(orbiter);
             orbitAnimation(orbiter, params.orbitDistance, params.orbitTiltX, params.orbitTiltY, params.orbitTiltZ, params.orbitSpeed);
-         });
+        });
+
+        loader.load('satellite.glb', function (gltf) 
+		{
+			satellite2 = gltf.scene;
+            satellite2.scale.set(0.01,0.01,0.01);
+            satellite2.position.set(-596,0,18);
+            scene.add(satellite2);
+			animate();
+        });
+        loader.load('asteroid.glb', function (gltf) 
+		{
+            asteroid2 = gltf.scene;
+            asteroid2.scale.set(2,2,2);
+            asteroid2.position.set(-500,0,-50);
+            asteroid2.rotation.y += 25;
+			scene.add(asteroid2);
+			animate();
+        });
 
 		renderer = new THREE.WebGLRenderer({antialias: true});
 		renderer.setPixelRatio(window.devicePixelRatio);
@@ -259,19 +285,69 @@
 		}
 
 		return rand;
-	}
+    }
+    
+    function marsAssist() {
+
+        canvasCard.style.display = "none";
+
+        if (set2Idle)   {
+            satellite2.position.set(-200,-1,10);
+            set2Idle = false;
+        }
+        else{
+            satellite.position.set(-200,-1,10);
+            set2Idle = true;
+        }
+        
+        targetPosition.x = -197;
+        targetPosition.y = 0;
+        targetPosition.z = 22;  
+            
+        tween = new TWEEN.Tween( position )
+            .to( targetPosition, 2500 )
+            .easing( TWEEN.Easing.Sinusoidal.InOut)
+            .onUpdate( function () {
+                camera.position.copy( position );
+            } )
+            .onComplete( function () {
+                infoText.innerHTML = "Phase #?? - Mars Gravity Assist"
+                beginButton.style.visibility = "hidden";
+                prevButton.style.visibility = "visible";
+                nextButton.style.visibility = "visible";
+                description.innerHTML = "While cruising toward its destination, the spacecraft "+
+                                        "flies by Mars and undergoes a gravitational slingshot";
+                canvasCard.style.display = "block";
+                prevButton.removeEventListener('click', marsAssist, false);
+                nextButton.addEventListener('click', arrivalPhase, false);
+
+                prevButton.removeEventListener('touchend', marsAssist, false);
+                nextButton.addEventListener('touchend', arrivalPhase, false);
+                } )
+            .start();
+    
+    }
 
     function arrivalPhase() {
 
         canvasCard.style.display = "none";
-        asteroid.position.set(-100,0,-50);
-        satellite.position.set(-100,0,12);
+
+        if (set2Idle)   {
+            satellite2.position.set(-100,0,12);
+            asteroid2.position.set(-100,0,-50);
+            set2Idle = false;
+        }
+        else{
+            satellite.position.set(-100,0,12);
+            asteroid.position.set(-100,0,-50);
+            set2Idle = true;
+        }
 
         targetPosition.x = -97;
         targetPosition.y = 0;
         targetPosition.z = 22;
-            
-		var tween = new TWEEN.Tween( position )
+
+		tween = new TWEEN.Tween( position )
             .to( targetPosition, 2500 )
             .easing( TWEEN.Easing.Sinusoidal.InOut)
             .onUpdate( function () {
@@ -285,24 +361,40 @@
                 description.innerHTML = "After spending around 100 days in the approach phase, "+
                                         "the spacecraft finally arrives at its destination";
                 canvasCard.style.display = "block";
+
                 prevButton.removeEventListener('click', arrivalPhase, false);
+                nextButton.removeEventListener('click', arrivalPhase, false);
+
+                prevButton.removeEventListener('touchend', arrivalPhase, false);
+                nextButton.removeEventListener('touchend', arrivalPhase, false);
+
+                prevButton.addEventListener('click', marsAssist, false);
                 nextButton.addEventListener('click', orbitalPhase, false);
+
+                prevButton.addEventListener('touchend', marsAssist, false);
+                nextButton.addEventListener('touchend', orbitalPhase, false);
                 } )
             .start();
-         
     }
 
     function orbitalPhase() {
 
         canvasCard.style.display = "none";
-        asteroid.position.set(0,0,0);
-        satellite.position.set(200,200,12);
+
+        if (set2Idle)   {
+            asteroid2.position.set(0,0,0);
+            set2Idle = false;
+        }
+        else{
+            asteroid.position.set(0,0,0);
+            set2Idle = true;
+        }
 
         targetPosition.x = 5;
         targetPosition.y = 0;
         targetPosition.z = 22;
-            
-        var tween = new TWEEN.Tween( position )
+
+        tween = new TWEEN.Tween( position )
             .to( targetPosition, 2500 )
             .easing( TWEEN.Easing.Sinusoidal.InOut)
             .onUpdate( function () {
@@ -312,27 +404,15 @@
                 infoText.innerHTML = "Phase #?? - Orbiting Psyche"
                 prevButton.addEventListener('click', arrivalPhase, false);
                 nextButton.removeEventListener('click', orbitalPhase, false);
+                
+                prevButton.addEventListener('touchend', arrivalPhase, false);
+                nextButton.removeEventListener('touchend', orbitalPhase, false);
+                
                 description.innerHTML = "The spacecraft will orbit Psyche for about 21 months,"+
                                         " where it can take measurements and send the data back to Earth";
                 canvasCard.style.display = "block";
                 } )
             .start();
-    
-    }
-
-    function getDescription(name)
-    {
-        if (name == 'PSYCHE_20170116_DEC') 
-        {
-            return "I lied, we didn't upload any information yet";
-        }
-
-        if (name == 'Psyche')
-        {
-            return "I lied, we didn't upload any information yet";
-        }    
-
-        return name;
     }
 
     function orbitAnimation(objectToMod, distance, xTilt, yTilt, zTilt, speed) {
@@ -372,9 +452,13 @@
 
 		asteroid.rotation.z += rotSpeed;
         asteroid.rotation.y += rotSpeed;
+        asteroid2.rotation.z += rotSpeed;
+        asteroid2.rotation.y += rotSpeed;
         
         satellite.rotation.x += rotSpeed2;
-		satellite.rotation.z += rotSpeed2;
+        satellite.rotation.z += rotSpeed2;
+        satellite2.rotation.x += rotSpeed2;
+        satellite2.rotation.z += rotSpeed2;
 
         orbiter.rotation.x -= rotSpeed2;
 		orbiter.rotation.z += rotSpeed2;
