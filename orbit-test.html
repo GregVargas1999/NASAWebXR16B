@@ -4,7 +4,8 @@
 <head>
     <base href="./">
     <meta charset="utf-8">
-    <title>psyche_asteroid</title>
+    <title>Orbit Test</title>
+    <link rel="icon" href="/images/site-icon.png">
     <style>
         body {
             margin: 0;
@@ -38,6 +39,7 @@
 
         const params = {
             povCameraActive: false,
+            orbitPathActive: false,
             orbitDistance: 5,
             orbitSpeed: 1,
             orbitTiltX: 0,
@@ -50,7 +52,7 @@
         var normalCamera, scene, renderer, povCamera;
         var model, newMin, satellite, mesh;
         var ambientLight, pointLight;
-        var tween, orbit, orbitContainer;
+        var tween, orbit, orbitContainer, orbitPath;
 
         init();
         animate();
@@ -66,11 +68,11 @@
             scene = new THREE.Scene();
             ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.05);
             scene.add(ambientLight);
-            
+
             // Point light is similar to directional light, I'm using realistic setting for light falloff
             // PointLight( color : Integer, intensity : Float, distance : Number, decay : Float )
             pointLight = new THREE.PointLight(0xFFFFFF, 1, 0, 2);
-            pointLight.position.set(10000,0,0);
+            pointLight.position.set(10000, 0, 0);
             scene.add(pointLight);
 
             var particleGeom = new THREE.Geometry();
@@ -99,29 +101,29 @@
             let particleSys = new THREE.Points(particleGeom, particleMaterial);
             particleSys.name = 'particleSys';
             scene.add(particleSys);
-            
+
             // Build sphere mesh
             // SphereGeometry(radius : Float, widthSegments : Integer, heightSegments : Integer)
             var geometry = new THREE.SphereGeometry(20, 30, 30);
             var material = new THREE.MeshLambertMaterial(
-            {
-                color: 0xFC9601,
-                emissive: 0xFC9601,
-                emissiveIntensity: 1000
-            });
-            mesh = new THREE.Mesh(geometry,material);
-            mesh.position.set(10000,0,0);
+                {
+                    color: 0xFC9601,
+                    emissive: 0xFC9601,
+                    emissiveIntensity: 1000
+                });
+            mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(10000, 0, 0);
             scene.add(mesh);
-            
+
             // Build glow effect
             // Using png sprite blending
-            var spriteMaterial = new THREE.SpriteMaterial( 
-            { 
-                map: new THREE.TextureLoader().load('textures/orange glow.png'), 
-                color: 0xFFCC33, 
-                transparent: true, 
-                blending: THREE.AdditiveBlending
-            });
+            var spriteMaterial = new THREE.SpriteMaterial(
+                {
+                    map: new THREE.TextureLoader().load('textures/orange glow.png'),
+                    color: 0xFFCC33,
+                    transparent: true,
+                    blending: THREE.AdditiveBlending
+                });
             var sprite = new THREE.Sprite(spriteMaterial);
             sprite.scale.set(200, 200, 1.0);
             mesh.add(sprite); // this centers the glow at the mesh
@@ -136,7 +138,7 @@
             // Load satellite model
             loader.load('satellite.glb', function (gltf) {
                 satellite = gltf.scene;
-                satellite.scale.multiplyScalar(1/1000); // scale model 1/1000th original size
+                satellite.scale.multiplyScalar(1 / 1000); // scale model 1/1000th original size
                 satellite.rotation.z = 180;
                 satellite.rotation.y = 45;
                 modifyOrbit(satellite, params.orbitDistance, params.orbitTiltX, params.orbitTiltY, params.orbitTiltZ, params.orbitSpeed);
@@ -175,9 +177,22 @@
         function makeGUI() {
             const gui = new GUI({ width: 420 });
             gui.add(params, 'povCameraActive').name('Enable POV camera');
+            gui.add(params, 'orbitPathActive').name('Enable Orbit Path Ring').listen().onChange(function (changeVal) {
+                if (changeVal) {
+                    orbitPath = makeOrbitPath(params.orbitDistance);
+                    orbitContainer.add(orbitPath);
+                } else {
+                    orbitContainer.remove(orbitPath);
+                }
+            })
             gui.add(params, 'orbitDistance', 3, 15, 0.1).name('Orbit Radius').listen().onChange(function (orbitDistance) {
                 povCamera.position.set(orbitDistance, 0, 0);
                 satellite.position.set(orbitDistance, 0, 0);
+                if (params.orbitPathActive) {
+                    orbitContainer.remove(orbitPath);
+                    orbitPath = makeOrbitPath(orbitDistance);
+                    orbitContainer.add(orbitPath);
+                }
             });
             gui.add(params, 'orbitSpeed', 0, 5, 0.1).name('Orbit Speed').listen().onChange(function (speed) {
                 tween = new TWEEN.Tween(orbit.rotation).to({ y: '+' + (Math.PI * 2) }, 10000 / speed);
@@ -253,6 +268,15 @@
             orbitContainer.add(orbit);
             scene.add(orbitContainer);
             return orbitContainer;
+        }
+
+        function makeOrbitPath(radius) {
+            const geometry = new THREE.CircleGeometry(radius, 128);
+            const material = new THREE.LineBasicMaterial({ color: 0xffffff });
+            geometry.vertices.shift();
+            const circle = new THREE.LineLoop(geometry, material);
+            circle.rotation.x = 1 / 2 * Math.PI;
+            return circle;
         }
     </script>
 </body>
