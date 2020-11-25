@@ -68,12 +68,12 @@
 
             // This creates a soft light so that shadows are less harsh
             scene = new THREE.Scene();
-            ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.05);
+            ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.1);
             scene.add(ambientLight);
 
             // Point light is similar to directional light, I'm using realistic setting for light falloff
             // PointLight( color : Integer, intensity : Float, distance : Number, decay : Float )
-            pointLight = new THREE.PointLight(0xFFFFFF, 1, 0, 2);
+            pointLight = new THREE.PointLight(0xFFFFFF, 1, 0, 1);
             pointLight.position.set(-3, 6, -3);
             scene.add(pointLight);
 
