@@ -61,16 +61,50 @@
         #nextButton    {
             left: 30; right: 0;
         }
-        #description    {
-            width: 65%;
-            font-size: 30px;
-            font-weight: 600;
-            font-style: "Courier New", Courier, monospace;
-            line-height: 40px;
-            color: rgb(228, 213, 7);
+		
+	.tooltip {
+            opacity: 1;
+            color:white;
+            display: flex;
+            background:  transparent;
+            /*height:  38px;
+            line-height:  40px;*/
+            border:  3px solid white;
+            font-size: 14px;
+            font-family: verdana, 'open sans', sans-serif;
+            justify-self: center;
+        }
+        .tooltip:hover  {
+            color:  #fff;
+            background:  rgba(255, 255, 255, 0.2);
+        }
+        #descriptionBox    {
+            visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             margin-top:30%;
             margin-left:65%;
-            text-align: left;
+            width: 45%;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            border-radius: 5px;
+            background: rgb(48,33,68);
+            background: linear-gradient(90deg, rgba(48,33,68,1) 0%, rgba(18,3,29,1) 100%);
+            margin-bottom: 25px;
+            padding: 10px 14px 10px 14px;
+            box-shadow: 0px 1px 5px #999;
+            opacity: 0.8;
+        }
+
+        #description    {
+            opacity: 1;
+            font-size: 18px;
+            line-height: 26px;
+            font-weight: 600;
+            font-family: verdana, 'open sans', sans-serif;
+            color: #ef5966; /*#a53f5b;*/ 
+            text-align: center;
         }
 
 	</style>
@@ -84,7 +118,10 @@
             <button class="button" id='prevButton' style='visibility: hidden;'>Previous Stage</button>
             <button class="button" id='nextButton' style='visibility: hidden;'>Next Stage</button>
         </div>
-        <div id='description'></div>
+        <div id='descriptionBox'>
+            <div id='description'></div>
+            <button class="tooltip" alignment='center'>&#8505 More info</div>
+        </div>
     </div>
 
 	<script type='module'>
@@ -102,7 +139,7 @@
     var asteroid, satellite, asteroid2, satellite2, mars, orbiter, newMin;
     var targetPosition = new THREE.Vector3();
     var position = new THREE.Vector3();
-    var beginButton, nextButton, prevButton, infoText, canvasCard, description;
+    var beginButton, nextButton, prevButton, infoText, canvasCard, description, descriptionBox;
     var set2Idle = true;
     const params = {
             orbitDistance: 5,
@@ -127,6 +164,7 @@
         prevButton = document.getElementById('prevButton');
         nextButton = document.getElementById('nextButton');
         description = document.getElementById('description');
+	descriptionBox = document.getElementById('descriptionBox');
         beginButton.addEventListener('click', marsAssist, false);
         beginButton.addEventListener('touchend', marsAssist, false);
         orbitContainer = new THREE.Object3D();
@@ -320,7 +358,7 @@
                 canvasCard.style.display = "block";
                 prevButton.removeEventListener('click', marsAssist, false);
                 nextButton.addEventListener('click', arrivalPhase, false);
-
+		descriptionBox.style.visibility = "visible";
                 prevButton.removeEventListener('touchend', marsAssist, false);
                 nextButton.addEventListener('touchend', arrivalPhase, false);
                 } )
