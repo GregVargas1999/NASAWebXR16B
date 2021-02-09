@@ -36,30 +36,33 @@
 			margin: auto;
 			height: 40px;
 			font-size: 24px;
-            background:  transparent;
+            background:  #f47c33;
             /*height:  38px;
             line-height:  40px;*/
-            border:  3px solid white;
+            border:  3px solid #592651;
             /*display:  inline-block;*/
             float:  none;
             text-align:  center;
             width:  220px;
             /*padding:  0px!important;
             /*font-size:  14px;*/
-            color:  #fff;
+            color:  #592651;
         }
         .button:hover  {
-            color:  #fff;
-            background:  rgba(255, 255, 255, 0.2);
+            color:  #a53f5b;
+            background: #f9a000;
         }
         #beginButton    {
             left: 0; right: 0;
+            color:  #592651;
         }
         #prevButton    {
             left: 0; right: 30;
+            color:  #592651;
         }
         #nextButton    {
             left: 30; right: 0;
+            color:  #592651;
         }
 		
 	.tooltip {
@@ -349,11 +352,11 @@
                 camera.position.copy( position );
             } )
             .onComplete( function () {
-                infoText.innerHTML = "Phase #?? - Mars Gravity Assist"
+                infoText.innerHTML = "Phase #1 - Mars Gravity Assist"
                 beginButton.style.visibility = "hidden";
-                prevButton.style.visibility = "visible";
+                prevButton.style.visibility = "hidden";
                 nextButton.style.visibility = "visible";
-                description.innerHTML = "While cruising toward its destination, the spacecraft "+
+                description.innerHTML = "After launching in August 2022, the spacecraft "+
                                         "flies by Mars and undergoes a gravitational slingshot";
                 canvasCard.style.display = "block";
                 prevButton.removeEventListener('click', marsAssist, false);
@@ -392,12 +395,12 @@
                 camera.position.copy( position );
             } )
 			.onComplete( function () {
-                infoText.innerHTML = "Phase #?? - Arrival at Psyche"
+                infoText.innerHTML = "Phase #2 - Arrival at Psyche"
                 beginButton.style.visibility = "hidden";
                 prevButton.style.visibility = "visible";
                 nextButton.style.visibility = "visible";
                 description.innerHTML = "After spending around 100 days in the approach phase, "+
-                                        "the spacecraft finally arrives at its destination";
+                                        "the spacecraft begins to orbit the Psyche asteroid in January 2026";
                 canvasCard.style.display = "block";
 
                 prevButton.removeEventListener('click', arrivalPhase, false);
@@ -439,15 +442,17 @@
                 camera.position.copy( position );
             } )
             .onComplete( function () {
-                infoText.innerHTML = "Phase #?? - Orbiting Psyche"
+                infoText.innerHTML = "Phase #3 - Orbiting Psyche"
                 prevButton.addEventListener('click', arrivalPhase, false);
                 nextButton.removeEventListener('click', orbitalPhase, false);
+                prevButton.style.visibility = "visible";
+                nextButton.style.visibility = "hidden";
                 
                 prevButton.addEventListener('touchend', arrivalPhase, false);
                 nextButton.removeEventListener('touchend', orbitalPhase, false);
                 
-                description.innerHTML = "The spacecraft will orbit Psyche for about 21 months,"+
-                                        " where it can take measurements and send the data back to Earth";
+                description.innerHTML = "The spacecraft will orbit Psyche until Octbber 2027 (21 months!),"+
+                                        " where it will take measurements and send data back to Earth";
                 canvasCard.style.display = "block";
                 } )
             .start();
