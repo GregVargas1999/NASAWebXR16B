@@ -64,6 +64,7 @@
             left: 30; right: 0;
             color:  #592651;
         }
+		
 	.tooltip {
             opacity: 1;
             color:white;
@@ -79,7 +80,7 @@
         .tooltip:hover  {
             color:  #fff;
             background:  rgba(255, 255, 255, 0.2);
-        }	
+        }
         #descriptionBox    {
             visibility: hidden;
             display: flex;
@@ -113,18 +114,16 @@
 </head>
 
 <body>
-    <div id ='card'>
-	<div id='info'>The Psyche Asteroid Mission</div>
+	<div id ='card'>
+		<div id='info'>The Psyche Asteroid Mission</div>
         <button class="button" id='beginButton'>Begin Journey</button>
         <div>
             <button class="button" id='prevButton' style='visibility: hidden;'>Previous Stage</button>
             <button class="button" id='nextButton' style='visibility: hidden;'>Next Stage</button>
         </div>
-        
         <div id='descriptionBox'>
             <div id='description'></div>
-            <div id='details'></div>
-            <button id='moreInfo' class="tooltip" alignment='center'>&#8505 More info
+            <button class="tooltip" alignment='center'>&#8505 More info</div>
         </div>
     </div>
 
@@ -143,7 +142,7 @@
     var asteroid, satellite, asteroid2, satellite2, mars, orbiter, newMin;
     var targetPosition = new THREE.Vector3();
     var position = new THREE.Vector3();
-    var beginButton, nextButton, prevButton, moreInfo, infoText, canvasCard, description, details, descriptionBox;
+    var beginButton, nextButton, prevButton, infoText, canvasCard, description, descriptionBox;
     var set2Idle = true;
     const params = {
             orbitDistance: 5,
@@ -165,24 +164,21 @@
 		canvasCard = document.getElementById('card');
 		infoText = document.getElementById('info');
 		beginButton = document.getElementById('beginButton');
-		prevButton = document.getElementById('prevButton');
-		nextButton = document.getElementById('nextButton');
-		description = document.getElementById('description');
-		details = document.getElementById('details');
-		descriptionBox = document.getElementById('descriptionBox');
-		beginButton.addEventListener('click', marsAssist, false);
-		beginButton.addEventListener('touchend', marsAssist, false);
-		moreInfo.addEventListener('click', showDetails, false);
-        	moreInfo.addEventListener('touchend', showDetails, false);
-		orbitContainer = new THREE.Object3D();
+        prevButton = document.getElementById('prevButton');
+        nextButton = document.getElementById('nextButton');
+        description = document.getElementById('description');
+	descriptionBox = document.getElementById('descriptionBox');
+        beginButton.addEventListener('click', marsAssist, false);
+        beginButton.addEventListener('touchend', marsAssist, false);
+        orbitContainer = new THREE.Object3D();
 		
 		container = document.createElement('div');
 		document.body.appendChild(container);
 
 		camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
-		camera.position.set(-297, 0, 22);
-		position.copy(camera.position)
-		camera.lookAt( new THREE.Vector3(-297, 0, 0 ));
+        camera.position.set(-297, 0, 22);
+        position.copy(camera.position)
+        camera.lookAt( new THREE.Vector3(-297, 0, 0 ));
 
 		scene = new THREE.Scene();
 		
@@ -331,32 +327,6 @@
 
 		return rand;
     }
-		
-    function showDetails() {
-        description.style.display = "none";
-        details.style.display = "block";
-        moreInfo.innerHTML = "Close";
-        moreInfo.removeEventListener('click', showDetails, false);
-        moreInfo.removeEventListener('touchend', showDetails, false);
-        moreInfo.addEventListener('click', closeDetails, false);
-        moreInfo.addEventListener('touchend', closeDetails, false);
-        descriptionBox.style.margintop = "20%";
-        descriptionBox.style.marginleft = "55%";
-        descriptionBox.style.width = "55%";
-    }
-
-    function closeDetails() {
-        description.style.display = "block";
-        details.style.display = "none";
-        moreInfo.innerHTML = "&#8505 More info"
-        moreInfo.removeEventListener('click', closeDetails, false);
-        moreInfo.removeEventListener('touchend', closeDetails, false);
-        moreInfo.addEventListener('click', showDetails, false);
-        moreInfo.addEventListener('touchend', showDetails, false);
-        descriptionBox.style.margintop = "30%";
-        descriptionBox.style.marginleft = "65%";
-        descriptionBox.style.width = "45%";
-    }
     
     function marsAssist() {
 
@@ -388,18 +358,12 @@
                 nextButton.style.visibility = "visible";
                 description.innerHTML = "After launching in August 2022, the spacecraft "+
                                         "flies by Mars and undergoes a gravitational slingshot";
-		details.innerHTML = "More detailed description goes here -->\n"+
-                                        "####################\n####################\n"+
-                                        "####################\n####################\n"+
-                                        "####################\n####################\n"+
-                                        "####################\n####################\n";
                 canvasCard.style.display = "block";
                 prevButton.removeEventListener('click', marsAssist, false);
                 nextButton.addEventListener('click', arrivalPhase, false);
 		descriptionBox.style.visibility = "visible";
                 prevButton.removeEventListener('touchend', marsAssist, false);
                 nextButton.addEventListener('touchend', arrivalPhase, false);
-		closeDetails();
                 } )
             .start();
     
@@ -450,7 +414,6 @@
 
                 prevButton.addEventListener('touchend', marsAssist, false);
                 nextButton.addEventListener('touchend', orbitalPhase, false);
-		closeDetails();
                 } )
             .start();
     }
@@ -491,7 +454,6 @@
                 description.innerHTML = "The spacecraft will orbit Psyche until Octbber 2027 (21 months!),"+
                                         " where it will take measurements and send data back to Earth";
                 canvasCard.style.display = "block";
-		closeDetails();
                 } )
             .start();
     }
