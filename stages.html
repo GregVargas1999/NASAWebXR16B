@@ -109,6 +109,17 @@
             color: #ef5966; /*#a53f5b;*/ 
             text-align: center;
         }
+        #details    {
+            display: none;
+            opacity: 1;
+            font-size: 12px;
+            line-height: 16px;
+            font-weight: 600;
+            font-family: verdana, 'open sans', sans-serif;
+            color: #ef5966; /*#a53f5b;*/ 
+            text-align: center;
+        }
+
 
 	</style>
 </head>
@@ -121,12 +132,14 @@
             <button class="button" id='prevButton' style='visibility: hidden;'>Previous Stage</button>
             <button class="button" id='nextButton' style='visibility: hidden;'>Next Stage</button>
         </div>
+        
         <div id='descriptionBox'>
             <div id='description'></div>
-            <button class="tooltip" alignment='center'>&#8505 More info</div>
-        </div>
+            <div id='details'></div>
+            <button id='moreInfo' class="tooltip" alignment='center'>&#8505 More info
+            </div>
+        
     </div>
-
 	<script type='module'>
 
     import * as THREE from 'https://unpkg.com/three@0.121.1/build/three.module.js';
@@ -142,7 +155,7 @@
     var asteroid, satellite, asteroid2, satellite2, mars, orbiter, newMin;
     var targetPosition = new THREE.Vector3();
     var position = new THREE.Vector3();
-    var beginButton, nextButton, prevButton, infoText, canvasCard, description, descriptionBox;
+    var beginButton, nextButton, prevButton, infoText, moreInfo, canvasCard, description, details, descriptionBox;
     var set2Idle = true;
     const params = {
             orbitDistance: 5,
@@ -167,9 +180,13 @@
         prevButton = document.getElementById('prevButton');
         nextButton = document.getElementById('nextButton');
         description = document.getElementById('description');
-	descriptionBox = document.getElementById('descriptionBox');
+        descriptionBox = document.getElementById('descriptionBox');
+        details = document.getElementById('details');
+        moreInfo = document.getElementById('moreInfo');
         beginButton.addEventListener('click', marsAssist, false);
         beginButton.addEventListener('touchend', marsAssist, false);
+        moreInfo.addEventListener('click', showDetails, false);
+        moreInfo.addEventListener('touchend', showDetails, false);
         orbitContainer = new THREE.Object3D();
 		
 		container = document.createElement('div');
@@ -315,6 +332,32 @@
         mouseVector = new THREE.Vector3();
 	}
 
+    function showDetails() {
+        description.style.display = "none";
+        details.style.display = "block";
+        moreInfo.innerHTML = "Close";
+        moreInfo.removeEventListener('click', showDetails, false);
+        moreInfo.removeEventListener('touchend', showDetails, false);
+        moreInfo.addEventListener('click', closeDetails, false);
+        moreInfo.addEventListener('touchend', closeDetails, false);
+        descriptionBox.style.margintop = "20%";
+        descriptionBox.style.marginleft = "55%";
+        descriptionBox.style.width = "55%";
+    }
+
+    function closeDetails() {
+        description.style.display = "block";
+        details.style.display = "none";
+        moreInfo.innerHTML = "&#8505 More info"
+        moreInfo.removeEventListener('click', closeDetails, false);
+        moreInfo.removeEventListener('touchend', closeDetails, false);
+        moreInfo.addEventListener('click', showDetails, false);
+        moreInfo.addEventListener('touchend', showDetails, false);
+        descriptionBox.style.margintop = "30%";
+        descriptionBox.style.marginleft = "65%";
+        descriptionBox.style.width = "45%";
+    }
+
 	function getRandom(number)
 	{
 		let rand = (Math.random() - 0.5);
@@ -358,12 +401,18 @@
                 nextButton.style.visibility = "visible";
                 description.innerHTML = "After launching in August 2022, the spacecraft "+
                                         "flies by Mars and undergoes a gravitational slingshot";
+                details.innerHTML = "More detailed description goes here -->\n"+
+                                        "####################\n####################\n"+
+                                        "####################\n####################\n"+
+                                        "####################\n####################\n"+
+                                        "####################\n####################\n";
                 canvasCard.style.display = "block";
                 prevButton.removeEventListener('click', marsAssist, false);
                 nextButton.addEventListener('click', arrivalPhase, false);
 		descriptionBox.style.visibility = "visible";
                 prevButton.removeEventListener('touchend', marsAssist, false);
                 nextButton.addEventListener('touchend', arrivalPhase, false);
+                closeDetails();
                 } )
             .start();
     
@@ -414,6 +463,7 @@
 
                 prevButton.addEventListener('touchend', marsAssist, false);
                 nextButton.addEventListener('touchend', orbitalPhase, false);
+                closeDetails();
                 } )
             .start();
     }
@@ -454,6 +504,7 @@
                 description.innerHTML = "The spacecraft will orbit Psyche until Octbber 2027 (21 months!),"+
                                         " where it will take measurements and send data back to Earth";
                 canvasCard.style.display = "block";
+                closeDetails();
                 } )
             .start();
     }
