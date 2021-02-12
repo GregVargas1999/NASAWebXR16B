@@ -35,6 +35,7 @@
 
         import { OrbitControls } from 'https://unpkg.com/three@0.122.0/examples/jsm/controls/OrbitControls.js';
         import { GLTFLoader } from 'https://unpkg.com/three@0.122.0/examples/jsm/loaders/GLTFLoader.js';
+        import { DRACOLoader } from 'https://unpkg.com/three@0.122.0/examples/jsm/loaders/DRACOLoader.js';
         import TWEEN from 'https://unpkg.com/@tweenjs/tween.js@18.6.4/dist/tween.esm.js';
         import { GUI } from 'https://unpkg.com/three@0.122.0/examples/jsm/libs/dat.gui.module.js';
 
@@ -76,44 +77,41 @@
             pointLight.position.set(10000, 0, 0);
             scene.add(pointLight);
 
-            var particleGeom = new THREE.Geometry();
-            var particleMaterial = new THREE.PointsMaterial({
-                color: 'rgb(80, 130, 255)',
-                size: 50,
-                map: new THREE.TextureLoader().load('textures/lensflare0.png'),
-                transparent: true,
-                blending: THREE.AdditiveBlending,
-            });
 
-            // Plotting particles at -(min to max) and (min to max)
-            let particleCount = 10000;
-            let min = 100;
-            let max = 10000;
+            // adding SkyBox to the scene
+            let materialArray = [];
+            let texture_ft = new THREE.TextureLoader().load('textures/skybox-textures/front.png');
+            let texture_bk = new THREE.TextureLoader().load('textures/skybox-textures/back.png');
+            let texture_up = new THREE.TextureLoader().load('textures/skybox-textures/top.png');
+            let texture_dn = new THREE.TextureLoader().load('textures/skybox-textures/bottom.png');
+            let texture_rt = new THREE.TextureLoader().load('textures/skybox-textures/right.png');
+            let texture_lf = new THREE.TextureLoader().load('textures/skybox-textures/left.png');
 
-            for (var i = 0; i < particleCount; i++) {
-                let posX = (getRandom(min) * (2 * (max - min))) + newMin;
-                let posY = (getRandom(min) * (2 * (max - min))) + newMin;
-                let posZ = (getRandom(min) * (2 * (max - min))) + newMin;
+            materialArray.push(new THREE.MeshBasicMaterial({ map: texture_ft }));
+            materialArray.push(new THREE.MeshBasicMaterial({ map: texture_bk }));
+            materialArray.push(new THREE.MeshBasicMaterial({ map: texture_up }));
+            materialArray.push(new THREE.MeshBasicMaterial({ map: texture_dn }));
+            materialArray.push(new THREE.MeshBasicMaterial({ map: texture_rt }));
+            materialArray.push(new THREE.MeshBasicMaterial({ map: texture_lf }));
 
-                let particle = new THREE.Vector3(posX, posY, posZ);
-                particleGeom.vertices.push(particle);
-            }
+            for (let i = 0; i < 6; i++)
+                materialArray[i].side = THREE.BackSide;
 
-            let particleSys = new THREE.Points(particleGeom, particleMaterial);
-            particleSys.name = 'particleSys';
-            scene.add(particleSys);
+            let skyboxGeo = new THREE.BoxGeometry(10000, 10000, 10000);
+            let skybox = new THREE.Mesh(skyboxGeo, materialArray);
+            scene.add(skybox);
 
-            // Build sphere mesh
+            // Build sphere mesh (sun)
             // SphereGeometry(radius : Float, widthSegments : Integer, heightSegments : Integer)
             var geometry = new THREE.SphereGeometry(20, 30, 30);
             var material = new THREE.MeshLambertMaterial(
                 {
                     color: 0xFC9601,
                     emissive: 0xFC9601,
-                    emissiveIntensity: 1000
+                    emissiveIntensity: 10000
                 });
             mesh = new THREE.Mesh(geometry, material);
-            mesh.position.set(10000, 0, 0);
+            mesh.position.set(4750, 0, 0);
             scene.add(mesh);
 
             // Build glow effect
@@ -131,13 +129,16 @@
 
             // Load asteroid model
             var loader = new GLTFLoader().setPath('models/');
-            loader.load('asteroid.glb', function (gltf) {
+            var dracoLoader = new DRACOLoader();
+            dracoLoader.setDecoderPath('js/draco/');
+            loader.setDRACOLoader(dracoLoader);
+            loader.load('raw-models/packed-asteroid-processed.glb', function (gltf) {
                 model = gltf.scene
                 scene.add(model);
             });
 
             // Load satellite model
-            loader.load('satellite.glb', function (gltf) {
+            loader.load('raw-models/spacecraft-processed.glb', function (gltf) {
                 satellite = gltf.scene;
                 satellite.scale.multiplyScalar(1 / 1000); // scale model 1/1000th original size
                 satellite.rotation.z = 180;
