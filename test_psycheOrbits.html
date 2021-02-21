@@ -75,9 +75,8 @@
             // Point light is similar to directional light, I'm using realistic setting for light falloff
             // PointLight( color : Integer, intensity : Float, distance : Number, decay : Float )
             pointLight = new THREE.PointLight(0xFFFFFF, 1, 0, 1);
-            pointLight.position.set(10000, 0, 0);
+            pointLight.position.set(0, 200, 0);
             scene.add(pointLight);
-
 
             // adding SkyBox to the scene
             let materialArray = [];
@@ -112,7 +111,7 @@
                     emissiveIntensity: 10000
                 });
             mesh = new THREE.Mesh(geometry, material);
-            mesh.position.set(4750, 0, 0);
+            mesh.position.set(0, 2000, 0);
             scene.add(mesh);
 
             // Build glow effect
@@ -135,6 +134,8 @@
             loader.setDRACOLoader(dracoLoader);
             loader.load('raw-models/packed-asteroid-processed.glb', function (gltf) {
                 model = gltf.scene
+                model.rotation.x += 300;
+                model.scale.set(1.5,1.5,1.5);
                 scene.add(model);
             });
 
@@ -150,12 +151,15 @@
             orbitPath = makeOrbitPath(5);
             scene.add(orbitPath);
 
+            orbitPath = makeOrbitPath(7.5);
+            scene.add(orbitPath);
+
             orbitPath = makeOrbitPath(10);
             scene.add(orbitPath);
 
             orbitPath = makeOrbitPath(15);
             scene.add(orbitPath);
-            params.orbitDistance = 20
+            params.orbitDistance = 15
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
 
@@ -264,7 +268,7 @@
 
         function makeOrbitPath(radius) {
             const geometry = new THREE.CircleGeometry(radius, 128);
-            const material = new THREE.LineBasicMaterial({ color: 0xffffff });
+            const material = new THREE.LineBasicMaterial({ color: 0xf9a000 });
             geometry.vertices.shift();
             const circle = new THREE.LineLoop(geometry, material);
             circle.rotation.x = 1 / 2 * Math.PI;
