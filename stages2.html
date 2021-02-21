@@ -6,6 +6,7 @@
 	<meta charset="utf-8">
 	<title>psyche_asteroid</title>
 	<style>
+
 		body {
 			margin: 0;
 		}
@@ -36,36 +37,33 @@
 			margin: auto;
 			height: 40px;
 			font-size: 24px;
-            background:  #f47c33;
+            background:  transparent;
             /*height:  38px;
             line-height:  40px;*/
-            border:  3px solid #592651;
+            border:  3px solid white;
             /*display:  inline-block;*/
             float:  none;
             text-align:  center;
             width:  220px;
             /*padding:  0px!important;
             /*font-size:  14px;*/
-            color:  #592651;
+            color:  #fff;
         }
         .button:hover  {
-            color:  #a53f5b;
-            background: #f9a000;
+            color:  #fff;
+            background:  rgba(255, 255, 255, 0.2);
         }
         #beginButton    {
             left: 0; right: 0;
-            color:  #592651;
         }
         #prevButton    {
             left: 0; right: 30;
-            color:  #592651;
         }
         #nextButton    {
             left: 30; right: 0;
-            color:  #592651;
         }
-		
-	.tooltip {
+
+        .tooltip {
             opacity: 1;
             color:white;
             display: flex;
@@ -81,6 +79,24 @@
             color:  #fff;
             background:  rgba(255, 255, 255, 0.2);
         }
+
+        /*.tooltip .tooltiptext {
+            visibility: hidden;
+            font-size: 10px;
+            width: 120px;
+            background-color: black;
+            color: #fff;
+            text-align: left;
+            border-radius: 6px;
+            padding: 5px 0;
+            position: absolute;
+            z-index: 1;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+        }*/
+
         #descriptionBox    {
             visibility: hidden;
             display: flex;
@@ -120,7 +136,6 @@
             text-align: center;
         }
 
-
 	</style>
 </head>
 
@@ -137,9 +152,11 @@
             <div id='description'></div>
             <div id='details'></div>
             <button id='moreInfo' class="tooltip" alignment='center'>&#8505 More info
+                <!--<span class="tooltiptext"></span>*/-->
             </div>
         
     </div>
+
 	<script type='module'>
 
     import * as THREE from 'https://unpkg.com/three@0.121.1/build/three.module.js';
@@ -179,10 +196,10 @@
 		beginButton = document.getElementById('beginButton');
         prevButton = document.getElementById('prevButton');
         nextButton = document.getElementById('nextButton');
-        description = document.getElementById('description');
-        descriptionBox = document.getElementById('descriptionBox');
-        details = document.getElementById('details');
         moreInfo = document.getElementById('moreInfo');
+        descriptionBox = document.getElementById('descriptionBox');
+        description = document.getElementById('description');
+        details = document.getElementById('details');
         beginButton.addEventListener('click', marsAssist, false);
         beginButton.addEventListener('touchend', marsAssist, false);
         moreInfo.addEventListener('click', showDetails, false);
@@ -201,13 +218,13 @@
 		
         //scene.add(new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 0.5));
 		// This creates a soft light so that shadows are less harsh
-		var ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.1);
+		var ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.2);
 		scene.add(ambientLight);
 		
 		// Point light is similar to directional light, I'm using realistic setting for light falloff
 		// PointLight( color : Integer, intensity : Float, distance : Number, decay : Float )
-		var pointLight = new THREE.PointLight(0xFFFFFF, 1, 0, 1);
-		pointLight.position.set(-7000,2000,-10000);
+		var pointLight = new THREE.PointLight(0xFFFFFF, 1, 0, 2);
+		pointLight.position.set(-1200,1000,-10000);
 		scene.add(pointLight);
         
         // Build sphere mesh
@@ -220,7 +237,7 @@
 			emissiveIntensity: 1000
 		});
 		var mesh = new THREE.Mesh(geometry,material);
-		mesh.position.set(-7000,2000,-10000);
+		mesh.position.set(-1000,1000,-10000);
 		scene.add(mesh);
 		
 		// Build glow effect
@@ -372,7 +389,6 @@
     }
     
     function marsAssist() {
-
         canvasCard.style.display = "none";
 
         if (set2Idle)   {
@@ -395,11 +411,11 @@
                 camera.position.copy( position );
             } )
             .onComplete( function () {
-                infoText.innerHTML = "Phase #1 - Mars Gravity Assist"
+                infoText.innerHTML = "Phase #?? - Mars Gravity Assist"
                 beginButton.style.visibility = "hidden";
-                prevButton.style.visibility = "hidden";
+                prevButton.style.visibility = "visible";
                 nextButton.style.visibility = "visible";
-                description.innerHTML = "After launching in August 2022, the spacecraft "+
+                description.innerHTML = "While cruising toward its destination, the spacecraft "+
                                         "flies by Mars and undergoes a gravitational slingshot";
                 details.innerHTML = "More detailed description goes here -->\n"+
                                         "####################\n####################\n"+
@@ -407,9 +423,10 @@
                                         "####################\n####################\n"+
                                         "####################\n####################\n";
                 canvasCard.style.display = "block";
+                descriptionBox.style.visibility = "visible";
                 prevButton.removeEventListener('click', marsAssist, false);
                 nextButton.addEventListener('click', arrivalPhase, false);
-		descriptionBox.style.visibility = "visible";
+
                 prevButton.removeEventListener('touchend', marsAssist, false);
                 nextButton.addEventListener('touchend', arrivalPhase, false);
                 closeDetails();
@@ -419,7 +436,7 @@
     }
 
     function arrivalPhase() {
-
+        
         canvasCard.style.display = "none";
 
         if (set2Idle)   {
@@ -444,12 +461,12 @@
                 camera.position.copy( position );
             } )
 			.onComplete( function () {
-                infoText.innerHTML = "Phase #2 - Arrival at Psyche"
+                infoText.innerHTML = "Phase #?? - Arrival at Psyche"
                 beginButton.style.visibility = "hidden";
                 prevButton.style.visibility = "visible";
                 nextButton.style.visibility = "visible";
                 description.innerHTML = "After spending around 100 days in the approach phase, "+
-                                        "the spacecraft begins to orbit the Psyche asteroid in January 2026";
+                                        "the spacecraft finally arrives at its destination";
                 canvasCard.style.display = "block";
 
                 prevButton.removeEventListener('click', arrivalPhase, false);
@@ -492,17 +509,15 @@
                 camera.position.copy( position );
             } )
             .onComplete( function () {
-                infoText.innerHTML = "Phase #3 - Orbiting Psyche"
+                infoText.innerHTML = "Phase #?? - Orbiting Psyche"
                 prevButton.addEventListener('click', arrivalPhase, false);
                 nextButton.removeEventListener('click', orbitalPhase, false);
-                prevButton.style.visibility = "visible";
-                nextButton.style.visibility = "hidden";
                 
                 prevButton.addEventListener('touchend', arrivalPhase, false);
                 nextButton.removeEventListener('touchend', orbitalPhase, false);
                 
-                description.innerHTML = "The spacecraft will orbit Psyche until Octbber 2027 (21 months!),"+
-                                        " where it will take measurements and send data back to Earth";
+                description.innerHTML = "The spacecraft will orbit Psyche for about 21 months,"+
+                                        " where it can take measurements and send the data back to Earth";
                 canvasCard.style.display = "block";
                 closeDetails();
                 } )
