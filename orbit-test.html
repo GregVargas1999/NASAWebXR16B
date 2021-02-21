@@ -132,13 +132,13 @@
             var dracoLoader = new DRACOLoader();
             dracoLoader.setDecoderPath('js/draco/');
             loader.setDRACOLoader(dracoLoader);
-            loader.load('raw-models/packed-asteroid-processed.glb', function (gltf) {
+            loader.load('asteroid-compressed.glb', function (gltf) {
                 model = gltf.scene
                 scene.add(model);
             });
 
             // Load satellite model
-            loader.load('raw-models/spacecraft-processed.glb', function (gltf) {
+            loader.load('compressed-spacecraft.glb', function (gltf) {
                 satellite = gltf.scene;
                 satellite.scale.multiplyScalar(1 / 1000); // scale model 1/1000th original size
                 satellite.rotation.z = 180;
