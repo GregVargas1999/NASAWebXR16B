@@ -37,6 +37,7 @@
 
 	import { OrbitControls } from 'https://unpkg.com/three@0.121.1/examples/jsm/controls/OrbitControls.js';
 	import { GLTFLoader } from 'https://unpkg.com/three@0.121.1/examples/jsm/loaders/GLTFLoader.js';
+	import { DRACOLoader } from 'https://unpkg.com/three@0.122.0/examples/jsm/loaders/DRACOLoader.js';
 
 	var container, controls;
 	var camera, scene, renderer;
@@ -73,24 +74,28 @@
 			blending: THREE.AdditiveBlending,
 		});
 
-		// Plotting particles at -(min to max) and (min to max)
-		let particleCount = 10000;
-		let min = 100;
-		let max = 10000;
+		// adding SkyBox to the scene
+		let materialArray = [];
+		let texture_ft = new THREE.TextureLoader().load('textures/skybox-textures/front.png');
+		let texture_bk = new THREE.TextureLoader().load('textures/skybox-textures/back.png');
+		let texture_up = new THREE.TextureLoader().load('textures/skybox-textures/top.png');
+		let texture_dn = new THREE.TextureLoader().load('textures/skybox-textures/bottom.png');
+		let texture_rt = new THREE.TextureLoader().load('textures/skybox-textures/right.png');
+		let texture_lf = new THREE.TextureLoader().load('textures/skybox-textures/left.png');
 
-		for (var i = 0; i < particleCount; i++) 
-		{
-			let posX = (getRandom(min) * (2 * (max - min))) + newMin;
-			let posY = (getRandom(min) * (2 * (max - min))) + newMin;
-			let posZ = (getRandom(min) * (2 * (max - min))) + newMin;
-			
-			let particle = new THREE.Vector3(posX, posY, posZ);
-			particleGeom.vertices.push(particle);
-		}
+		materialArray.push(new THREE.MeshBasicMaterial({ map: texture_ft }));
+		materialArray.push(new THREE.MeshBasicMaterial({ map: texture_bk }));
+		materialArray.push(new THREE.MeshBasicMaterial({ map: texture_up }));
+		materialArray.push(new THREE.MeshBasicMaterial({ map: texture_dn }));
+		materialArray.push(new THREE.MeshBasicMaterial({ map: texture_rt }));
+		materialArray.push(new THREE.MeshBasicMaterial({ map: texture_lf }));
 
-		let particleSys = new THREE.Points(particleGeom, particleMaterial);
-		particleSys.name = 'particleSys';
-		scene.add(particleSys);
+		for (let i = 0; i < 6; i++)
+			materialArray[i].side = THREE.BackSide;
+
+		let skyboxGeo = new THREE.BoxGeometry(10000, 10000, 10000);
+		let skybox = new THREE.Mesh(skyboxGeo, materialArray);
+		scene.add(skybox);
 
 		// Build sphere mesh
 		// SphereGeometry(radius : Float, widthSegments : Integer, heightSegments : Integer)
@@ -118,10 +123,13 @@
 		sprite.scale.set(200, 200, 1.0);
 		mesh.add(sprite); // this centers the glow at the mesh
 
-		// Load blender model
+		// Load asteroid model
 		var loader = new GLTFLoader().setPath('models/');
-		loader.load('asteroid.glb', function (gltf) 
-		{
+		var dracoLoader = new DRACOLoader();
+		dracoLoader.setDecoderPath('js/draco/');
+		loader.setDRACOLoader(dracoLoader);
+
+		loader.load('asteroid-compressed.glb', function (gltf) {
 			model = gltf.scene
 			scene.add(model);
 			animate();
@@ -150,27 +158,12 @@
 		window.addEventListener('resize', onWindowResize, false);
 	}
 
-	function getRandom(number)
-	{
-		let rand = (Math.random() - 0.5);
-		newMin = number;
-
-		if(rand < 0)
-		{
-			newMin *= -1;
-		}
-
-		return rand;
-	}
-
 	function onWindowResize() 
 	{
 		camera.aspect = window.innerWidth / window.innerHeight;
 		camera.updateProjectionMatrix();
 
 		renderer.setSize( window.innerWidth, window.innerHeight );
-
-		animate();
 	}
 
 	function animate() 
