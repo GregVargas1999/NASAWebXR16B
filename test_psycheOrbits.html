@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base href="./">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>Orbit Animation Test</title>
+    <link rel="icon" href="/images/site-icon.png">
+    <style>
+        body {
+            margin: 0;
+        }
+
+        canvas {
+            display: block;
+        }
+        #card {
+			background: transparent;
+            height: 100%;
+  			width: 100%;
+			margin: auto;
+			position: absolute;
+			top: 0; left: 0; right: 0;
+		}
+        #info   {
+            font-size: 40px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-style: "Lucida Console", Monaco, monospace;
+            line-height: 40px;
+            color: #f47c33;
+            text-align: center;
+            transform: translate
+        }
+        .button  {
+			height: 40px;
+			font-size: 24px;
+            background:  #f47c33;
+            border:  3px solid #592651;
+            text-align:  center;
+            width:  350px;
+            /*padding:  0px!important;
+            /*font-size:  14px;*/
+            color:  #592651;
+        }
+        .button:hover  {
+            color:  #a53f5b;
+            background: #f9a000;
+        }
+        #orbitAButton   {
+            color:  #592651;
+        }
+        #orbitBButton   {
+            color:  #592651;
+        }
+        #orbitCButton   {
+            color:  #592651;
+        }
+        #orbitDButton   {
+            color:  #592651;
+        }
+		
+	.tooltip {
+            opacity: 1;
+            color:white;
+            display: flex;
+            background:  transparent;
+            /*height:  38px;
+            line-height:  40px;*/
+            border:  3px solid white;
+            font-size: 14px;
+            font-family: verdana, 'open sans', sans-serif;
+            justify-self: center;
+        }
+        .tooltip:hover  {
+            color:  #fff;
+            background:  rgba(255, 255, 255, 0.2);
+        }
+        #descriptionBox    {
+            visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top:30%;
+            margin-left:65%;
+            width: 45%;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            border-radius: 5px;
+            background: rgb(48,33,68);
+            background: linear-gradient(90deg, rgba(48,33,68,1) 0%, rgba(18,3,29,1) 100%);
+            margin-bottom: 25px;
+            padding: 10px 14px 10px 14px;
+            box-shadow: 0px 1px 5px #999;
+            opacity: 0.8;
+        }
+
+        #description    {
+            opacity: 1;
+            font-size: 18px;
+            line-height: 26px;
+            font-weight: 600;
+            font-family: verdana, 'open sans', sans-serif;
+            color: #ef5966; /*#a53f5b;*/ 
+            text-align: center;
+        }
+        #details    {
+            display: none;
+            opacity: 1;
+            font-size: 12px;
+            line-height: 16px;
+            font-weight: 600;
+            font-family: verdana, 'open sans', sans-serif;
+            color: #ef5966; /*#a53f5b;*/ 
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id ='card'>
+        <div id='info'>The Psyche Asteroid Mission</div>
+        <div>
+            <button class="button" id='orbitAButton' style='visibility: visible;width:24.8%'>Orbit A: Characterization</button>
+            <button class="button" id='orbitBButton' style='visibility: visible;width:24.8%'>Orbit B: Topography</button>
+            <button class="button" id='orbitCButton' style='visibility: visible;width:24.8%'>Orbit C: Gravity Science</button>
+            <button class="button" id='orbitDButton' style='visibility: visible;width:24.8%'>Orbit D: Elemental Mapping</button>
+        </div>
+    
+        
+    </div>
+    <!---Div to implement scene transition controls-->
+    <script type="module">
+
+        import * as THREE from 'https://unpkg.com/three@0.122.0/build/three.module.js';
+
+        import { OrbitControls } from 'https://unpkg.com/three@0.122.0/examples/jsm/controls/OrbitControls.js';
+        import { GLTFLoader } from 'https://unpkg.com/three@0.122.0/examples/jsm/loaders/GLTFLoader.js';
+        import { DRACOLoader } from 'https://unpkg.com/three@0.122.0/examples/jsm/loaders/DRACOLoader.js';
+        import TWEEN from 'https://unpkg.com/@tweenjs/tween.js@18.6.4/dist/tween.esm.js';
+        import { GUI } from 'https://unpkg.com/three@0.122.0/examples/jsm/libs/dat.gui.module.js';
+
+        const params = {
+            povCameraActive: false,
+            orbitPathActive: true,
+            orbitDistance: 10,
+            orbitSpeed: 1,
+            orbitTiltX: 0,
+            orbitTiltY: 0,
+            orbitTiltZ: 0,
+            cameraFOV: 45
+        };
+
+        var container, controls;
+        var normalCamera, scene, renderer, povCamera;
+        var model, newMin, satellite, mesh;
+        var ambientLight, pointLight;
+        var tween, orbit, orbitContainer, orbitPath;
+        var orbitPathA, orbitPathB, orbitPathC, orbitPathD;
+
+        document.getElementById("orbitAButton").addEventListener("click", orbitA);
+        document.getElementById("orbitBButton").addEventListener("click", orbitB);
+        document.getElementById("orbitCButton").addEventListener("click", orbitC);
+        document.getElementById("orbitDButton").addEventListener("click", orbitD);
+
+        init();
+        animate();
+
+        function init() {
+
+            container = document.createElement('div');
+            document.body.appendChild(container);
+
+            normalCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
+            normalCamera.position.set(10, 180, 10);
+            normalCamera.lookAt( 0, 0, 0 );
+            
+            orbitContainer = new THREE.Object3D();
+
+            // This creates a soft light so that shadows are less harsh
+            scene = new THREE.Scene();
+            ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.1);
+            scene.add(ambientLight);
+
+            // Point light is similar to directional light, I'm using realistic setting for light falloff
+            // PointLight( color : Integer, intensity : Float, distance : Number, decay : Float )
+            pointLight = new THREE.PointLight(0xFFFFFF, 1, 0, 1);
+            pointLight.position.set(0, 200, 0);
+            scene.add(pointLight);
+
+            // adding SkyBox to the scene
+            let materialArray = [];
+            let texture_ft = new THREE.TextureLoader().load('textures/skybox-textures/front.png');
+            let texture_bk = new THREE.TextureLoader().load('textures/skybox-textures/back.png');
+            let texture_up = new THREE.TextureLoader().load('textures/skybox-textures/top.png');
+            let texture_dn = new THREE.TextureLoader().load('textures/skybox-textures/bottom.png');
+            let texture_rt = new THREE.TextureLoader().load('textures/skybox-textures/right.png');
+            let texture_lf = new THREE.TextureLoader().load('textures/skybox-textures/left.png');
+
+            materialArray.push(new THREE.MeshBasicMaterial({ map: texture_ft }));
+            materialArray.push(new THREE.MeshBasicMaterial({ map: texture_bk }));
+            materialArray.push(new THREE.MeshBasicMaterial({ map: texture_up }));
+            materialArray.push(new THREE.MeshBasicMaterial({ map: texture_dn }));
+            materialArray.push(new THREE.MeshBasicMaterial({ map: texture_rt }));
+            materialArray.push(new THREE.MeshBasicMaterial({ map: texture_lf }));
+
+            for (let i = 0; i < 6; i++)
+                materialArray[i].side = THREE.BackSide;
+
+            let skyboxGeo = new THREE.BoxGeometry(10000, 10000, 10000);
+            let skybox = new THREE.Mesh(skyboxGeo, materialArray);
+            scene.add(skybox);
+
+            // Build sphere mesh (sun)
+            // SphereGeometry(radius : Float, widthSegments : Integer, heightSegments : Integer)
+            var geometry = new THREE.SphereGeometry(20, 30, 30);
+            var material = new THREE.MeshLambertMaterial(
+                {
+                    color: 0xFC9601,
+                    emissive: 0xFC9601,
+                    emissiveIntensity: 10000
+                });
+            mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(0, 2000, 0);
+            scene.add(mesh);
+
+            // Build glow effect
+            // Using png sprite blending
+            var spriteMaterial = new THREE.SpriteMaterial(
+                {
+                    map: new THREE.TextureLoader().load('textures/orange glow.png'),
+                    color: 0xFFCC33,
+                    transparent: true,
+                    blending: THREE.AdditiveBlending
+                });
+            var sprite = new THREE.Sprite(spriteMaterial);
+            sprite.scale.set(200, 200, 1.0);
+            mesh.add(sprite); // this centers the glow at the mesh
+
+            // Load asteroid model
+            var loader = new GLTFLoader().setPath('models/');
+            var dracoLoader = new DRACOLoader();
+            dracoLoader.setDecoderPath('js/draco/');
+            loader.setDRACOLoader(dracoLoader);
+            loader.load('raw-models/packed-asteroid-processed.glb', function (gltf) {
+                model = gltf.scene
+                model.rotation.x += 300;
+                model.scale.set(1.5,1.5,1.5);
+                scene.add(model);
+            });
+
+            // Load satellite model
+            loader.load('raw-models/spacecraft-processed.glb', function (gltf) {
+                satellite = gltf.scene;
+                satellite.scale.multiplyScalar(10 / 1000); // scale model 1/1000th original size
+                satellite.rotation.z = 180;
+                satellite.rotation.y = 45;
+                modifyOrbit(satellite, params.orbitDistance, params.orbitTiltX, params.orbitTiltY, params.orbitTiltZ, params.orbitSpeed);
+            });
+
+            orbitPathD = makeOrbitPath(5, 0xf47c33);
+
+            orbitPathC = makeOrbitPath(7.5, 0xf47c33);
+
+            orbitPathB = makeOrbitPath(10, 0xf47c33);
+
+            orbitPathA = makeOrbitPath(15, 0x592651);
+            params.orbitDistance = 15
+            orbitContainer.add(orbitPathA);
+            orbitContainer.add(orbitPathB);
+            orbitContainer.add(orbitPathC);
+            orbitContainer.add(orbitPathD);
+            scene.add(orbitContainer);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1;
+
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.BasicShadowMap;
+
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            container.appendChild(renderer.domElement);
+
+            var pmremGenerator = new THREE.PMREMGenerator(renderer);
+            pmremGenerator.compileEquirectangularShader();
+
+            controls = new OrbitControls(normalCamera, renderer.domElement);
+            controls.minDistance = 5;
+            controls.maxDistance = 40;
+            controls.update();
+
+            window.addEventListener('resize', onWindowResize, false);
+            onWindowResize();
+            document.body.appendChild(renderer.domElement);
+        }
+
+        function makeGUI() {
+            const gui = new GUI({ width: 420 });
+
+            gui.add(params, 'povCameraActive').name('Enable POV camera');
+            gui.add(params, 'orbitPathActive').name('Enable Orbit Path Ring').listen().onChange(function (orbitPathActive) {
+                if (params.orbitPathActive) {
+                    orbitPath = makeOrbitPath(params.orbitDistance);
+                    orbitContainer.add(orbitPath);
+                } else {
+                    orbitContainer.remove(orbitPath);
+                }
+            })
+            gui.add(params, 'orbitDistance', 3, 15, 0.1).name('Orbit Radius').listen().onChange(function (orbitDistance) {
+                satellite.position.set(orbitDistance, 0, 0);
+                if (params.orbitPathActive) {
+                    orbitContainer.remove(orbitPath);
+                    orbitPath = makeOrbitPath(orbitDistance);
+                    orbitContainer.add(orbitPath);
+                }
+            });
+        }
+
+        function getRandom(number) {
+            let rand = (Math.random() - 0.5);
+            newMin = number;
+
+            if (rand < 0) {
+                newMin *= -1;
+            }
+
+            return rand;
+        }
+
+        function onWindowResize() {
+            normalCamera.aspect = window.innerWidth / window.innerHeight;
+            normalCamera.updateProjectionMatrix();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            animate();
+        }
+
+        function animate(time) {
+            TWEEN.update(time);
+            controls.update();
+            requestAnimationFrame(animate);
+            if (params.povCameraActive) { renderer.render(scene, povCamera); }
+            else {
+                renderer.render(scene, normalCamera);
+            }
+        }
+
+        function modifyOrbit(objectToMod, distance, xTilt, yTilt, zTilt, speed) {
+            orbitContainer = new THREE.Object3D();
+            orbitContainer.rotation.x = xTilt;
+            orbitContainer.rotation.y = yTilt;
+            orbitContainer.rotation.z = zTilt;
+
+            orbit = new THREE.Object3D();
+
+            var planet = objectToMod;
+            planet.position.set(distance, 0.0, 0.0);
+            orbit.add(planet);
+
+            povCamera = new THREE.PerspectiveCamera(params.cameraFOV, window.innerWidth / window.innerHeight, 1, 100000);
+            povCamera.position.set(distance, 0, 0);
+            povCamera.lookAt(0, 0, 0);
+            orbit.add(povCamera);
+
+            tween = new TWEEN.Tween(orbit.rotation).to({ y: '+' + (Math.PI * 2) }, 10000 / speed);
+            tween.start();
+            tween.repeat(Infinity);
+
+            orbitContainer.add(orbit);
+            scene.add(orbitContainer);
+            return orbitContainer;
+        }
+
+        function makeOrbitPath(radius, inputColor) {
+            const geometry = new THREE.CircleGeometry(radius, 128);
+            const material = new THREE.LineBasicMaterial({ color: inputColor});
+            geometry.vertices.shift();
+            const circle = new THREE.LineLoop(geometry, material);
+            circle.rotation.x = 1 / 2 * Math.PI;
+            return circle;
+        }
+
+        function orbitA()
+        {
+            orbitContainer.remove(orbitPathA);
+            orbitContainer.remove(orbitPathB);
+            orbitContainer.remove(orbitPathC);
+            orbitContainer.remove(orbitPathD);
+
+            orbitPathD = makeOrbitPath(5, 0xf47c33);
+
+            orbitPathC = makeOrbitPath(7.5, 0xf47c33);
+
+            orbitPathB = makeOrbitPath(10, 0xf47c33);
+
+            orbitPathA = makeOrbitPath(15, 0x592651);
+            params.orbitDistance = 15
+            satellite.position.set(15, 0, 0);
+
+            orbitContainer.add(orbitPathA);
+            orbitContainer.add(orbitPathB);
+            orbitContainer.add(orbitPathC);
+            orbitContainer.add(orbitPathD);
+            scene.add(orbitContainer);
+        }
+
+        function orbitB()
+        {
+            orbitContainer.remove(orbitPathA);
+            orbitContainer.remove(orbitPathB);
+            orbitContainer.remove(orbitPathC);
+            orbitContainer.remove(orbitPathD);
+
+            orbitPathD = makeOrbitPath(5, 0xf47c33);
+
+            orbitPathC = makeOrbitPath(7.5, 0xf47c33);
+
+            orbitPathB = makeOrbitPath(10, 0x592651);
+
+            orbitPathA = makeOrbitPath(15, 0xf47c33);
+            params.orbitDistance = 10
+            satellite.position.set(10, 0, 0);
+
+            orbitContainer.add(orbitPathA);
+            orbitContainer.add(orbitPathB);
+            orbitContainer.add(orbitPathC);
+            orbitContainer.add(orbitPathD);
+            scene.add(orbitContainer);
+        }
+
+        function orbitC()
+        {
+            orbitContainer.remove(orbitPathA);
+            orbitContainer.remove(orbitPathB);
+            orbitContainer.remove(orbitPathC);
+            orbitContainer.remove(orbitPathD);
+
+            orbitPathD = makeOrbitPath(5, 0xf47c33);
+
+            orbitPathC = makeOrbitPath(7.5, 0x592651);
+
+            orbitPathB = makeOrbitPath(10, 0xf47c33);
+
+            orbitPathA = makeOrbitPath(15, 0xf47c33);
+            params.orbitDistance = 7.5
+            satellite.position.set(7.5, 0, 0);
+
+            orbitContainer.add(orbitPathA);
+            orbitContainer.add(orbitPathB);
+            orbitContainer.add(orbitPathC);
+            orbitContainer.add(orbitPathD);
+            scene.add(orbitContainer);
+        }
+
+        function orbitD()
+        {
+            orbitContainer.remove(orbitPathA);
+            orbitContainer.remove(orbitPathB);
+            orbitContainer.remove(orbitPathC);
+            orbitContainer.remove(orbitPathD);
+
+            orbitPathD = makeOrbitPath(5, 0x592651);
+
+            orbitPathC = makeOrbitPath(7.5, 0xf47c33);
+
+            orbitPathB = makeOrbitPath(10, 0xf47c33);
+
+            orbitPathA = makeOrbitPath(15, 0xf47c33);
+            params.orbitDistance = 5
+            satellite.position.set(5, 0, 0);
+
+            orbitContainer.add(orbitPathA);
+            orbitContainer.add(orbitPathB);
+            orbitContainer.add(orbitPathC);
+            orbitContainer.add(orbitPathD);
+            scene.add(orbitContainer);
+        }
+    </script>
+</body>
+
+</html>
