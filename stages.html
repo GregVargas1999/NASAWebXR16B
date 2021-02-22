@@ -2,26 +2,30 @@
 <html>
 
 <head>
-	<base href="./">
-	<meta charset="utf-8">
-	<title>psyche_asteroid</title>
-	<style>
-		body {
-			margin: 0;
-		}
+    <base href="./">
+    <meta charset="utf-8">
+    <title>psyche_asteroid</title>
+    <style>
+        body {
+            margin: 0;
+        }
 
-		canvas {
-			display: block;
-		}
-		#card {
-			background: transparent;
+        canvas {
+            display: block;
+        }
+
+        #card {
+            background: transparent;
             height: 100%;
-  			width: 50%;
-			margin: auto;
-			position: absolute;
-			top: 0; left: 0; right: 0;
-		}
-        #info   {
+            width: 50%;
+            margin: auto;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+
+        #info {
             font-size: 40px;
             font-weight: 600;
             margin-bottom: 10px;
@@ -31,485 +35,491 @@
             text-align: center;
             transform: translate
         }
-        .button  {
+
+        .button {
             position: absolute;
-			margin: auto;
-			height: 40px;
-			font-size: 24px;
-            background:  #f47c33;
+            margin: auto;
+            height: 40px;
+            font-size: 24px;
+            background: #f47c33;
             /*height:  38px;
             line-height:  40px;*/
-            border:  3px solid #592651;
+            border: 3px solid #592651;
             /*display:  inline-block;*/
-            float:  none;
-            text-align:  center;
-            width:  220px;
+            float: none;
+            text-align: center;
+            width: 220px;
             /*padding:  0px!important;
             /*font-size:  14px;*/
-            color:  #592651;
+            color: #592651;
         }
-        .button:hover  {
-            color:  #a53f5b;
+
+        .button:hover {
+            color: #a53f5b;
             background: #f9a000;
         }
-        #beginButton    {
-            left: 0; right: 0;
-            color:  #592651;
+
+        #beginButton {
+            left: 0;
+            right: 0;
+            color: #592651;
         }
-        #prevButton    {
-            left: 0; right: 30;
-            color:  #592651;
+
+        #prevButton {
+            left: 0;
+            right: 30;
+            color: #592651;
         }
-        #nextButton    {
-            left: 30; right: 0;
-            color:  #592651;
+
+        #nextButton {
+            left: 30;
+            right: 0;
+            color: #592651;
         }
-		
-	.tooltip {
+
+        .tooltip {
             opacity: 1;
-            color:white;
+            color: white;
             display: flex;
-            background:  transparent;
+            background: transparent;
             /*height:  38px;
             line-height:  40px;*/
-            border:  3px solid white;
+            border: 3px solid white;
             font-size: 14px;
             font-family: verdana, 'open sans', sans-serif;
             justify-self: center;
         }
-        .tooltip:hover  {
-            color:  #fff;
-            background:  rgba(255, 255, 255, 0.2);
+
+        .tooltip:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.2);
         }
-        #descriptionBox    {
+
+        #descriptionBox {
             visibility: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top:30%;
-            margin-left:65%;
+            margin-top: 30%;
+            margin-left: 65%;
             width: 45%;
             -moz-border-radius: 5px;
             -webkit-border-radius: 5px;
             border-radius: 5px;
-            background: rgb(48,33,68);
-            background: linear-gradient(90deg, rgba(48,33,68,1) 0%, rgba(18,3,29,1) 100%);
+            background: rgb(48, 33, 68);
+            background: linear-gradient(90deg, rgba(48, 33, 68, 1) 0%, rgba(18, 3, 29, 1) 100%);
             margin-bottom: 25px;
             padding: 10px 14px 10px 14px;
             box-shadow: 0px 1px 5px #999;
             opacity: 0.8;
         }
 
-        #description    {
+        #description {
             opacity: 1;
             font-size: 18px;
             line-height: 26px;
             font-weight: 600;
             font-family: verdana, 'open sans', sans-serif;
-            color: #ef5966; /*#a53f5b;*/ 
+            color: #ef5966;
+            /*#a53f5b;*/
             text-align: center;
         }
-        #details    {
+
+        #details {
             display: none;
             opacity: 1;
             font-size: 12px;
             line-height: 16px;
             font-weight: 600;
             font-family: verdana, 'open sans', sans-serif;
-            color: #ef5966; /*#a53f5b;*/ 
+            color: #ef5966;
+            /*#a53f5b;*/
             text-align: center;
         }
-
-
-	</style>
+    </style>
 </head>
 
 <body>
-	<div id ='card'>
-		<div id='info'>The Psyche Asteroid Mission</div>
+    <div id='card'>
+        <div id='info'>The Psyche Asteroid Mission</div>
         <button class="button" id='beginButton'>Begin Journey</button>
         <div>
             <button class="button" id='prevButton' style='visibility: hidden;'>Previous Stage</button>
             <button class="button" id='nextButton' style='visibility: hidden;'>Next Stage</button>
         </div>
-        
+
         <div id='descriptionBox'>
             <div id='description'></div>
             <div id='details'></div>
             <button id='moreInfo' class="tooltip" alignment='center'>&#8505 More info
-            </div>
-        
+        </div>
+
     </div>
-	<script type='module'>
+    <script type='module'>
 
-    import * as THREE from 'https://unpkg.com/three@0.121.1/build/three.module.js';
-	import { Vector3 } from 'https://unpkg.com/three@0.121.1/src/math/Vector3.js';
-	import { Raycaster } from 'https://unpkg.com/three@0.121.1/src/core/Raycaster.js';
-    import { GLTFLoader } from 'https://unpkg.com/three@0.121.1/examples/jsm/loaders/GLTFLoader.js';
+        import * as THREE from 'https://unpkg.com/three@0.124.0/build/three.module.js';
+        import { Vector3 } from 'https://unpkg.com/three@0.125.2/src/math/Vector3.js';
+        import { Raycaster } from 'https://unpkg.com/three@0.125.2/src/core/Raycaster.js';
+        import { GLTFLoader } from 'https://unpkg.com/three@0.125.2/examples/jsm/loaders/GLTFLoader.js';
+        import { DRACOLoader } from 'https://unpkg.com/three@0.125.2/examples/jsm/loaders/DRACOLoader.js';
 
-    import TWEEN from 'https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@18.5.0/dist/tween.esm.js';
+        import TWEEN from 'https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@18.5.0/dist/tween.esm.js';
 
-	var container, controls;
-	var camera, povCamera, scene, renderer, tween; 
-	var raycaster, projector, mouseVector, intersects, intersection, obj;
-    var asteroid, satellite, asteroid2, satellite2, mars, orbiter, newMin;
-    var targetPosition = new THREE.Vector3();
-    var position = new THREE.Vector3();
-    var beginButton, nextButton, prevButton, infoText, moreInfo, canvasCard, description, details, descriptionBox;
-    var set2Idle = true;
-    const params = {
+        var container, controls;
+        var camera, povCamera, scene, renderer, tween;
+        var raycaster, projector, mouseVector, intersects, intersection, obj;
+        var asteroid, satellite, asteroid2, satellite2, mars, orbiter, newMin;
+        var targetPosition = new THREE.Vector3();
+        var position = new THREE.Vector3();
+        var beginButton, nextButton, prevButton, infoText, moreInfo, canvasCard, description, details, descriptionBox;
+        var set2Idle = true;
+        const params = {
             orbitDistance: 5,
             orbitSpeed: 1,
             orbitTiltX: 0,
             orbitTiltY: 0,
             orbitTiltZ: 0,
             cameraFOV: 45
-    };
-    var tween, orbit, orbitContainer;
-	var rotSpeed = 0.0001;
-    var rotSpeed2 = 0.002;
+        };
+        var tween, orbit, orbitContainer;
+        var rotSpeed = 0.0001;
+        var rotSpeed2 = 0.002;
 
-	init();
-	animate();
+        init();
+        animate();
 
-	function init() 
-	{
-		canvasCard = document.getElementById('card');
-		infoText = document.getElementById('info');
-		beginButton = document.getElementById('beginButton');
-        prevButton = document.getElementById('prevButton');
-        nextButton = document.getElementById('nextButton');
-        description = document.getElementById('description');
-        descriptionBox = document.getElementById('descriptionBox');
-        details = document.getElementById('details');
-        moreInfo = document.getElementById('moreInfo');
-        beginButton.addEventListener('click', marsAssist, false);
-        beginButton.addEventListener('touchend', marsAssist, false);
-        moreInfo.addEventListener('click', showDetails, false);
-        moreInfo.addEventListener('touchend', showDetails, false);
-        orbitContainer = new THREE.Object3D();
-		
-		container = document.createElement('div');
-		document.body.appendChild(container);
+        function init() {
+            canvasCard = document.getElementById('card');
+            infoText = document.getElementById('info');
+            beginButton = document.getElementById('beginButton');
+            prevButton = document.getElementById('prevButton');
+            nextButton = document.getElementById('nextButton');
+            description = document.getElementById('description');
+            descriptionBox = document.getElementById('descriptionBox');
+            details = document.getElementById('details');
+            moreInfo = document.getElementById('moreInfo');
+            beginButton.addEventListener('click', marsAssist, false);
+            beginButton.addEventListener('touchend', marsAssist, false);
+            moreInfo.addEventListener('click', showDetails, false);
+            moreInfo.addEventListener('touchend', showDetails, false);
+            orbitContainer = new THREE.Object3D();
 
-		camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
-        camera.position.set(-297, 0, 22);
-        position.copy(camera.position)
-        camera.lookAt( new THREE.Vector3(-297, 0, 0 ));
+            container = document.createElement('div');
+            document.body.appendChild(container);
 
-		scene = new THREE.Scene();
-		
-        //scene.add(new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 0.5));
-		// This creates a soft light so that shadows are less harsh
-		var ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.1);
-		scene.add(ambientLight);
-		
-		// Point light is similar to directional light, I'm using realistic setting for light falloff
-		// PointLight( color : Integer, intensity : Float, distance : Number, decay : Float )
-		var pointLight = new THREE.PointLight(0xFFFFFF, 1, 0, 1);
-		pointLight.position.set(-7000,2000,-10000);
-		scene.add(pointLight);
-        
-        // Build sphere mesh
-		// SphereGeometry(radius : Float, widthSegments : Integer, heightSegments : Integer)
-		var geometry = new THREE.SphereGeometry(20, 30, 30);
-		var material = new THREE.MeshLambertMaterial(
-		{
-			color: 0xFC9601,
-			emissive: 0xFC9601,
-			emissiveIntensity: 1000
-		});
-		var mesh = new THREE.Mesh(geometry,material);
-		mesh.position.set(-7000,2000,-10000);
-		scene.add(mesh);
-		
-		// Build glow effect
-		// Using png sprite blending
-		var spriteMaterial = new THREE.SpriteMaterial( 
-		{ 
-			map: new THREE.TextureLoader().load('textures/orange glow.png'), 
-			color: 0xFFCC33, 
-			transparent: true, 
-			blending: THREE.AdditiveBlending
-		});
-		var sprite = new THREE.Sprite(spriteMaterial);
-		sprite.scale.set(200, 200, 1.0);
-		mesh.add(sprite); // this centers the glow at the mesh
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
+            camera.position.set(-297, 0, 22);
+            position.copy(camera.position)
+            camera.lookAt(new THREE.Vector3(-297, 0, 0));
 
-		var particleGeom = new THREE.Geometry();
-		var particleMaterial = new THREE.PointsMaterial({
-			color: 'rgb(80, 130, 255)',
-			size: 50,
-			map: new THREE.TextureLoader().load('textures/lensflare0.png'),
-			transparent: true,
-			blending: THREE.AdditiveBlending,
-		});
+            scene = new THREE.Scene();
 
-		// Plotting particles at -(min to max) and (min to max)
-		let particleCount = 5000;
-		let min = 100;
-		let max = 10000;
+            //scene.add(new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 0.5));
+            // This creates a soft light so that shadows are less harsh
+            var ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.1);
+            scene.add(ambientLight);
 
-		for (var i = 0; i < particleCount; i++) 
-		{
-			let posX = (getRandom(min) * (2 * (max - min))) + newMin;
-			let posY = (getRandom(min) * (2 * (max - min))) + newMin;
-			let posZ = (getRandom(min) * (2 * (max - min))) + newMin;
-			
-			let particle = new THREE.Vector3(posX, posY, posZ);
-			particleGeom.vertices.push(particle);
-		}
+            // Point light is similar to directional light, I'm using realistic setting for light falloff
+            // PointLight( color : Integer, intensity : Float, distance : Number, decay : Float )
+            var pointLight = new THREE.PointLight(0xFFFFFF, 1, 0, 1);
+            pointLight.position.set(-7000, 2000, -10000);
+            scene.add(pointLight);
 
-		let particleSys = new THREE.Points(particleGeom, particleMaterial);
-		particleSys.name = 'particleSys';
-        scene.add(particleSys);
-        
-        var loader = new GLTFLoader().setPath('models/');
-        loader.load('satellite.glb', function (gltf) 
-		{
-			satellite = gltf.scene;
-            satellite.scale.set(0.01,0.01,0.01);
-            satellite.position.set(-296,0,18);
-            scene.add(satellite);
-			animate();
-        });
-        loader.load('mars.glb', function (gltf) 
-		{
-			mars = gltf.scene;
-            mars.scale.set(0.01,0.01,0.01);
-            mars.position.set(-200,0,-50);
-            scene.add(mars);
-			animate();
-        });
-        loader.load('asteroid.glb', function (gltf) 
-		{
-            asteroid = gltf.scene;
-            asteroid.scale.set(2,2,2);
-            asteroid.position.set(-100,0,-50);
-            asteroid.rotation.y += 25;
-			scene.add(asteroid);
-			animate();
-        });
-        loader.load('satellite.glb', function (gltf) 
-        {
-            orbiter = gltf.scene;
-            orbiter.scale.set(0.0025, 0.0025, 0.0025);
-            orbiter.rotation.z = 180;
-            orbiter.rotation.y = 45;
-            scene.add(orbiter);
-            orbitAnimation(orbiter, params.orbitDistance, params.orbitTiltX, params.orbitTiltY, params.orbitTiltZ, params.orbitSpeed);
-        });
+            // Build sphere mesh
+            // SphereGeometry(radius : Float, widthSegments : Integer, heightSegments : Integer)
+            var geometry = new THREE.SphereGeometry(20, 30, 30);
+            var material = new THREE.MeshLambertMaterial(
+                {
+                    color: 0xFC9601,
+                    emissive: 0xFC9601,
+                    emissiveIntensity: 1000
+                });
+            var mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(-7000, 2000, -10000);
+            scene.add(mesh);
 
-        loader.load('satellite.glb', function (gltf) 
-		{
-			satellite2 = gltf.scene;
-            satellite2.scale.set(0.01,0.01,0.01);
-            satellite2.position.set(-596,0,18);
-            scene.add(satellite2);
-			animate();
-        });
-        loader.load('asteroid.glb', function (gltf) 
-		{
-            asteroid2 = gltf.scene;
-            asteroid2.scale.set(2,2,2);
-            asteroid2.position.set(-500,0,-50);
-            asteroid2.rotation.y += 25;
-			scene.add(asteroid2);
-			animate();
-        });
+            // Build glow effect
+            // Using png sprite blending
+            var spriteMaterial = new THREE.SpriteMaterial(
+                {
+                    map: new THREE.TextureLoader().load('textures/orange glow.png'),
+                    color: 0xFFCC33,
+                    transparent: true,
+                    blending: THREE.AdditiveBlending
+                });
+            var sprite = new THREE.Sprite(spriteMaterial);
+            sprite.scale.set(200, 200, 1.0);
+            mesh.add(sprite); // this centers the glow at the mesh
 
-		renderer = new THREE.WebGLRenderer({antialias: true});
-		renderer.setPixelRatio(window.devicePixelRatio);
-		renderer.setSize(window.innerWidth, window.innerHeight);
-		renderer.toneMapping = THREE.ACESFilmicToneMapping;
-		renderer.toneMappingExposure = 1;
-		renderer.outputEncoding = THREE.sRGBEncoding;
-		container.appendChild(renderer.domElement);
-		
-		var pmremGenerator = new THREE.PMREMGenerator(renderer);
-		pmremGenerator.compileEquirectangularShader();
-		
-        mouseVector = new THREE.Vector3();
-	}
+            var particleGeom = new THREE.Geometry();
+            var particleMaterial = new THREE.PointsMaterial({
+                color: 'rgb(80, 130, 255)',
+                size: 50,
+                map: new THREE.TextureLoader().load('textures/lensflare0.png'),
+                transparent: true,
+                blending: THREE.AdditiveBlending,
+            });
 
-    function showDetails() {
-        description.style.display = "none";
-        details.style.display = "block";
-        moreInfo.innerHTML = "Close";
-        moreInfo.removeEventListener('click', showDetails, false);
-        moreInfo.removeEventListener('touchend', showDetails, false);
-        moreInfo.addEventListener('click', closeDetails, false);
-        moreInfo.addEventListener('touchend', closeDetails, false);
-        descriptionBox.style.margintop = "20%";
-        descriptionBox.style.marginleft = "55%";
-        descriptionBox.style.width = "55%";
-    }
+            // Plotting particles at -(min to max) and (min to max)
+            let particleCount = 5000;
+            let min = 100;
+            let max = 10000;
 
-    function closeDetails() {
-        description.style.display = "block";
-        details.style.display = "none";
-        moreInfo.innerHTML = "&#8505 More info"
-        moreInfo.removeEventListener('click', closeDetails, false);
-        moreInfo.removeEventListener('touchend', closeDetails, false);
-        moreInfo.addEventListener('click', showDetails, false);
-        moreInfo.addEventListener('touchend', showDetails, false);
-        descriptionBox.style.margintop = "30%";
-        descriptionBox.style.marginleft = "65%";
-        descriptionBox.style.width = "45%";
-    }
+            for (var i = 0; i < particleCount; i++) {
+                let posX = (getRandom(min) * (2 * (max - min))) + newMin;
+                let posY = (getRandom(min) * (2 * (max - min))) + newMin;
+                let posZ = (getRandom(min) * (2 * (max - min))) + newMin;
 
-	function getRandom(number)
-	{
-		let rand = (Math.random() - 0.5);
-		newMin = number;
+                let particle = new THREE.Vector3(posX, posY, posZ);
+                particleGeom.vertices.push(particle);
+            }
 
-		if(rand < 0)
-		{
-			newMin *= -1;
-		}
+            let particleSys = new THREE.Points(particleGeom, particleMaterial);
+            particleSys.name = 'particleSys';
+            scene.add(particleSys);
 
-		return rand;
-    }
-    
-    function marsAssist() {
+            var loader = new GLTFLoader().setPath('models/');
+            var dracoLoader = new DRACOLoader();
+            dracoLoader.setDecoderPath('js/draco/');
+            loader.setDRACOLoader(dracoLoader);
+            loader.load('compressed-spacecraft.glb', function (gltf) {
+                satellite = gltf.scene;
+                satellite.scale.set(0.01, 0.01, 0.01);
+                satellite.position.set(-296, 0, 18);
+                scene.add(satellite);
+                animate();
+            });
+            loader.load('mars-compressed.glb', function (gltf) {
+                mars = gltf.scene;
+                mars.scale.set(0.01, 0.01, 0.01);
+                mars.position.set(-200, 0, -50);
+                scene.add(mars);
+                animate();
+            });
+            loader.load('asteroid-compressed.glb', function (gltf) {
+                asteroid = gltf.scene;
+                asteroid.scale.set(2, 2, 2);
+                asteroid.position.set(-100, 0, -50);
+                asteroid.rotation.y += 25;
+                scene.add(asteroid);
+                animate();
+            });
 
-        canvasCard.style.display = "none";
+            loader.load('compressed-spacecraft.glb', function (gltf) {
+                orbiter = gltf.scene;
+                orbiter.scale.set(0.0025, 0.0025, 0.0025);
+                orbiter.rotation.z = 180;
+                orbiter.rotation.y = 45;
+                scene.add(orbiter);
+                orbitAnimation(orbiter, params.orbitDistance, params.orbitTiltX, params.orbitTiltY, params.orbitTiltZ, params.orbitSpeed);
+            });
 
-        if (set2Idle)   {
-            satellite2.position.set(-200,-1,10);
-            set2Idle = false;
-        }
-        else{
-            satellite.position.set(-200,-1,10);
-            set2Idle = true;
-        }
-        
-        targetPosition.x = -197;
-        targetPosition.y = 0;
-        targetPosition.z = 22;  
-            
-        tween = new TWEEN.Tween( position )
-            .to( targetPosition, 2500 )
-            .easing( TWEEN.Easing.Sinusoidal.InOut)
-            .onUpdate( function () {
-                camera.position.copy( position );
-            } )
-            .onComplete( function () {
-                infoText.innerHTML = "Phase #1 - Mars Gravity Assist"
-                beginButton.style.visibility = "hidden";
-                prevButton.style.visibility = "hidden";
-                nextButton.style.visibility = "visible";
-                description.innerHTML = "After launching in August 2022, the spacecraft "+
-                                        "flies by Mars and undergoes a gravitational slingshot";
-                details.innerHTML = "More detailed description goes here -->\n"+
-                                        "####################\n####################\n"+
-                                        "####################\n####################\n"+
-                                        "####################\n####################\n"+
-                                        "####################\n####################\n";
-                canvasCard.style.display = "block";
-                prevButton.removeEventListener('click', marsAssist, false);
-                nextButton.addEventListener('click', arrivalPhase, false);
-		descriptionBox.style.visibility = "visible";
-                prevButton.removeEventListener('touchend', marsAssist, false);
-                nextButton.addEventListener('touchend', arrivalPhase, false);
-                closeDetails();
-                } )
-            .start();
-    
-    }
+            loader.load('compressed-spacecraft.glb', function (gltf) {
+                satellite2 = gltf.scene;
+                satellite2.scale.set(0.01, 0.01, 0.01);
+                satellite2.position.set(-596, 0, 18);
+                scene.add(satellite2);
+                animate();
+            });
+            loader.load('asteroid-compressed.glb', function (gltf) {
+                asteroid2 = gltf.scene;
+                asteroid2.scale.set(2, 2, 2);
+                asteroid2.position.set(-500, 0, -50);
+                asteroid2.rotation.y += 25;
+                scene.add(asteroid2);
+                animate();
+            });
 
-    function arrivalPhase() {
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1;
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            container.appendChild(renderer.domElement);
 
-        canvasCard.style.display = "none";
+            var pmremGenerator = new THREE.PMREMGenerator(renderer);
+            pmremGenerator.compileEquirectangularShader();
 
-        if (set2Idle)   {
-            satellite2.position.set(-100,0,12);
-            asteroid2.position.set(-100,0,-50);
-            set2Idle = false;
-        }
-        else{
-            satellite.position.set(-100,0,12);
-            asteroid.position.set(-100,0,-50);
-            set2Idle = true;
+            mouseVector = new THREE.Vector3();
         }
 
-        targetPosition.x = -97;
-        targetPosition.y = 0;
-        targetPosition.z = 22;
-
-		tween = new TWEEN.Tween( position )
-            .to( targetPosition, 2500 )
-            .easing( TWEEN.Easing.Sinusoidal.InOut)
-            .onUpdate( function () {
-                camera.position.copy( position );
-            } )
-			.onComplete( function () {
-                infoText.innerHTML = "Phase #2 - Arrival at Psyche"
-                beginButton.style.visibility = "hidden";
-                prevButton.style.visibility = "visible";
-                nextButton.style.visibility = "visible";
-                description.innerHTML = "After spending around 100 days in the approach phase, "+
-                                        "the spacecraft begins to orbit the Psyche asteroid in January 2026";
-                canvasCard.style.display = "block";
-
-                prevButton.removeEventListener('click', arrivalPhase, false);
-                nextButton.removeEventListener('click', arrivalPhase, false);
-
-                prevButton.removeEventListener('touchend', arrivalPhase, false);
-                nextButton.removeEventListener('touchend', arrivalPhase, false);
-
-                prevButton.addEventListener('click', marsAssist, false);
-                nextButton.addEventListener('click', orbitalPhase, false);
-
-                prevButton.addEventListener('touchend', marsAssist, false);
-                nextButton.addEventListener('touchend', orbitalPhase, false);
-                closeDetails();
-                } )
-            .start();
-    }
-
-    function orbitalPhase() {
-
-        canvasCard.style.display = "none";
-
-        if (set2Idle)   {
-            asteroid2.position.set(0,0,0);
-            set2Idle = false;
-        }
-        else{
-            asteroid.position.set(0,0,0);
-            set2Idle = true;
+        function showDetails() {
+            description.style.display = "none";
+            details.style.display = "block";
+            moreInfo.innerHTML = "Close";
+            moreInfo.removeEventListener('click', showDetails, false);
+            moreInfo.removeEventListener('touchend', showDetails, false);
+            moreInfo.addEventListener('click', closeDetails, false);
+            moreInfo.addEventListener('touchend', closeDetails, false);
+            descriptionBox.style.margintop = "20%";
+            descriptionBox.style.marginleft = "55%";
+            descriptionBox.style.width = "55%";
         }
 
-        targetPosition.x = 5;
-        targetPosition.y = 0;
-        targetPosition.z = 22;
+        function closeDetails() {
+            description.style.display = "block";
+            details.style.display = "none";
+            moreInfo.innerHTML = "&#8505 More info"
+            moreInfo.removeEventListener('click', closeDetails, false);
+            moreInfo.removeEventListener('touchend', closeDetails, false);
+            moreInfo.addEventListener('click', showDetails, false);
+            moreInfo.addEventListener('touchend', showDetails, false);
+            descriptionBox.style.margintop = "30%";
+            descriptionBox.style.marginleft = "65%";
+            descriptionBox.style.width = "45%";
+        }
 
-        tween = new TWEEN.Tween( position )
-            .to( targetPosition, 2500 )
-            .easing( TWEEN.Easing.Sinusoidal.InOut)
-            .onUpdate( function () {
-                camera.position.copy( position );
-            } )
-            .onComplete( function () {
-                infoText.innerHTML = "Phase #3 - Orbiting Psyche"
-                prevButton.addEventListener('click', arrivalPhase, false);
-                nextButton.removeEventListener('click', orbitalPhase, false);
-                prevButton.style.visibility = "visible";
-                nextButton.style.visibility = "hidden";
-                
-                prevButton.addEventListener('touchend', arrivalPhase, false);
-                nextButton.removeEventListener('touchend', orbitalPhase, false);
-                
-                description.innerHTML = "The spacecraft will orbit Psyche until Octbber 2027 (21 months!),"+
-                                        " where it will take measurements and send data back to Earth";
-                canvasCard.style.display = "block";
-                closeDetails();
-                } )
-            .start();
-    }
+        function getRandom(number) {
+            let rand = (Math.random() - 0.5);
+            newMin = number;
 
-    function orbitAnimation(objectToMod, distance, xTilt, yTilt, zTilt, speed) {
+            if (rand < 0) {
+                newMin *= -1;
+            }
+
+            return rand;
+        }
+
+        function marsAssist() {
+
+            canvasCard.style.display = "none";
+
+            if (set2Idle) {
+                satellite2.position.set(-200, -1, 10);
+                set2Idle = false;
+            }
+            else {
+                satellite.position.set(-200, -1, 10);
+                set2Idle = true;
+            }
+
+            targetPosition.x = -197;
+            targetPosition.y = 0;
+            targetPosition.z = 22;
+
+            tween = new TWEEN.Tween(position)
+                .to(targetPosition, 2500)
+                .easing(TWEEN.Easing.Sinusoidal.InOut)
+                .onUpdate(function () {
+                    camera.position.copy(position);
+                })
+                .onComplete(function () {
+                    infoText.innerHTML = "Phase #1 - Mars Gravity Assist"
+                    beginButton.style.visibility = "hidden";
+                    prevButton.style.visibility = "hidden";
+                    nextButton.style.visibility = "visible";
+                    description.innerHTML = "After launching in August 2022, the spacecraft " +
+                        "flies by Mars and undergoes a gravitational slingshot";
+                    details.innerHTML = "More detailed description goes here -->\n" +
+                        "####################\n####################\n" +
+                        "####################\n####################\n" +
+                        "####################\n####################\n" +
+                        "####################\n####################\n";
+                    canvasCard.style.display = "block";
+                    prevButton.removeEventListener('click', marsAssist, false);
+                    nextButton.addEventListener('click', arrivalPhase, false);
+                    descriptionBox.style.visibility = "visible";
+                    prevButton.removeEventListener('touchend', marsAssist, false);
+                    nextButton.addEventListener('touchend', arrivalPhase, false);
+                    closeDetails();
+                })
+                .start();
+
+        }
+
+        function arrivalPhase() {
+
+            canvasCard.style.display = "none";
+
+            if (set2Idle) {
+                satellite2.position.set(-100, 0, 12);
+                asteroid2.position.set(-100, 0, -50);
+                set2Idle = false;
+            }
+            else {
+                satellite.position.set(-100, 0, 12);
+                asteroid.position.set(-100, 0, -50);
+                set2Idle = true;
+            }
+
+            targetPosition.x = -97;
+            targetPosition.y = 0;
+            targetPosition.z = 22;
+
+            tween = new TWEEN.Tween(position)
+                .to(targetPosition, 2500)
+                .easing(TWEEN.Easing.Sinusoidal.InOut)
+                .onUpdate(function () {
+                    camera.position.copy(position);
+                })
+                .onComplete(function () {
+                    infoText.innerHTML = "Phase #2 - Arrival at Psyche"
+                    beginButton.style.visibility = "hidden";
+                    prevButton.style.visibility = "visible";
+                    nextButton.style.visibility = "visible";
+                    description.innerHTML = "After spending around 100 days in the approach phase, " +
+                        "the spacecraft begins to orbit the Psyche asteroid in January 2026";
+                    canvasCard.style.display = "block";
+
+                    prevButton.removeEventListener('click', arrivalPhase, false);
+                    nextButton.removeEventListener('click', arrivalPhase, false);
+
+                    prevButton.removeEventListener('touchend', arrivalPhase, false);
+                    nextButton.removeEventListener('touchend', arrivalPhase, false);
+
+                    prevButton.addEventListener('click', marsAssist, false);
+                    nextButton.addEventListener('click', orbitalPhase, false);
+
+                    prevButton.addEventListener('touchend', marsAssist, false);
+                    nextButton.addEventListener('touchend', orbitalPhase, false);
+                    closeDetails();
+                })
+                .start();
+        }
+
+        function orbitalPhase() {
+
+            canvasCard.style.display = "none";
+
+            if (set2Idle) {
+                asteroid2.position.set(0, 0, 0);
+                set2Idle = false;
+            }
+            else {
+                asteroid.position.set(0, 0, 0);
+                set2Idle = true;
+            }
+
+            targetPosition.x = 5;
+            targetPosition.y = 0;
+            targetPosition.z = 22;
+
+            tween = new TWEEN.Tween(position)
+                .to(targetPosition, 2500)
+                .easing(TWEEN.Easing.Sinusoidal.InOut)
+                .onUpdate(function () {
+                    camera.position.copy(position);
+                })
+                .onComplete(function () {
+                    infoText.innerHTML = "Phase #3 - Orbiting Psyche"
+                    prevButton.addEventListener('click', arrivalPhase, false);
+                    nextButton.removeEventListener('click', orbitalPhase, false);
+                    prevButton.style.visibility = "visible";
+                    nextButton.style.visibility = "hidden";
+
+                    prevButton.addEventListener('touchend', arrivalPhase, false);
+                    nextButton.removeEventListener('touchend', orbitalPhase, false);
+
+                    description.innerHTML = "The spacecraft will orbit Psyche until Octbber 2027 (21 months!)," +
+                        " where it will take measurements and send data back to Earth";
+                    canvasCard.style.display = "block";
+                    closeDetails();
+                })
+                .start();
+        }
+
+        function orbitAnimation(objectToMod, distance, xTilt, yTilt, zTilt, speed) {
             orbitContainer.rotation.x = xTilt;
             orbitContainer.rotation.y = yTilt;
             orbitContainer.rotation.z = zTilt;
@@ -521,47 +531,58 @@
             orbit.add(planet);
 
             tween = new TWEEN.Tween(orbit.rotation).to({ z: '+' + (Math.PI * 2) }, 10000 / speed);
-            
+
             tween.start();
             tween.repeat(Infinity);
 
             orbitContainer.add(orbit);
             scene.add(orbitContainer);
             return orbitContainer;
-    }
+        }
 
-	function onWindowResize() 
-	{
-		camera.aspect = window.innerWidth / window.innerHeight;
-		camera.updateProjectionMatrix();
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
 
-		renderer.setSize( window.innerWidth, window.innerHeight );
+            renderer.setSize(window.innerWidth, window.innerHeight);
 
-		animate();
-	}
+            animate();
+        }
 
-	function animate() 
-	{
-        requestAnimationFrame(animate);
+        function animate(time) {
+            TWEEN.update(time);
+            requestAnimationFrame(animate);
 
-		asteroid.rotation.z += rotSpeed;
-        asteroid.rotation.y += rotSpeed;
-        asteroid2.rotation.z += rotSpeed;
-        asteroid2.rotation.y += rotSpeed;
-        
-        satellite.rotation.x += rotSpeed2;
-        satellite.rotation.z += rotSpeed2;
-        satellite2.rotation.x += rotSpeed2;
-        satellite2.rotation.z += rotSpeed2;
+            if (asteroid !== undefined) {
 
-        orbiter.rotation.x -= rotSpeed2;
-		orbiter.rotation.z += rotSpeed2;
+                asteroid.rotation.z += rotSpeed;
+                asteroid.rotation.y += rotSpeed;
+            }
+            if (asteroid2 !== undefined) {
+                asteroid2.rotation.z += rotSpeed;
+                asteroid2.rotation.y += rotSpeed;
+            }
 
-        TWEEN.update();
-		renderer.render(scene, camera);
-    }
-    
-	</script>
+            if (satellite !== undefined) {
+                satellite.rotation.x += rotSpeed2;
+                satellite.rotation.z += rotSpeed2;
+            }
+
+            if (satellite2 !== undefined) {
+                satellite2.rotation.x += rotSpeed2;
+                satellite2.rotation.z += rotSpeed2;
+            }
+
+            if (orbiter !== undefined) {
+
+                orbiter.rotation.x -= rotSpeed2;
+                orbiter.rotation.z += rotSpeed2;
+            }
+            renderer.render(scene, camera);
+
+        }
+
+    </script>
 </body>
 
 </html>
