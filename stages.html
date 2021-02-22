@@ -157,11 +157,11 @@
     </div>
     <script type='module'>
 
-        import * as THREE from 'https://unpkg.com/three@0.121.1/build/three.module.js';
-        import { Vector3 } from 'https://unpkg.com/three@0.121.1/src/math/Vector3.js';
-        import { Raycaster } from 'https://unpkg.com/three@0.121.1/src/core/Raycaster.js';
-        import { GLTFLoader } from 'https://unpkg.com/three@0.121.1/examples/jsm/loaders/GLTFLoader.js';
-        import { DRACOLoader } from 'https://unpkg.com/three@0.122.0/examples/jsm/loaders/DRACOLoader.js';
+        import * as THREE from 'https://unpkg.com/three@0.124.0/build/three.module.js';
+        import { Vector3 } from 'https://unpkg.com/three@0.125.2/src/math/Vector3.js';
+        import { Raycaster } from 'https://unpkg.com/three@0.125.2/src/core/Raycaster.js';
+        import { GLTFLoader } from 'https://unpkg.com/three@0.125.2/examples/jsm/loaders/GLTFLoader.js';
+        import { DRACOLoader } from 'https://unpkg.com/three@0.125.2/examples/jsm/loaders/DRACOLoader.js';
 
         import TWEEN from 'https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@18.5.0/dist/tween.esm.js';
 
@@ -289,7 +289,7 @@
                 scene.add(satellite);
                 animate();
             });
-            loader.load('mars.glb', function (gltf) {
+            loader.load('mars-compressed.glb', function (gltf) {
                 mars = gltf.scene;
                 mars.scale.set(0.01, 0.01, 0.01);
                 mars.position.set(-200, 0, -50);
@@ -549,26 +549,37 @@
             animate();
         }
 
-        function animate() {
+        function animate(time) {
+            TWEEN.update(time);
             requestAnimationFrame(animate);
 
+            if (asteroid !== undefined) {
 
-            asteroid.rotation.z += rotSpeed;
-            asteroid.rotation.y += rotSpeed;
-            asteroid2.rotation.z += rotSpeed;
-            asteroid2.rotation.y += rotSpeed;
+                asteroid.rotation.z += rotSpeed;
+                asteroid.rotation.y += rotSpeed;
+            }
+            if (asteroid2 !== undefined) {
+                asteroid2.rotation.z += rotSpeed;
+                asteroid2.rotation.y += rotSpeed;
+            }
 
-            satellite.rotation.x += rotSpeed2;
-            satellite.rotation.z += rotSpeed2;
-            satellite2.rotation.x += rotSpeed2;
-            satellite2.rotation.z += rotSpeed2;
+            if (satellite !== undefined) {
+                satellite.rotation.x += rotSpeed2;
+                satellite.rotation.z += rotSpeed2;
+            }
 
-            orbiter.rotation.x -= rotSpeed2;
-            orbiter.rotation.z += rotSpeed2;
+            if (satellite2 !== undefined) {
+                satellite2.rotation.x += rotSpeed2;
+                satellite2.rotation.z += rotSpeed2;
+            }
 
+            if (orbiter !== undefined) {
 
-            TWEEN.update();
+                orbiter.rotation.x -= rotSpeed2;
+                orbiter.rotation.z += rotSpeed2;
+            }
             renderer.render(scene, camera);
+
         }
 
     </script>
