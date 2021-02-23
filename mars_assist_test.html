@@ -207,7 +207,7 @@
         }
 
         function marsAssist() {
-            
+
             testAnimation.style.display = 'none';
             position.set(15, 0, 20);
             targetPosition.set(0, 0, -10);
@@ -218,8 +218,7 @@
                                 .onUpdate( function () {
                                     mars.position.copy( marsPosition );
                                     mars.rotation.y += 0.02;
-                                })
-                                .repeat(Infinity);
+                                });
 
             satelliteTween2 = new TWEEN.Tween(targetPosition)
                                 .to({ x: -20, z: -26 }, 2500 )
@@ -227,29 +226,30 @@
                                     satellite.position.copy(targetPosition);
                                     satellite.rotation.x += 0.004;
                                     satellite.rotation.z += 0.004;
-                                })
-                                .delay(5000)
-                                .repeat(Infinity)
-                                .repeatDelay(5000);
+                                });
 
-            satelliteTweenZ = new TWEEN.Tween(position).to({z: -10 }, 5000)
-                                            .repeat(Infinity)
-                                            .repeatDelay(2500);
+            satelliteTweenZ = new TWEEN.Tween(position).to({z: -10 }, 5000);
 
             satelliteTween = new TWEEN.Tween(position)
                                 .to({ x: 0 }, 5000 )
+                                .onUpdate( function () {
+                                    satellite.position.copy(targetPosition);
+                                    satellite.rotation.x += 0.004;
+                                    satellite.rotation.z += 0.004;
+                                })
                                 .easing( TWEEN.Easing.Cubic.In)
                                 .onUpdate( function () {
                                     satellite.position.copy(position);
                                     satellite.rotation.x += 0.004;
                                     satellite.rotation.z += 0.004;
-                                })
-                                .repeat(Infinity)
-                                .repeatDelay(2500);
+                                });
+                                
+            satelliteTween.chain(satelliteTween2);
+            marsTween.chain(satelliteTween, satelliteTweenZ);
+            satelliteTween2.chain(marsTween, satelliteTween, satelliteTweenZ);
 
             satelliteTween.start();
             satelliteTweenZ.start();
-            satelliteTween2.start();
             marsTween.start();
         }
 
