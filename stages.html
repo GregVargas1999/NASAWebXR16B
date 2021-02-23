@@ -10,7 +10,8 @@
 
 <body>
     <div id='card'>
-        <div id='info'>The Psyche Asteroid Mission</div>
+        <div id='info' class="ml2">The Psyche Asteroid Mission
+        </div>
         <button class="button" id='beginButton'>Begin Journey</button>
         <div>
             <button class="button" id='prevButton' style='visibility: hidden;'>Previous Stage</button>
@@ -24,6 +25,7 @@
         </div>
 
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script type='module'>
 
         import * as THREE from 'https://unpkg.com/three@0.124.0/build/three.module.js';
@@ -211,6 +213,8 @@
             pmremGenerator.compileEquirectangularShader();
 
             mouseVector = new THREE.Vector3();
+
+            textAnimate();
         }
 
         function showDetails() {
@@ -253,7 +257,6 @@
         function marsAssist() {
 
             canvasCard.style.display = "none";
-
             if (set2Idle) {
                 satellite2.position.set(-200, -1, 10);
                 set2Idle = false;
@@ -274,7 +277,8 @@
                     camera.position.copy(position);
                 })
                 .onComplete(function () {
-                    infoText.innerHTML = "Phase #1 - Mars Gravity Assist"
+                    infoText.innerHTML = "Phase #1 - Mars Gravity Assist";
+                    textAnimate();
                     beginButton.style.visibility = "hidden";
                     prevButton.style.visibility = "hidden";
                     nextButton.style.visibility = "visible";
@@ -324,6 +328,7 @@
                 })
                 .onComplete(function () {
                     infoText.innerHTML = "Phase #2 - Arrival at Psyche"
+                    textAnimate();
                     beginButton.style.visibility = "hidden";
                     prevButton.style.visibility = "visible";
                     nextButton.style.visibility = "visible";
@@ -372,6 +377,7 @@
                 })
                 .onComplete(function () {
                     infoText.innerHTML = "Phase #3 - Orbiting Psyche"
+                    textAnimate();
                     prevButton.addEventListener('click', arrivalPhase, false);
                     nextButton.removeEventListener('click', orbitalPhase, false);
                     prevButton.style.visibility = "visible";
@@ -386,6 +392,23 @@
                     closeDetails();
                 })
                 .start();
+        }
+
+
+        function textAnimate() { // Wrap every letter in a span
+            var textWrapper = document.querySelector('.ml2');
+            textWrapper.innerHTML = textWrapper.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
+
+            anime.timeline({ loop: false })
+                .add({
+                    targets: '.ml2 .letter',
+                    scale: [4, 1],
+                    opacity: [0, 1],
+                    translateZ: 0,
+                    easing: "easeOutExpo",
+                    duration: 950,
+                    delay: (el, i) => 70 * i
+                });
         }
 
         function orbitAnimation(objectToMod, distance, xTilt, yTilt, zTilt, speed) {
