@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald&display=swap');
 body {
     margin: 0;
 }
@@ -9,7 +10,7 @@ canvas {
 #card {
     background: transparent;
     height: 100%;
-    width: 50%;
+    width: 80%;
     margin: auto;
     position: absolute;
     top: 0;
@@ -18,14 +19,13 @@ canvas {
 }
 
 #info {
-    font-size: 40px;
-    font-weight: 600;
+    
+    font-size: 4vmax;
+    font-weight: 300;
     margin-bottom: 10px;
-    font-style: "Lucida Console", Monaco, monospace;
-    line-height: 40px;
     color: #f47c33;
     text-align: center;
-    transform: translate
+    word-break: keep-all;
 }
 
 .button {
@@ -130,11 +130,5 @@ canvas {
 }
 
 .ml2 {
-    font-weight: 900;
-    font-size: 3.5em;
-  }
-  
-  .ml2 .letter {
-    display: inline-block;
-    line-height: 1em;
+    font-family: 'Oswald', sans-serif;
   }

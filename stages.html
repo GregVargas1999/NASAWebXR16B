@@ -34,7 +34,7 @@
         import { GLTFLoader } from 'https://unpkg.com/three@0.125.2/examples/jsm/loaders/GLTFLoader.js';
         import { DRACOLoader } from 'https://unpkg.com/three@0.125.2/examples/jsm/loaders/DRACOLoader.js';
 
-        import TWEEN from 'https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@18.5.0/dist/tween.esm.js';
+        import TWEEN from 'https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.esm.min.js';
 
         var container, controls;
         var camera, povCamera, scene, renderer, tween;
@@ -213,8 +213,8 @@
             pmremGenerator.compileEquirectangularShader();
 
             mouseVector = new THREE.Vector3();
-
             textAnimate();
+
         }
 
         function showDetails() {
@@ -405,7 +405,7 @@
                     scale: [4, 1],
                     opacity: [0, 1],
                     translateZ: 0,
-                    easing: "easeOutExpo",
+                    easing: "easeOutQuad",
                     duration: 950,
                     delay: (el, i) => 70 * i
                 });
