@@ -142,7 +142,7 @@
             var dracoLoader = new DRACOLoader();
             dracoLoader.setDecoderPath('js/draco/');
             loader.setDRACOLoader(dracoLoader);
-            loader.load('mars.glb', function (gltf) {
+            loader.load('mars-compressed.glb', function (gltf) {
                 mars = gltf.scene
                 mars.scale.set(0.005, 0.005, 0.005);
                 mars.position.set(20, 0, 0);
@@ -150,7 +150,7 @@
             });
             
             // Load satellite model
-            loader.load('raw-models/spacecraft-processed.glb', function (gltf) {
+            loader.load('satellite.glb', function (gltf) {
                 satellite = gltf.scene;
                 satellite.scale.multiplyScalar(1 / 100); // scale model 1/100th original size
                 satellite.position.set(15, 0, 20);
