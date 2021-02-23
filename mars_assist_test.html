@@ -56,8 +56,9 @@
         var position = new THREE.Vector3();
         var targetPosition = new THREE.Vector3();
         var marsPosition = new THREE.Vector3();
+        var pointVector;
         var testAnimation;
-        var animations;
+        var animations, lineDrawn, index, points, line;
         
         init();
         animate();
@@ -156,6 +157,38 @@
                 scene.add(satellite);
             });
 
+            
+            const lineMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
+            const MAX_POINTS = 5000;
+
+            // Geometry for Psyche spacecraft path
+            const lineGeometry = new THREE.BufferGeometry();
+
+            // Create attributes for points on the path
+            points = new Float32Array( MAX_POINTS * 3 ); // 3 vertices per point
+            lineGeometry.setAttribute( 'position', new THREE.BufferAttribute( points, 3 ) );
+
+            // Draw the first to points to begin with
+            lineGeometry.setDrawRange( 0, 2 );
+            var index = 0;
+            points[index++] = 15;  // x-coord
+            points[index++] = 0;   // y-coord
+            points[index++] = 30;  // z-coord
+            points[index++] = 15;  // x-coord
+            points[index++] = 0;   // y-coord
+            points[index++] = 20;  // z-coord
+            line = new THREE.Line( lineGeometry, lineMaterial );
+            scene.add(line);
+
+            // Draw the line for Mars' path
+            const marsPoints = [];
+            marsPoints.push( new THREE.Vector3( 50, 0, 0 ) );
+            marsPoints.push( new THREE.Vector3( -50, 0, 0 ) );
+            const lineGeometry2 = new THREE.BufferGeometry().setFromPoints( marsPoints );
+            const lineMaterial2 = new THREE.LineBasicMaterial({ color: 0xff0000 });
+            const line2 = new THREE.Line( lineGeometry2, lineMaterial2);
+            scene.add(line2);
+
             renderer = new THREE.WebGLRenderer({ antialias: true });
 
             renderer.setPixelRatio(window.devicePixelRatio);
@@ -208,6 +241,8 @@
 
         function marsAssist() {
 
+            lineDrawn = false;
+            index = 6;
             testAnimation.style.display = 'none';
             position.set(15, 0, 20);
             targetPosition.set(0, 0, -10);
@@ -218,27 +253,39 @@
                                 .onUpdate( function () {
                                     mars.position.copy( marsPosition );
                                     mars.rotation.y += 0.02;
-                                });
+                                }); 
 
+            // Post sling-shot
             satelliteTween2 = new TWEEN.Tween(targetPosition)
-                                .to({ x: -20, z: -26 }, 2500 )
+                                .to({ x: -20, z: -24 }, 2500 )
                                 .onUpdate( function () {
+                                    if (!lineDrawn) {
+                                        points[index++] = targetPosition.x;
+                                        points[index++] = targetPosition.y;
+                                        points[index++] = targetPosition.z;
+                                        line.geometry.setDrawRange( 0, index/3 );
+                                        line.geometry.attributes.position.needsUpdate = true;
+                                    }
                                     satellite.position.copy(targetPosition);
                                     satellite.rotation.x += 0.004;
-                                    satellite.rotation.z += 0.004;
+                                    satellite.rotation.z += 0.004;})
+                                .onComplete( function () {
+                                    lineDrawn = true;
                                 });
 
             satelliteTweenZ = new TWEEN.Tween(position).to({z: -10 }, 5000);
 
             satelliteTween = new TWEEN.Tween(position)
                                 .to({ x: 0 }, 5000 )
-                                .onUpdate( function () {
-                                    satellite.position.copy(targetPosition);
-                                    satellite.rotation.x += 0.004;
-                                    satellite.rotation.z += 0.004;
-                                })
                                 .easing( TWEEN.Easing.Cubic.In)
                                 .onUpdate( function () {
+                                    if (!lineDrawn) {
+                                        points[index++] = position.x;
+                                        points[index++] = position.y;
+                                        points[index++] = position.z;
+                                        line.geometry.setDrawRange( 0, index/3 );
+                                        line.geometry.attributes.position.needsUpdate = true;
+                                    }
                                     satellite.position.copy(position);
                                     satellite.rotation.x += 0.004;
                                     satellite.rotation.z += 0.004;
