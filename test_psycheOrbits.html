@@ -120,7 +120,7 @@
 
 <body>
     <div id ='card'>
-        <div id='info'>The Psyche Asteroid Mission</div>
+        <div id='info'>The Psyche Spacecraft Orbits</div>
         <div>
             <button class="button" id='orbitAButton' style='visibility: visible;width:24.8%'>Orbit A: Characterization</button>
             <button class="button" id='orbitBButton' style='visibility: visible;width:24.8%'>Orbit B: Topography</button>
@@ -186,7 +186,7 @@
             // Point light is similar to directional light, I'm using realistic setting for light falloff
             // PointLight( color : Integer, intensity : Float, distance : Number, decay : Float )
             pointLight = new THREE.PointLight(0xFFFFFF, 1, 0, 1);
-            pointLight.position.set(0, 200, 0);
+            pointLight.position.set(0, 200, 100);
             scene.add(pointLight);
 
             // adding SkyBox to the scene
@@ -243,7 +243,7 @@
             var dracoLoader = new DRACOLoader();
             dracoLoader.setDecoderPath('js/draco/');
             loader.setDRACOLoader(dracoLoader);
-            loader.load('raw-models/packed-asteroid-processed.glb', function (gltf) {
+            loader.load('asteroid-compressed.glb', function (gltf) {
                 model = gltf.scene
                 model.rotation.x += 300;
                 model.scale.set(1.5,1.5,1.5);
@@ -251,7 +251,7 @@
             });
 
             // Load satellite model
-            loader.load('raw-models/spacecraft-processed.glb', function (gltf) {
+            loader.load('compressed-spacecraft.glb', function (gltf) {
                 satellite = gltf.scene;
                 satellite.scale.multiplyScalar(10 / 1000); // scale model 1/1000th original size
                 satellite.rotation.z = 180;

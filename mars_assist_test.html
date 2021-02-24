@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base href="./">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>Mars Assist Animation Test</title>
+    <link rel="icon" href="/images/site-icon.png">
+    <style>
+        body {
+            margin: 0;
+        }
+        canvas {
+            display: block;
+        }
+        .button  {
+            position: absolute;
+            width: 50%;
+            left: 0; right: 0;
+			margin: auto;
+			height: 40px;
+			font-size: 24px;
+            background:  #f47c33;
+            border:  3px solid #592651;
+            float:  none;
+            text-align:  center;
+            width:  220px;
+            color:  #592651;
+        }
+        .button:hover  {
+            color:  #a53f5b;
+            background: #f9a000;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <button class="button" id='testAnimation'>Test Animation</button>
+    </div>
+
+    <script type="module">
+
+        import * as THREE from 'https://unpkg.com/three@0.122.0/build/three.module.js';
+        import { GLTFLoader } from 'https://unpkg.com/three@0.122.0/examples/jsm/loaders/GLTFLoader.js';
+        import { DRACOLoader } from 'https://unpkg.com/three@0.122.0/examples/jsm/loaders/DRACOLoader.js';
+        import TWEEN from 'https://unpkg.com/@tweenjs/tween.js@18.6.4/dist/tween.esm.js';
+        import { GUI } from 'https://unpkg.com/three@0.122.0/examples/jsm/libs/dat.gui.module.js';
+
+        var container, controls;
+        var camera, scene, renderer;
+        var mars, newMin, satellite, mesh;
+        var ambientLight, pointLight;
+        var satelliteTween, satelliteTweenZ, marsTween, satelliteTween2;
+        var position = new THREE.Vector3();
+        var targetPosition = new THREE.Vector3();
+        var marsPosition = new THREE.Vector3();
+        var pointVector;
+        var testAnimation;
+        var animations, lineDrawn, index, points, line;
+        
+        init();
+        animate();
+
+        function init() {
+            container = document.createElement('div');
+            document.body.appendChild(container);
+
+            testAnimation = document.getElementById('testAnimation');
+            testAnimation.addEventListener('click', marsAssist, false);
+            testAnimation.addEventListener('touchend', marsAssist, false);
+
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
+            camera.position.set(5, 50, 5);
+            camera.rotation.y += Math.PI;
+            camera.lookAt(5, 0, 5);
+
+            // This creates a soft light so that shadows are less harsh
+            scene = new THREE.Scene();
+            ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.4);
+            scene.add(ambientLight);
+
+            // Point light is similar to directional light, I'm using realistic setting for light falloff
+            // PointLight( color : Integer, intensity : Float, distance : Number, decay : Float )
+            pointLight = new THREE.PointLight(0xFFFFFF, 1, 0, 1);
+            pointLight.position.set(10000, 0, 0);
+            scene.add(pointLight);
+
+
+            // adding SkyBox to the scene
+            let materialArray = [];
+            let texture_ft = new THREE.TextureLoader().load('textures/skybox-textures/front.png');
+            let texture_bk = new THREE.TextureLoader().load('textures/skybox-textures/back.png');
+            let texture_up = new THREE.TextureLoader().load('textures/skybox-textures/top.png');
+            let texture_dn = new THREE.TextureLoader().load('textures/skybox-textures/bottom.png');
+            let texture_rt = new THREE.TextureLoader().load('textures/skybox-textures/right.png');
+            let texture_lf = new THREE.TextureLoader().load('textures/skybox-textures/left.png');
+
+            materialArray.push(new THREE.MeshBasicMaterial({ map: texture_ft }));
+            materialArray.push(new THREE.MeshBasicMaterial({ map: texture_bk }));
+            materialArray.push(new THREE.MeshBasicMaterial({ map: texture_up }));
+            materialArray.push(new THREE.MeshBasicMaterial({ map: texture_dn }));
+            materialArray.push(new THREE.MeshBasicMaterial({ map: texture_rt }));
+            materialArray.push(new THREE.MeshBasicMaterial({ map: texture_lf }));
+
+            for (let i = 0; i < 6; i++)
+                materialArray[i].side = THREE.BackSide;
+
+            let skyboxGeo = new THREE.BoxGeometry(10000, 10000, 10000);
+            let skybox = new THREE.Mesh(skyboxGeo, materialArray);
+            scene.add(skybox);
+
+            // Build sphere mesh (sun)
+            // SphereGeometry(radius : Float, widthSegments : Integer, heightSegments : Integer)
+            var geometry = new THREE.SphereGeometry(20, 30, 30);
+            var material = new THREE.MeshLambertMaterial(
+                {
+                    color: 0xFC9601,
+                    emissive: 0xFC9601,
+                    emissiveIntensity: 10000
+                });
+            mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(4750, 0, 0);
+            scene.add(mesh);
+
+            // Build glow effect
+            // Using png sprite blending
+            var spriteMaterial = new THREE.SpriteMaterial(
+                {
+                    map: new THREE.TextureLoader().load('textures/orange glow.png'),
+                    color: 0xFFCC33,
+                    transparent: true,
+                    blending: THREE.AdditiveBlending
+                });
+            var sprite = new THREE.Sprite(spriteMaterial);
+            sprite.scale.set(200, 200, 1.0);
+            mesh.add(sprite); // this centers the glow at the mesh
+
+            // Load mars model
+            var loader = new GLTFLoader().setPath('models/');
+            var dracoLoader = new DRACOLoader();
+            dracoLoader.setDecoderPath('js/draco/');
+            loader.setDRACOLoader(dracoLoader);
+            loader.load('mars-compressed.glb', function (gltf) {
+                mars = gltf.scene
+                mars.scale.set(0.005, 0.005, 0.005);
+                mars.position.set(20, 0, 0);
+                scene.add(mars);
+            });
+            
+            // Load satellite model
+            loader.load('satellite.glb', function (gltf) {
+                satellite = gltf.scene;
+                satellite.scale.multiplyScalar(1 / 100); // scale model 1/100th original size
+                satellite.position.set(15, 0, 20);
+                scene.add(satellite);
+            });
+
+            
+            const lineMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
+            const MAX_POINTS = 1000;
+
+            // Geometry for Psyche spacecraft path
+            const lineGeometry = new THREE.BufferGeometry();
+
+            // Create attributes for points on the path
+            points = new Float32Array( MAX_POINTS * 3 ); // 3 vertices per point
+            lineGeometry.setAttribute( 'position', new THREE.BufferAttribute( points, 3 ) );
+
+            // Draw the first to points to begin with
+            lineGeometry.setDrawRange( 0, 2 );
+            var index = 0;
+            points[index++] = 15;  // x-coord
+            points[index++] = 0;   // y-coord
+            points[index++] = 30;  // z-coord
+            points[index++] = 15;  // x-coord
+            points[index++] = 0;   // y-coord
+            points[index++] = 20;  // z-coord
+            line = new THREE.Line( lineGeometry, lineMaterial );
+            scene.add(line);
+
+            // Draw the line for Mars' path
+            const marsPoints = [];
+            marsPoints.push( new THREE.Vector3( 50, 0, 0 ) );
+            marsPoints.push( new THREE.Vector3( -50, 0, 0 ) );
+            const lineGeometry2 = new THREE.BufferGeometry().setFromPoints( marsPoints );
+            const lineMaterial2 = new THREE.LineBasicMaterial({ color: 0xff0000 });
+            const line2 = new THREE.Line( lineGeometry2, lineMaterial2);
+            scene.add(line2);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1;
+
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.BasicShadowMap;
+
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            container.appendChild(renderer.domElement);
+
+            var pmremGenerator = new THREE.PMREMGenerator(renderer);
+            pmremGenerator.compileEquirectangularShader();
+
+            window.addEventListener('resize', onWindowResize, false);
+            onWindowResize();
+            document.body.appendChild(renderer.domElement);
+
+            animate();
+        }
+
+        function getRandom(number) {
+            let rand = (Math.random() - 0.5);
+            newMin = number;
+
+            if (rand < 0) {
+                newMin *= -1;
+            }
+
+            return rand;
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            animate();
+        }
+
+        function animate(time) {
+            TWEEN.update(time);
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+
+        function marsAssist() {
+
+            lineDrawn = false;
+            index = 6;
+            testAnimation.style.display = 'none';
+            position.set(15, 0, 20);
+            targetPosition.set(0, 0, -10);
+            marsPosition.set(20, 0, 0);
+
+            marsTween = new TWEEN.Tween(marsPosition)
+                                .to({ x: -17.5 }, 7500 )
+                                .onUpdate( function () {
+                                    mars.position.copy( marsPosition );
+                                    mars.rotation.y += 0.02;
+                                }); 
+
+            // Post sling-shot
+            satelliteTween2 = new TWEEN.Tween(targetPosition)
+                                .to({ x: -20, z: -24 }, 2500 )
+                                .onUpdate( function () {
+                                    if (!lineDrawn) {
+                                        points[index++] = targetPosition.x;
+                                        points[index++] = targetPosition.y;
+                                        points[index++] = targetPosition.z;
+                                        line.geometry.setDrawRange( 0, index/3 );
+                                        line.geometry.attributes.position.needsUpdate = true;
+                                    }
+                                    satellite.position.copy(targetPosition);
+                                    satellite.rotation.x += 0.004;
+                                    satellite.rotation.z += 0.004;})
+                                .onComplete( function () {
+                                    lineDrawn = true;
+                                });
+
+            satelliteTweenZ = new TWEEN.Tween(position).to({z: -10 }, 5000);
+
+            satelliteTween = new TWEEN.Tween(position)
+                                .to({ x: 0 }, 5000 )
+                                .easing( TWEEN.Easing.Cubic.In)
+                                .onUpdate( function () {
+                                    if (!lineDrawn) {
+                                        points[index++] = position.x;
+                                        points[index++] = position.y;
+                                        points[index++] = position.z;
+                                        line.geometry.setDrawRange( 0, index/3 );
+                                        line.geometry.attributes.position.needsUpdate = true;
+                                    }
+                                    satellite.position.copy(position);
+                                    satellite.rotation.x += 0.004;
+                                    satellite.rotation.z += 0.004;
+                                });
+                                
+            satelliteTween.chain(satelliteTween2);
+            marsTween.chain(satelliteTween, satelliteTweenZ);
+            satelliteTween2.chain(marsTween, satelliteTween, satelliteTweenZ);
+
+            satelliteTween.start();
+            satelliteTweenZ.start();
+            marsTween.start();
+        }
+
+    </script>
+</body>
+
+</html>

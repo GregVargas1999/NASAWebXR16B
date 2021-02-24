@@ -1,0 +1,134 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald&display=swap');
+body {
+    margin: 0;
+}
+
+canvas {
+    display: block;
+}
+
+#card {
+    background: transparent;
+    height: 100%;
+    width: 80%;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+#info {
+    
+    font-size: 4vmax;
+    font-weight: 300;
+    margin-bottom: 10px;
+    color: #f47c33;
+    text-align: center;
+    word-break: keep-all;
+}
+
+.button {
+    position: absolute;
+    margin: auto;
+    height: 40px;
+    font-size: 24px;
+    background: #f47c33;
+    /*height:  38px;
+    line-height:  40px;*/
+    border: 3px solid #592651;
+    /*display:  inline-block;*/
+    float: none;
+    text-align: center;
+    width: 220px;
+    /*padding:  0px!important;
+    /*font-size:  14px;*/
+    color: #592651;
+}
+
+.button:hover {
+    color: #a53f5b;
+    background: #f9a000;
+}
+
+#beginButton {
+    left: 0;
+    right: 0;
+    color: #592651;
+}
+
+#prevButton {
+    left: 0;
+    right: 30;
+    color: #592651;
+}
+
+#nextButton {
+    left: 30;
+    right: 0;
+    color: #592651;
+}
+
+.tooltip {
+    opacity: 1;
+    color: white;
+    display: flex;
+    background: transparent;
+    /*height:  38px;
+    line-height:  40px;*/
+    border: 3px solid white;
+    font-size: 14px;
+    font-family: verdana, 'open sans', sans-serif;
+    justify-self: center;
+}
+
+.tooltip:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+#descriptionBox {
+    visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 30%;
+    margin-left: 65%;
+    width: 45%;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    background: rgb(48, 33, 68);
+    background: linear-gradient(90deg, rgba(48, 33, 68, 1) 0%, rgba(18, 3, 29, 1) 100%);
+    margin-bottom: 25px;
+    padding: 10px 14px 10px 14px;
+    box-shadow: 0px 1px 5px #999;
+    opacity: 0.8;
+}
+
+#description {
+    opacity: 1;
+    font-size: 18px;
+    line-height: 26px;
+    font-weight: 600;
+    font-family: verdana, 'open sans', sans-serif;
+    color: #ef5966;
+    /*#a53f5b;*/
+    text-align: center;
+}
+
+#details {
+    display: none;
+    opacity: 1;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    font-family: verdana, 'open sans', sans-serif;
+    color: #ef5966;
+    /*#a53f5b;*/
+    text-align: center;
+}
+
+.ml2 {
+    font-family: 'Oswald', sans-serif;
+  }
