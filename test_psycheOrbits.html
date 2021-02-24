@@ -172,9 +172,9 @@
             container = document.createElement('div');
             document.body.appendChild(container);
 
-            normalCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
+            normalCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
             normalCamera.position.set(10, 180, 10);
-            normalCamera.lookAt( 0, 0, 0 );
+            normalCamera.lookAt(0, 0, 0);
             
             orbitContainer = new THREE.Object3D();
 
@@ -219,10 +219,10 @@
                 {
                     color: 0xFC9601,
                     emissive: 0xFC9601,
-                    emissiveIntensity: 10000
+                    emissiveIntensity: 1
                 });
             mesh = new THREE.Mesh(geometry, material);
-            mesh.position.set(0, 2000, 0);
+            mesh.position.set(0, 200, 100);
             scene.add(mesh);
 
             // Build glow effect
@@ -245,7 +245,7 @@
             loader.setDRACOLoader(dracoLoader);
             loader.load('asteroid-compressed.glb', function (gltf) {
                 model = gltf.scene
-                model.rotation.x += 300;
+                model.rotation.x += 200;
                 model.scale.set(1.5,1.5,1.5);
                 scene.add(model);
             });
@@ -300,46 +300,11 @@
             document.body.appendChild(renderer.domElement);
         }
 
-        function makeGUI() {
-            const gui = new GUI({ width: 420 });
-
-            gui.add(params, 'povCameraActive').name('Enable POV camera');
-            gui.add(params, 'orbitPathActive').name('Enable Orbit Path Ring').listen().onChange(function (orbitPathActive) {
-                if (params.orbitPathActive) {
-                    orbitPath = makeOrbitPath(params.orbitDistance);
-                    orbitContainer.add(orbitPath);
-                } else {
-                    orbitContainer.remove(orbitPath);
-                }
-            })
-            gui.add(params, 'orbitDistance', 3, 15, 0.1).name('Orbit Radius').listen().onChange(function (orbitDistance) {
-                satellite.position.set(orbitDistance, 0, 0);
-                if (params.orbitPathActive) {
-                    orbitContainer.remove(orbitPath);
-                    orbitPath = makeOrbitPath(orbitDistance);
-                    orbitContainer.add(orbitPath);
-                }
-            });
-        }
-
-        function getRandom(number) {
-            let rand = (Math.random() - 0.5);
-            newMin = number;
-
-            if (rand < 0) {
-                newMin *= -1;
-            }
-
-            return rand;
-        }
-
         function onWindowResize() {
             normalCamera.aspect = window.innerWidth / window.innerHeight;
             normalCamera.updateProjectionMatrix();
 
             renderer.setSize(window.innerWidth, window.innerHeight);
-
-            animate();
         }
 
         function animate(time) {
