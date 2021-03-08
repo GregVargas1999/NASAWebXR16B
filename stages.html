@@ -21,7 +21,7 @@
         <div id='descriptionBox'>
             <div id='description'></div>
             <div id='details'></div>
-            <button id='moreInfo' class="tooltip" alignment='center'>&#8505 More info
+            <button id='moreInfo' class="tooltip" alignment='center'>&#8505 More Info
         </div>
 
     </div>
@@ -247,7 +247,7 @@
         function closeDetails() {
             description.style.display = "block";
             details.style.display = "none";
-            moreInfo.innerHTML = "&#8505 More info"
+            moreInfo.innerHTML = "&#8505 More Info"
             moreInfo.removeEventListener('click', closeDetails, false);
             moreInfo.removeEventListener('touchend', closeDetails, false);
             moreInfo.addEventListener('click', showDetails, false);
@@ -389,7 +389,7 @@
                     prevButton.addEventListener('touchend', arrivalPhase, false);
                     nextButton.removeEventListener('touchend', orbitalPhase, false);
 
-                    description.innerHTML = "The spacecraft will orbit Psyche until Octbber 2027 (21 months!)," +
+                    description.innerHTML = "The spacecraft will orbit Psyche until October 2027 (21 months!)," +
                         " where it will take measurements and send data back to Earth";
                     canvasCard.style.display = "block";
                     closeDetails();
