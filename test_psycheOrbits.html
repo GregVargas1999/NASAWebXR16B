@@ -5,7 +5,7 @@
     <base href="./">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <title>Orbit Animation Test</title>
+    <title>Psyche Orbits</title>
     <link rel="icon" href="/images/site-icon.png">
     <style>
         body {
@@ -24,8 +24,7 @@
 			top: 0; left: 0; right: 0;
 		}
         #info   {
-            font-size: 40px;
-            font-weight: 600;
+            font-size: 100%;
             margin-bottom: 10px;
             font-style: "Lucida Console", Monaco, monospace;
             line-height: 40px;
@@ -39,7 +38,6 @@
             background:  #f47c33;
             border:  3px solid #592651;
             text-align:  center;
-            width:  350px;
             /*padding:  0px!important;
             /*font-size:  14px;*/
             color:  #592651;
@@ -120,12 +118,14 @@
 
 <body>
     <div id ='card'>
-        <div id='info'>The Psyche Spacecraft Orbits</div>
+        <div id='info'>Psyche Spacecraft Orbits</div>
         <div>
-            <button class="button" id='orbitAButton' style='visibility: visible;width:24.8%'>Orbit A: Characterization</button>
-            <button class="button" id='orbitBButton' style='visibility: visible;width:24.8%'>Orbit B: Topography</button>
-            <button class="button" id='orbitCButton' style='visibility: visible;width:24.8%'>Orbit C: Gravity Science</button>
-            <button class="button" id='orbitDButton' style='visibility: visible;width:24.8%'>Orbit D: Elemental Mapping</button>
+            <button class="button" id='orbitAButton' style='visibility: visible;width:47%;margin: 1%; margin-right: 1%;'>Orbit A: Characterization</button>
+            <button class="button" id='orbitBButton' style='visibility: visible;width:47%;margin: 1%; margin-left: 1%;'>Orbit B: Topography</button>
+        </div>
+        <div>
+            <button class="button" id='orbitCButton' style='visibility: visible;width:48%;margin: 1%; margin-right: 0%;'>Orbit C: Gravity Science</button>
+            <button class="button" id='orbitDButton' style='visibility: visible;width:48%;margin: 1%; margin-left: 0%;;'>Orbit D: Elemental Mapping</button>
         </div>
     
         
@@ -259,13 +259,13 @@
                 modifyOrbit(satellite, params.orbitDistance, params.orbitTiltX, params.orbitTiltY, params.orbitTiltZ, params.orbitSpeed);
             });
 
-            orbitPathD = makeOrbitPath(5, 0xf47c33);
+            orbitPathD = makeOrbitPath(5*.25, 0xf47c33);
 
-            orbitPathC = makeOrbitPath(7.5, 0xf47c33);
+            orbitPathC = makeOrbitPath(7.5*.25, 0xf47c33);
 
-            orbitPathB = makeOrbitPath(10, 0xf47c33);
+            orbitPathB = makeOrbitPath(10*.25, 0xf47c33);
 
-            orbitPathA = makeOrbitPath(15, 0x592651);
+            orbitPathA = makeOrbitPath(15*.25, 0x592651);
             params.orbitDistance = 15
             orbitContainer.add(orbitPathA);
             orbitContainer.add(orbitPathB);
