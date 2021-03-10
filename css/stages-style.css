@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 body {
     margin: 0;
 }
@@ -19,9 +20,7 @@ canvas {
 }
 
 #info {
-    
-    font-size: 4vmax;
-    font-weight: 300;
+
     margin-bottom: 10px;
     color: #f47c33;
     text-align: center;
@@ -30,6 +29,7 @@ canvas {
 
 .button {
     position: absolute;
+    font-family: 'Roboto', sans-serif;
     margin: auto;
     height: 40px;
     font-size: 24px;
@@ -77,8 +77,8 @@ canvas {
     /*height:  38px;
     line-height:  40px;*/
     border: 3px solid white;
-    font-size: 14px;
-    font-family: verdana, 'open sans', sans-serif;
+    font-size: 1.5vmax;
+    font-family: 'roboto', sans-serif;
     justify-self: center;
 }
 
@@ -92,43 +92,39 @@ canvas {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 30%;
-    margin-left: 65%;
-    width: 45%;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
+    position: fixed;
+    bottom: 5vmin;
+    right: 1vmax;
+    width: 40vmax;
     border-radius: 5px;
-    background: rgb(48, 33, 68);
     background: linear-gradient(90deg, rgba(48, 33, 68, 1) 0%, rgba(18, 3, 29, 1) 100%);
-    margin-bottom: 25px;
-    padding: 10px 14px 10px 14px;
+    padding: 1vmin 1vmin 1vmin 1vmin;
     box-shadow: 0px 1px 5px #999;
     opacity: 0.8;
 }
 
 #description {
     opacity: 1;
-    font-size: 18px;
-    line-height: 26px;
-    font-weight: 600;
-    font-family: verdana, 'open sans', sans-serif;
+    font-size: 2vmax;
+    font-family: 'roboto', sans-serif;
     color: #ef5966;
     /*#a53f5b;*/
     text-align: center;
+    margin-bottom: 2vmin;
 }
 
 #details {
-    display: none;
     opacity: 1;
-    font-size: 12px;
-    line-height: 16px;
-    font-weight: 600;
-    font-family: verdana, 'open sans', sans-serif;
+    font-size: 2vmax;
+    font-family: 'roboto', sans-serif;
     color: #ef5966;
     /*#a53f5b;*/
     text-align: center;
+    margin-bottom: 2vmin;
 }
 
 .ml2 {
     font-family: 'Oswald', sans-serif;
+    font-size: 6vmax;
+    font-weight: 300;
   }

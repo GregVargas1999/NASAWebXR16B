@@ -5,11 +5,12 @@
     <base href="./">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <title>Orbit Animation Test</title>
+    <title>Psyche Orbits</title>
     <link rel="icon" href="/images/site-icon.png">
     <style>
         body {
             margin: 0;
+            overflow-y: hidden;
         }
 
         canvas {
@@ -24,22 +25,22 @@
 			top: 0; left: 0; right: 0;
 		}
         #info   {
-            font-size: 40px;
-            font-weight: 600;
+            font-size: 7vw;
             margin-bottom: 10px;
             font-style: "Lucida Console", Monaco, monospace;
             line-height: 40px;
             color: #f47c33;
             text-align: center;
-            transform: translate
+            transform: translate;
+            background: #592651;
+            border:  3px solid #f47c33;
         }
         .button  {
-			height: 40px;
-			font-size: 24px;
+			height: 10%;
+			font-size: 4vw;
             background:  #f47c33;
             border:  3px solid #592651;
             text-align:  center;
-            width:  350px;
             /*padding:  0px!important;
             /*font-size:  14px;*/
             color:  #592651;
@@ -120,16 +121,27 @@
 
 <body>
     <div id ='card'>
-        <div id='info'>The Psyche Spacecraft Orbits</div>
-        <div>
-            <button class="button" id='orbitAButton' style='visibility: visible;width:24.8%'>Orbit A: Characterization</button>
-            <button class="button" id='orbitBButton' style='visibility: visible;width:24.8%'>Orbit B: Topography</button>
-            <button class="button" id='orbitCButton' style='visibility: visible;width:24.8%'>Orbit C: Gravity Science</button>
-            <button class="button" id='orbitDButton' style='visibility: visible;width:24.8%'>Orbit D: Elemental Mapping</button>
+        <div id='info' style="margin-top: 7%;">Psyche Spacecraft Orbits</div>
+        <div style="margin-top: 3%;">
+            <button class="button" id='orbitAButton' style='visibility: visible;width:47%;margin: 1%; margin-right: 1%;'>Orbit A:<br />Characterization</button>
+            <button class="button" id='orbitBButton' style='visibility: visible;width:47%;margin: 1%; margin-left: 1%;'>Orbit B:<br />Topography</button>
         </div>
-    
-        
+        <div>
+            <button class="button" id='orbitCButton' style='visibility: visible;width:47%;margin: 1%; margin-right: 1%;'>Orbit C:<br />Gravity Science</button>
+            <button class="button" id='orbitDButton' style='visibility: visible;width:47%;margin: 1%; margin-left: 1%;;'>Orbit D:<br />Elemental Mapping</button>
+        </div>    
     </div>
+    <div>
+        <p id='infoBox' style="height: 13%; width:90%; margin: 0%; font-size: 5vw;
+        background:  #f47c33;border:  3px solid #592651;
+        position:  absolute;
+        color:  #592651;
+        text-align: center;
+        bottom: 7%; left: 5%; right: 5%;
+        ">
+            Click on the buttons above to learn more about the Psyche Spacecraft's various orbits!
+        </p>
+    </div>>
     <!---Div to implement scene transition controls-->
     <script type="module">
 
@@ -144,7 +156,7 @@
         const params = {
             povCameraActive: false,
             orbitPathActive: true,
-            orbitDistance: 10,
+            orbitDistance: 5000/screen.width,
             orbitSpeed: 1,
             orbitTiltX: 0,
             orbitTiltY: 0,
@@ -256,16 +268,16 @@
                 satellite.scale.multiplyScalar(10 / 1000); // scale model 1/1000th original size
                 satellite.rotation.z = 180;
                 satellite.rotation.y = 45;
-                modifyOrbit(satellite, params.orbitDistance, params.orbitTiltX, params.orbitTiltY, params.orbitTiltZ, params.orbitSpeed);
+                modifyOrbit(satellite, 10000/screen.width, params.orbitTiltX, params.orbitTiltY, params.orbitTiltZ, params.orbitSpeed);
             });
 
-            orbitPathD = makeOrbitPath(5, 0xf47c33);
+            orbitPathD = makeOrbitPath(5000/screen.width, 0xf47c33);
 
-            orbitPathC = makeOrbitPath(7.5, 0xf47c33);
+            orbitPathC = makeOrbitPath(6500/screen.width, 0xf47c33);
 
-            orbitPathB = makeOrbitPath(10, 0xf47c33);
+            orbitPathB = makeOrbitPath(8000/screen.width, 0xf47c33);
 
-            orbitPathA = makeOrbitPath(15, 0x592651);
+            orbitPathA = makeOrbitPath(10000/screen.width, 0x592651);
             params.orbitDistance = 15
             orbitContainer.add(orbitPathA);
             orbitContainer.add(orbitPathB);
@@ -359,21 +371,23 @@
             orbitContainer.remove(orbitPathC);
             orbitContainer.remove(orbitPathD);
 
-            orbitPathD = makeOrbitPath(5, 0xf47c33);
+            orbitPathD = makeOrbitPath(5000/screen.width, 0xf47c33);
 
-            orbitPathC = makeOrbitPath(7.5, 0xf47c33);
+            orbitPathC = makeOrbitPath(6500/screen.width, 0xf47c33);
 
-            orbitPathB = makeOrbitPath(10, 0xf47c33);
+            orbitPathB = makeOrbitPath(8000/screen.width, 0xf47c33);
 
-            orbitPathA = makeOrbitPath(15, 0x592651);
-            params.orbitDistance = 15
-            satellite.position.set(15, 0, 0);
+            orbitPathA = makeOrbitPath(10000/screen.width, 0x592651);
+            params.orbitDistance = 10000/screen.width
+            satellite.position.set(10000/screen.width, 0, 0);
 
             orbitContainer.add(orbitPathA);
             orbitContainer.add(orbitPathB);
             orbitContainer.add(orbitPathC);
             orbitContainer.add(orbitPathD);
             scene.add(orbitContainer);
+
+            document.getElementById('infoBox').innerHTML = "<strong>Characterization</strong><br />The Psyche Spacecraft will spend 56 days in this orbit to get a reliable model of the gravity field for planning the next orbits"
         }
 
         function orbitB()
@@ -383,21 +397,23 @@
             orbitContainer.remove(orbitPathC);
             orbitContainer.remove(orbitPathD);
 
-            orbitPathD = makeOrbitPath(5, 0xf47c33);
+            orbitPathD = makeOrbitPath(5000/screen.width, 0xf47c33);
 
-            orbitPathC = makeOrbitPath(7.5, 0xf47c33);
+            orbitPathC = makeOrbitPath(6500/screen.width, 0xf47c33);
 
-            orbitPathB = makeOrbitPath(10, 0x592651);
+            orbitPathB = makeOrbitPath(8000/screen.width, 0x592651);
 
-            orbitPathA = makeOrbitPath(15, 0xf47c33);
-            params.orbitDistance = 10
-            satellite.position.set(10, 0, 0);
+            orbitPathA = makeOrbitPath(10000/screen.width, 0xf47c33);
+            params.orbitDistance = 8000/screen.width
+            satellite.position.set(8000/screen.width, 0, 0);
 
             orbitContainer.add(orbitPathA);
             orbitContainer.add(orbitPathB);
             orbitContainer.add(orbitPathC);
             orbitContainer.add(orbitPathD);
             scene.add(orbitContainer);
+
+            document.getElementById('infoBox').innerHTML = "<strong>Topography</strong><br />The best lighting happens in this 80 day orbit, and the spacecraft is able to map the surface of Psyche"
         }
 
         function orbitC()
@@ -407,21 +423,23 @@
             orbitContainer.remove(orbitPathC);
             orbitContainer.remove(orbitPathD);
 
-            orbitPathD = makeOrbitPath(5, 0xf47c33);
+            orbitPathD = makeOrbitPath(5000/screen.width, 0xf47c33);
 
-            orbitPathC = makeOrbitPath(7.5, 0x592651);
+            orbitPathC = makeOrbitPath(6500/screen.width, 0x592651);
 
-            orbitPathB = makeOrbitPath(10, 0xf47c33);
+            orbitPathB = makeOrbitPath(8000/screen.width, 0xf47c33);
 
-            orbitPathA = makeOrbitPath(15, 0xf47c33);
-            params.orbitDistance = 7.5
-            satellite.position.set(7.5, 0, 0);
+            orbitPathA = makeOrbitPath(10000/screen.width, 0xf47c33);
+            params.orbitDistance = 6500/screen.width
+            satellite.position.set(6500/screen.width, 0, 0);
 
             orbitContainer.add(orbitPathA);
             orbitContainer.add(orbitPathB);
             orbitContainer.add(orbitPathC);
             orbitContainer.add(orbitPathD);
             scene.add(orbitContainer);
+
+            document.getElementById('infoBox').innerHTML = "<strong>Gravity Science</strong><br />During this 100 day orbit, the Psyche Spacecraft will measure Psyche's gravity field to high precision"
         }
 
         function orbitD()
@@ -431,21 +449,23 @@
             orbitContainer.remove(orbitPathC);
             orbitContainer.remove(orbitPathD);
 
-            orbitPathD = makeOrbitPath(5, 0x592651);
+            orbitPathD = makeOrbitPath(5000/screen.width, 0x592651);
 
-            orbitPathC = makeOrbitPath(7.5, 0xf47c33);
+            orbitPathC = makeOrbitPath(6500/screen.width, 0xf47c33);
 
-            orbitPathB = makeOrbitPath(10, 0xf47c33);
+            orbitPathB = makeOrbitPath(8000/screen.width, 0xf47c33);
 
-            orbitPathA = makeOrbitPath(15, 0xf47c33);
-            params.orbitDistance = 5
-            satellite.position.set(5, 0, 0);
+            orbitPathA = makeOrbitPath(10000/screen.width, 0xf47c33);
+            params.orbitDistance = 5000/screen.width
+            satellite.position.set(5000/screen.width, 0, 0);
 
             orbitContainer.add(orbitPathA);
             orbitContainer.add(orbitPathB);
             orbitContainer.add(orbitPathC);
             orbitContainer.add(orbitPathD);
             scene.add(orbitContainer);
+
+            document.getElementById('infoBox').innerHTML = "<strong>Elemental Mapping</strong><br />In the final 100 days, the spacecraft will use a gamma ray and neutron spectrometer to learn what elements make up Psyche"
         }
     </script>
 </body>
