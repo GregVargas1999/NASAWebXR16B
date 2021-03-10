@@ -37,9 +37,12 @@
         import TWEEN from 'https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.esm.min.js';
 
         var container, controls;
-        var camera, povCamera, scene, renderer, tween;
-        var raycaster, projector, mouseVector, intersects, intersection, obj;
-        var asteroid, satellite, asteroid2, satellite2, mars, orbiter, newMin;
+        var camera, scene, renderer, tween;
+        var intersects;
+        var asteroid, satellite, asteroid2, satellite2, mars, orbiter;
+        var targetList = [];
+        var mouse = new THREE.Vector2();
+        var raycaster = new THREE.Raycaster();
         var targetPosition = new THREE.Vector3();
         var position = new THREE.Vector3();
         var beginButton, nextButton, prevButton, infoText, moreInfo, canvasCard, description, details, descriptionBox;
@@ -52,6 +55,24 @@
             orbitTiltZ: 0,
             cameraFOV: 45
         };
+
+        const ringParams = {
+            ring1Inner: 4.7,
+            ring2Inner: 6.2,
+            ring3Inner: 7.7,
+            ring4Inner: 9.2,
+            ring1Outer: 5,
+            ring2Outer: 6.5,
+            ring3Outer: 8,
+            ring4Outer: 9.5,
+            orbitSpeed: 1,
+            orbitTiltX: -1,
+            orbitTiltY: -0.5,
+            orbitTiltZ: 0,
+            ringHighlightColor: 0x3B0158,
+            ringIdleColor: 0x6A6A6A
+        }
+
         var tween, orbit, orbitContainer;
         var rotSpeed = 0.0001;
         var rotSpeed2 = 0.0001;
@@ -85,7 +106,6 @@
 
             scene = new THREE.Scene();
 
-            //scene.add(new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 0.5));
             // This creates a soft light so that shadows are less harsh
             var ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.1);
             scene.add(ambientLight);
@@ -93,7 +113,7 @@
             // Point light is similar to directional light, I'm using realistic setting for light falloff
             // PointLight( color : Integer, intensity : Float, distance : Number, decay : Float )
             var pointLight = new THREE.PointLight(0xFFFFFF, 1, 0, 1);
-            pointLight.position.set(-1000, 0, -4900);
+            pointLight.position.set(4900, 0, 1000);
             scene.add(pointLight);
 
             // Build sphere mesh
@@ -106,7 +126,7 @@
                     emissiveIntensity: 1
                 });
             var mesh = new THREE.Mesh(geometry, material);
-            mesh.position.set(-1000, 0, -4900);
+            mesh.position.set(4900, 0, 1000);
             scene.add(mesh);
 
             // Build glow effect
@@ -165,7 +185,6 @@
                 satellite.scale.set(0.01, 0.01, 0.01);
                 satellite.position.set(-296, 0, 18);
                 scene.add(satellite);
-                animate();
             });
             // ----------------------------------------------------------- //
 
@@ -175,7 +194,6 @@
                 mars.scale.set(0.01, 0.01, 0.01);
                 mars.position.set(-200, 0, -50);
                 scene.add(mars);
-                animate();
             });
 
             loader.load('compressed-spacecraft.glb', function (gltf) {
@@ -183,7 +201,6 @@
                 satellite2.scale.set(0.01, 0.01, 0.01);
                 satellite2.position.set(-596, 0, 18);
                 scene.add(satellite2);
-                animate();
             });
             // ----------------------------------------------------------- //
 
@@ -193,7 +210,6 @@
                 asteroid.scale.set(2, 2, 2);
                 asteroid.position.set(-100, 0, -50);
                 scene.add(asteroid);
-                animate();
             });
             // ----------------------------------------------------------- //
 
@@ -203,17 +219,28 @@
                 asteroid2.scale.set(2, 2, 2);
                 asteroid2.position.set(-500, 0, -50);
                 scene.add(asteroid2);
-                animate();
             });
 
             loader.load('compressed-spacecraft.glb', function (gltf) {
                 orbiter = gltf.scene;
-                orbiter.scale.set(0.0025, 0.0025, 0.0025);
-                //orbiter.rotation.z = 180;
-                //orbiter.rotation.y = 45;
+                orbiter.scale.set(0.005, 0.005, 0.005);
                 scene.add(orbiter);
-                orbitAnimation(orbiter, params.orbitDistance, params.orbitTiltX, params.orbitTiltY, params.orbitTiltZ, params.orbitSpeed);
+
+                // Orbiting on outermost ring
+                orbitAnimation(orbiter, ringParams.ring4Outer, ringParams.orbitTiltX, ringParams.orbitTiltY, ringParams.orbitTiltZ, ringParams.orbitSpeed);
             });
+
+            // Build orbit paths
+            makeOrbitPath(ringParams.ring1Inner, ringParams.ring1Outer, ringParams.orbitTiltX, ringParams.orbitTiltY, ringParams.orbitTiltZ, ringParams.ringIdleColor);
+            makeOrbitPath(ringParams.ring2Inner, ringParams.ring2Outer, ringParams.orbitTiltX, ringParams.orbitTiltY, ringParams.orbitTiltZ, ringParams.ringIdleColor);
+            makeOrbitPath(ringParams.ring3Inner, ringParams.ring3Outer, ringParams.orbitTiltX, ringParams.orbitTiltY, ringParams.orbitTiltZ, ringParams.ringIdleColor);
+            makeOrbitPath(ringParams.ring4Inner, ringParams.ring4Outer, ringParams.orbitTiltX, ringParams.orbitTiltY, ringParams.orbitTiltZ, ringParams.ringIdleColor);
+
+            // Setting outermost ring to highlight color
+            targetList[targetList.length-1].material.color.set(ringParams.ringHighlightColor);
+
+            // Listen for mouse clicks on orbit rings
+            document.addEventListener('click', onDocumentMouseDown, false);
             // ----------------------------------------------------------- //
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -227,9 +254,96 @@
             var pmremGenerator = new THREE.PMREMGenerator(renderer);
             pmremGenerator.compileEquirectangularShader();
 
-            mouseVector = new THREE.Vector3();
             textAnimate();
         }
+
+        function makeOrbitPath(innerRadius, outerRadius, xTilt, yTilt, zTilt, inputColor) {
+            const ringGeometry = new THREE.RingGeometry(innerRadius, outerRadius, 64);
+            const ringMaterial = new THREE.MeshBasicMaterial(
+                { 
+                    color: inputColor, 
+                    side: THREE.DoubleSide 
+                });
+            const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+            ring.position.set(0, 0, 0);
+            ring.rotation.x = xTilt;
+            ring.rotation.y = yTilt;
+            ring.rotation.z = zTilt;
+            scene.add(ring);
+
+            targetList.push(ring);
+        }
+
+        function onDocumentMouseDown(event) 
+        {
+            event.preventDefault();
+            console.log("Click.");
+            
+            // update the mouse variable
+            mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+            mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+            
+            // find intersections
+
+            // create a Ray with origin at the mouse position
+            //   and direction into the scene (camera direction)
+            raycaster.setFromCamera(mouse, camera);
+		    intersects = raycaster.intersectObjects(targetList);
+            
+            // if there is one (or more) intersections
+            if (intersects.length > 0)
+            {
+                // Simple output log
+                console.log("Hit @ " + intersects[0].object.id);
+
+                // Each ring has an ID based upon when it was added to the scene
+                switch(intersects[0].object.id)
+                {
+                    case 14:
+                        orbitAnimation(orbiter, (ringParams.ring1Outer + ringParams.ring1Inner) / 2, ringParams.orbitTiltX, ringParams.orbitTiltY, ringParams.orbitTiltZ, ringParams.orbitSpeed);
+                        description.innerHTML = "In the final 100 days, the spacecraft will use a gamma ray and neutron spectrometer to learn what elements make up Psyche.";
+                        details.innerHTML = "1"
+                        break;
+
+                    case 15:
+                        orbitAnimation(orbiter, (ringParams.ring2Outer + ringParams.ring2Inner) / 2, ringParams.orbitTiltX, ringParams.orbitTiltY, ringParams.orbitTiltZ, ringParams.orbitSpeed);
+                        description.innerHTML = "During this 100 day orbit, the Psyche Spacecraft will measure Psyche's gravity field to high precision.";
+                        details.innerHTML = "2"
+                        break;
+
+                    case 16:
+                        orbitAnimation(orbiter, (ringParams.ring3Outer + ringParams.ring3Inner) / 2, ringParams.orbitTiltX, ringParams.orbitTiltY, ringParams.orbitTiltZ, ringParams.orbitSpeed);
+                        description.innerHTML = "The best lighting happens in this 80 day orbit, and the spacecraft is able to map the surface of Psyche.";
+                        details.innerHTML = "3"
+                        break;
+
+                    case 17:
+                        orbitAnimation(orbiter, (ringParams.ring4Outer + ringParams.ring4Inner) / 2, ringParams.orbitTiltX, ringParams.orbitTiltY, ringParams.orbitTiltZ, ringParams.orbitSpeed);
+                        description.innerHTML = "The Psyche Spacecraft will spend 56 days in this orbit to get a reliable model of the gravity field for planning the next orbits.";
+                        details.innerHTML = "4"
+                        break;
+
+                    default:
+                        break;
+                }
+
+                // Change intersected ring color
+                intersects[0].object.material.color.set(ringParams.ringHighlightColor); 
+                intersects[0].object.geometry.colorsNeedUpdate = true;
+
+                // Reset all other rings' colors
+                for(var i = 0; i < targetList.length; i++)
+                {
+                    if(intersects[0].object != targetList[i])
+                    {
+                        targetList[i].material.color.set(ringParams.ringIdleColor); 
+                        targetList[i].geometry.colorsNeedUpdate = true;
+                    }
+                }
+            }
+        }
+
+        function toString(v) { return "[ " + v.x + ", " + v.y + ", " + v.z + " ]"; }
 
         function showDetails() {
             description.style.display = "none";
@@ -471,8 +585,8 @@
                 orbiter.rotation.x -= rotSpeed2;
                 orbiter.rotation.z += rotSpeed2;
             }
-            renderer.render(scene, camera);
 
+            renderer.render(scene, camera);
         }
 
     </script>
