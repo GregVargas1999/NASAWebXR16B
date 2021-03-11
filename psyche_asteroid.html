@@ -37,6 +37,7 @@
 	import { OrbitControls } from 'https://unpkg.com/three@0.121.1/examples/jsm/controls/OrbitControls.js';
 	import { GLTFLoader } from 'https://unpkg.com/three@0.121.1/examples/jsm/loaders/GLTFLoader.js';
 	import { DRACOLoader } from 'https://unpkg.com/three@0.122.0/examples/jsm/loaders/DRACOLoader.js';
+	import { DeviceOrientationControls } from 'https://unpkg.com/three@0.122.0/examples/jsm/controls/DeviceOrientationControls.js';
 
 	var container, controls;
 	var camera, scene, renderer;
@@ -151,7 +152,9 @@
 		var pmremGenerator = new THREE.PMREMGenerator(renderer);
 		pmremGenerator.compileEquirectangularShader();
 
-		controls = new OrbitControls(camera, renderer.domElement);
+		controls = new DeviceOrientationControls(camera, renderer.domElement);
+
+		//controls = new OrbitControls(camera, renderer.domElement);
 		controls.update();
 
 		window.addEventListener('resize', onWindowResize, false);
