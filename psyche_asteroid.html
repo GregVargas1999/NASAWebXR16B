@@ -152,10 +152,10 @@
 		var pmremGenerator = new THREE.PMREMGenerator(renderer);
 		pmremGenerator.compileEquirectangularShader();
 
-		dolly = new THREE.Object3D();
-		dolly.position.z = 5;
-		dolly.add(camera);
-		scene.add(dolly);
+		//dolly = new THREE.Object3D();
+		//dolly.position.z = 5;
+		//dolly.add(camera);
+		//scene.add(dolly);
 
 		controls = new DeviceOrientationControls(camera);
 
@@ -181,7 +181,7 @@
 		model.rotation.y += rotSpeed;
 
 		requestAnimationFrame(animate);
-		//controls.update();
+		controls.update();
 		renderer.render(scene, camera);
 	}
 	</script>
