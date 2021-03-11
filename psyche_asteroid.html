@@ -40,7 +40,7 @@
 	import { DeviceOrientationControls } from 'https://unpkg.com/three@0.122.0/examples/jsm/controls/DeviceOrientationControls.js';
 
 	var container, controls;
-	var camera, scene, renderer;
+	var camera, scene, renderer, dolly;
 	var model, newMin, mesh;
 	var ambientLight, pointLight;
 
@@ -52,7 +52,7 @@
 		document.body.appendChild(container);
 
 		camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
-		camera.position.set(5, 0, 5);
+		//camera.position.set(5, 0, 5);
 
 		// This creates a soft light so that shadows are less harsh
 		scene = new THREE.Scene();
@@ -152,10 +152,15 @@
 		var pmremGenerator = new THREE.PMREMGenerator(renderer);
 		pmremGenerator.compileEquirectangularShader();
 
-		controls = new DeviceOrientationControls(camera, renderer.domElement);
+		dolly = new THREE.Object3D();
+		dolly.position.z = 5;
+		dolly.add(camera);
+		scene.add(dolly);
+
+		controls = new DeviceOrientationControls(camera);
 
 		//controls = new OrbitControls(camera, renderer.domElement);
-		controls.update();
+		//controls.update();
 
 		window.addEventListener('resize', onWindowResize, false);
 	}
@@ -176,6 +181,7 @@
 		model.rotation.y += rotSpeed;
 
 		requestAnimationFrame(animate);
+		//controls.update();
 		renderer.render(scene, camera);
 	}
 	</script>
