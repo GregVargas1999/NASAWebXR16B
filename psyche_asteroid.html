@@ -52,7 +52,7 @@
 		document.body.appendChild(container);
 
 		camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
-		//camera.position.set(5, 0, 5);
+		camera.position.set(5, 0, 5);
 
 		// This creates a soft light so that shadows are less harsh
 		scene = new THREE.Scene();
@@ -157,10 +157,10 @@
 		//dolly.add(camera);
 		//scene.add(dolly);
 
-		controls = new DeviceOrientationControls(camera);
+		//controls = new DeviceOrientationControls(camera);
 
-		//controls = new OrbitControls(camera, renderer.domElement);
-		//controls.update();
+		controls = new OrbitControls(camera, renderer.domElement);
+		controls.update();
 
 		window.addEventListener('resize', onWindowResize, false);
 	}
@@ -181,7 +181,7 @@
 		model.rotation.y += rotSpeed;
 
 		requestAnimationFrame(animate);
-		controls.update();
+		//controls.update();
 		renderer.render(scene, camera);
 	}
 	</script>
