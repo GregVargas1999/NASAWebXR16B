@@ -136,7 +136,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #000000;
+            background-color: rgb(48,33,68);
             opacity: 1;
             transition: 1s opacity;
         }
@@ -155,7 +155,7 @@
             margin: -75px 0 0 -75px;
             border-radius: 50%;
             border: 3px solid transparent;
-            border-top-color: #9370DB;
+            border-top-color: #a53f5b;
             -webkit-animation: spin 2s linear infinite;
             animation: spin 2s linear infinite;
         }
@@ -168,7 +168,7 @@
             bottom: 5px;
             border-radius: 50%;
             border: 3px solid transparent;
-            border-top-color: #BA55D3;
+            border-top-color: #592651;
             -webkit-animation: spin 3s linear infinite;
             animation: spin 3s linear infinite;
         }
@@ -181,7 +181,7 @@
             bottom: 15px;
             border-radius: 50%;
             border: 3px solid transparent;
-            border-top-color: #FF00FF;
+            border-top-color: #ef5966;
             -webkit-animation: spin 1.5s linear infinite;
             animation: spin 1.5s linear infinite;
         }
@@ -255,7 +255,7 @@
 	var container, controls;
 	var camera, povCamera, scene, renderer, tween; 
 	var raycaster, projector, mouseVector, intersects, intersection, obj;
-    var asteroid, satellite, asteroid2, marsSatellite, mars, orbiter, newMin, mesh;
+    var asteroid, satellite, arrivalAsteroid, arrivalSatellite, marsSatellite, mars, orbiter, newMin, mesh;
     var targetPosition = new THREE.Vector3();
     var position = new THREE.Vector3();
     var marsPosition = new THREE.Vector3();
@@ -279,9 +279,10 @@
 	var rotSpeed = 0.0001;
     var rotSpeed2 = 0.002;
 
-    var marsScene, menuScene;
+    var marsScene, menuScene, arrivalScene;
     var mainMenuLoaded = false;
     var marsAssistLoaded = false;
+    var arrivalPhaseLoaded = false;
 
 	init();
 	animate();
@@ -453,6 +454,10 @@
 
         prevButton.style.visibility = "hidden";
         nextButton.style.visibility = "visible";
+
+        nextButton.addEventListener('click', loadArrivalPhase, false);
+        nextButton.addEventListener('touchend', loadArrivalPhase, false);
+
         description.innerHTML = "After launching in August 2022, the spacecraft "+
                                 "flies by Mars and undergoes a gravitational slingshot";
         details.innerHTML = "More detailed description goes here -->\n"+
@@ -651,9 +656,121 @@
         playAnimation.style.display = 'none';
     }
 
-    function arrivalPhase() {
+    function loadArrivalPhase() {
 
+        infoText.innerHTML = "Phase #2 - Arrival at Psyche";
 
+        //beginButton.replaceWith(beginButton.cloneNode(true));
+        beginButton.style.visibility = "hidden";
+        backButton.style.visibility = "hidden";
+        playAnimation.style.visibility = "hidden";
+        prevButton.style.visibility = "visible";
+        nextButton.style.visibility = "visible";
+
+        prevButton.addEventListener('click', loadMarsAssist, false);
+        prevButton.addEventListener('touchend', loadMarsAssist, false);
+
+        description.innerHTML = "After spending around 100 days in the approach phase, "+
+                                "the spacecraft begins to orbit the Psyche asteroid in January 2026";
+        details.innerHTML = "More detailed description goes here -->\n"+
+                            "####################\n####################\n"+
+                            "####################\n####################\n"+
+                            "####################\n####################\n"+
+                            "####################\n####################\n";
+
+		descriptionBox.style.visibility = "visible";
+        
+        closeDetails();
+        
+        camera.position.set(7, 0, 22);
+        camera.rotation.y += Math.PI;
+        camera.lookAt(5, 0, 12);
+        
+        if (arrivalPhaseLoaded) {
+            scene = arrivalScene;
+            return;
+        }
+        
+        loadingScreen.style.display = "block";
+
+        // This creates a soft light so that shadows are less harsh
+        arrivalScene = new THREE.Scene();
+        
+        var ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.1);
+        arrivalScene.add(ambientLight);
+
+        // Point light is similar to directional light, I'm using realistic setting for light falloff
+        // PointLight( color : Integer, intensity : Float, distance : Number, decay : Float )
+        var pointLight = new THREE.PointLight(0xFFFFFF, 1, 0, 1);
+        pointLight.position.set(10000, 0, 0);
+        arrivalScene.add(pointLight);
+
+        // adding SkyBox to the scene
+        let materialArray = [];
+        let texture_ft = new THREE.TextureLoader().load('textures/skybox-textures/front.png');
+        let texture_bk = new THREE.TextureLoader().load('textures/skybox-textures/back.png');
+        let texture_up = new THREE.TextureLoader().load('textures/skybox-textures/top.png');
+        let texture_dn = new THREE.TextureLoader().load('textures/skybox-textures/bottom.png');
+        let texture_rt = new THREE.TextureLoader().load('textures/skybox-textures/right.png');
+        let texture_lf = new THREE.TextureLoader().load('textures/skybox-textures/left.png');
+
+        materialArray.push(new THREE.MeshBasicMaterial({ map: texture_ft }));
+        materialArray.push(new THREE.MeshBasicMaterial({ map: texture_bk }));
+        materialArray.push(new THREE.MeshBasicMaterial({ map: texture_up }));
+        materialArray.push(new THREE.MeshBasicMaterial({ map: texture_dn }));
+        materialArray.push(new THREE.MeshBasicMaterial({ map: texture_rt }));
+        materialArray.push(new THREE.MeshBasicMaterial({ map: texture_lf }));
+
+        for (let i = 0; i < 6; i++)
+            materialArray[i].side = THREE.BackSide;
+
+        let skyboxGeo = new THREE.BoxGeometry(10000, 10000, 10000);
+        let skybox = new THREE.Mesh(skyboxGeo, materialArray);
+        arrivalScene.add(skybox);
+
+        // Build sphere mesh (sun)
+        // SphereGeometry(radius : Float, widthSegments : Integer, heightSegments : Integer)
+        var geometry = new THREE.SphereGeometry(20, 30, 30);
+        var material = new THREE.MeshLambertMaterial(
+            {
+                color: 0xFC9601,
+                emissive: 0xFC9601,
+                emissiveIntensity: 10000
+            });
+        mesh = new THREE.Mesh(geometry, material);
+        mesh.position.set(4750, 0, 0);
+        arrivalScene.add(mesh);
+
+        // Build glow effect
+        // Using png sprite blending
+        var spriteMaterial = new THREE.SpriteMaterial(
+            {
+                map: new THREE.TextureLoader().load('textures/orange glow.png'),
+                color: 0xFFCC33,
+                transparent: true,
+                blending: THREE.AdditiveBlending
+            });
+        var sprite = new THREE.Sprite(spriteMaterial);
+        sprite.scale.set(200, 200, 1.0);
+        mesh.add(sprite); // this centers the glow at the mesh
+
+        loader.load('asteroid.glb', function (gltf) 
+		{
+            arrivalAsteroid = gltf.scene;
+            arrivalAsteroid.scale.set(2,2,2);
+            arrivalAsteroid.position.set(-10, 0,-50);
+			arrivalScene.add(arrivalAsteroid);
+        });
+        loader.load('raw-models/spacecraft-processed.glb', function (gltf) 
+        {
+            arrivalSatellite = gltf.scene;
+            arrivalSatellite.scale.multiplyScalar(1 / 100);
+            arrivalSatellite.position.set(0, 0, 12);
+            arrivalScene.add(arrivalSatellite);
+        });
+        
+        arrivalPhaseLoaded = true;
+        scene = arrivalScene;
     }
 
     function showDetails() {
@@ -772,6 +889,14 @@
         
         satellite.rotation.x += rotSpeed2;
         satellite.rotation.z += rotSpeed2;
+
+        if (arrivalPhaseLoaded) {
+            arrivalSatellite.rotation.x += rotSpeed2;
+            arrivalSatellite.rotation.z += rotSpeed2;
+
+            arrivalAsteroid.rotation.x += rotSpeed2;
+            arrivalAsteroid.rotation.y += rotSpeed2;
+        }
 
         TWEEN.update(time);
 		renderer.render(scene, camera);
