@@ -251,8 +251,11 @@
             renderer.outputEncoding = THREE.sRGBEncoding;
             container.appendChild(renderer.domElement);
 
+            // Checking initial load orientation
+            window.addEventListener('load', function() {onWindowResize(window.orientation)}, true);
+
             // Resizing window on demand and sending orientation
-            window.addEventListener( 'resize', function() {onWindowResize(window.orientation)}, false );
+            window.addEventListener('resize', function() {onWindowResize(window.orientation)}, true);
 
             var pmremGenerator = new THREE.PMREMGenerator(renderer);
             pmremGenerator.compileEquirectangularShader();
