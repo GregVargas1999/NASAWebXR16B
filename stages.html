@@ -251,8 +251,11 @@
             renderer.outputEncoding = THREE.sRGBEncoding;
             container.appendChild(renderer.domElement);
 
+            // Checking initial load orientation
+            window.addEventListener('load', function() {onWindowResize(window.orientation)}, false);
+
             // Resizing window on demand and sending orientation
-            window.addEventListener( 'resize', function() {onWindowResize(window.orientation)}, false );
+            window.addEventListener('resize', function() {onWindowResize(window.orientation)}, false);
 
             var pmremGenerator = new THREE.PMREMGenerator(renderer);
             pmremGenerator.compileEquirectangularShader();
@@ -554,8 +557,13 @@
 
         function onWindowResize(orientation) 
         {
-            switch(orientation) 
-            {  
+            // Checks the browser that is being used
+            if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+            {
+                console.log("Assuming mobile.");
+
+                switch(orientation) 
+                {  
                 case -90: case 90:
                     console.log("Landscape mode.");
 
@@ -572,6 +580,16 @@
 
                     renderer.setSize(window.innerHeight, window.innerWidth);
                     break;
+                }
+            }
+            else
+            {
+                console.log("Assuming desktop.");
+
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+
+                renderer.setSize(window.innerWidth, window.innerHeight);
             }
         }
 
