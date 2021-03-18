@@ -38,7 +38,7 @@
 
         var container, controls;
         var camera, scene, renderer, tween;
-        var intersects;
+        var intersects, clickX, clickY;
         var asteroid, satellite, asteroid2, satellite2, mars, orbiter;
         var targetList = [];
         var mouse = new THREE.Vector2();
@@ -57,17 +57,17 @@
         };
 
         const ringParams = {
-            ring1Inner: 4.7,
-            ring2Inner: 6.2,
-            ring3Inner: 7.7,
-            ring4Inner: 9.2,
-            ring1Outer: 5,
-            ring2Outer: 6.5,
-            ring3Outer: 8,
-            ring4Outer: 9.5,
+            ring1Inner: 4.5,
+            ring2Inner: 6.0,
+            ring3Inner: 7.5,
+            ring4Inner: 9.0,
+            ring1Outer: 5.2,
+            ring2Outer: 6.7,
+            ring3Outer: 8.2,
+            ring4Outer: 9.7,
             orbitSpeed: 1,
             orbitTiltX: -1,
-            orbitTiltY: -0.5,
+            orbitTiltY: 0,
             orbitTiltZ: 0,
             ringHighlightColor: 0x3B0158,
             ringIdleColor: 0x6A6A6A
@@ -76,6 +76,8 @@
         var tween, orbit, orbitContainer;
         var rotSpeed = 0.0001;
         var rotSpeed2 = 0.0001;
+
+        var portrait = false;
 
         init();
         animate();
@@ -240,7 +242,7 @@
             targetList[targetList.length-1].material.color.set(ringParams.ringHighlightColor);
 
             // Listen for mouse clicks on orbit rings
-            document.addEventListener('click', onDocumentMouseDown, false);
+            window.addEventListener('click', onDocumentMouseDown, false);
             // ----------------------------------------------------------- //
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -285,9 +287,21 @@
             event.preventDefault();
             console.log("Click.");
             
-            // update the mouse variable
-            mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-            mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+            if(portrait == false)
+            {
+                // update the mouse variable
+                mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+                mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+            }
+            else
+            {
+                // update the mouse variable
+                clickX = ( event.clientX / window.innerWidth ) * 2 - 1;
+                clickY = - ( event.clientY / window.innerHeight ) * 2 + 1;
+                mouse.x = -clickY;
+                mouse.y = clickX;
+            }
+
             
             // find intersections
 
@@ -571,6 +585,8 @@
                     camera.updateProjectionMatrix();
 
                     renderer.setSize(window.innerWidth, window.innerHeight);
+
+                    portrait = false;
                     break; 
                 default:
                     console.log("Portrait mode.");
@@ -579,6 +595,8 @@
                     camera.updateProjectionMatrix();
 
                     renderer.setSize(window.innerHeight, window.innerWidth);
+
+                    portrait = true;
                     break;
                 }
             }
@@ -590,6 +608,8 @@
                 camera.updateProjectionMatrix();
 
                 renderer.setSize(window.innerWidth, window.innerHeight);
+
+                portrait = false;
             }
         }
 

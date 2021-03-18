@@ -12,6 +12,7 @@
 @media only screen and (orientation:landscape){
     body {
         margin: 0;
+        column-count: 2;
     }
 }
 
