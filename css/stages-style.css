@@ -1,11 +1,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-body {
-    margin: 0;
+
+@media only screen and (orientation:portrait){
+    body {
+        margin: 0;
+        height: 100vw;
+        transform: rotate(90deg);
+    }
+}
+
+@media only screen and (orientation:landscape){
+    body {
+        margin: 0;
+    }
 }
 
 canvas {
     display: block;
+    outline: none;
+    border: none;
 }
 
 #card {

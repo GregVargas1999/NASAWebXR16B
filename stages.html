@@ -251,6 +251,9 @@
             renderer.outputEncoding = THREE.sRGBEncoding;
             container.appendChild(renderer.domElement);
 
+            // Resizing window on demand and sending orientation
+            window.addEventListener( 'resize', function() {onWindowResize(window.orientation)}, false );
+
             var pmremGenerator = new THREE.PMREMGenerator(renderer);
             pmremGenerator.compileEquirectangularShader();
 
@@ -549,11 +552,27 @@
             return orbitContainer;
         }
 
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
+        function onWindowResize(orientation) 
+        {
+            switch(orientation) 
+            {  
+                case -90: case 90:
+                    console.log("Landscape mode.");
 
-            renderer.setSize(window.innerWidth, window.innerHeight);
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                    break; 
+                default:
+                    console.log("Portrait mode.");
+
+                    camera.aspect = window.innerHeight / window.innerWidth;
+                    camera.updateProjectionMatrix();
+
+                    renderer.setSize(window.innerHeight, window.innerWidth);
+                    break;
+            }
         }
 
         function animate(time) {
