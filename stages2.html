@@ -635,7 +635,7 @@
 		var ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.1);
         menuScene.add(ambientLight);
         
-        loader.load('satellite.glb', function (gltf) 
+        loader.load('compressed-spacecraft.glb', function (gltf) 
 		{
 			satellite = gltf.scene;
             satellite.scale.set(0.007,0.007,0.007);
@@ -653,7 +653,7 @@
         // Load mars model
         //loader = new GLTFLoader( LoadingManager ).setPath('models/');
         
-        loader.load('mars.glb', function (gltf) {
+        loader.load('mars-compressed.glb', function (gltf) {
             mars = gltf.scene
             mars.scale.set(0.005, 0.005, 0.005);
             mars.position.set(20, 0, 0);
@@ -661,7 +661,7 @@
         });
         
         // Load satellite model
-        loader.load('raw-models/spacecraft-processed.glb', function (gltf) {
+        loader.load('compressed-spacecraft.glb', function (gltf) {
             marsSatellite = gltf.scene;
             marsSatellite.scale.multiplyScalar(1 / 100); // scale model 1/100th original size
             marsSatellite.position.set(15, 0, 20);
@@ -772,14 +772,14 @@
         var ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.1);
         arrivalScene.add(ambientLight);
 
-        loader.load('asteroid.glb', function (gltf) 
+        loader.load('asteroid-compressed.glb', function (gltf) 
 		{
             arrivalAsteroid = gltf.scene;
             arrivalAsteroid.scale.set(2,2,2);
             arrivalAsteroid.position.set(-10, 0,-50);
 			arrivalScene.add(arrivalAsteroid);
         });
-        loader.load('raw-models/spacecraft-processed.glb', function (gltf) 
+        loader.load('compressed-spacecraft.glb', function (gltf) 
         {
             arrivalSatellite = gltf.scene;
             arrivalSatellite.scale.multiplyScalar(1 / 100);
@@ -793,7 +793,7 @@
         var ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.1);
         orbitalScene.add(ambientLight);
         
-        loader.load('raw-models/packed-asteroid-processed.glb', function (gltf) {
+        loader.load('asteroid-compressed.glb', function (gltf) {
             orbitalAsteroid = gltf.scene
             orbitalAsteroid.rotation.x += 300;
             orbitalAsteroid.scale.set(1.5,1.5,1.5);
@@ -801,7 +801,7 @@
         });
 
         // Load satellite model
-        loader.load('raw-models/spacecraft-processed.glb', function (gltf) {
+        loader.load('compressed-spacecraft.glb', function (gltf) {
             orbitalSatellite = gltf.scene;
             orbitalSatellite.scale.multiplyScalar(10 / 1000); // scale model 1/1000th original size
             orbitalSatellite.rotation.z = 180;
