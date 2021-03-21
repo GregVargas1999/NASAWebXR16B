@@ -125,7 +125,6 @@
             background:  rgba(255, 255, 255, 0.2);
         }
         #descriptionBox    {
-            visibility: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -153,7 +152,6 @@
             text-align: center;
         }
         #details    {
-            display: none;
             opacity: 1;
             font-size: 12px;
             line-height: 16px;
@@ -465,7 +463,8 @@
         backButton.style.visibility = "visible";
         playAnimation.style.visibility = "visible";
         nextButton.style.visibility = "visible";
-        description.style.display = "block";
+        descriptionBox.style.visibility = "visible";
+	closeDetails();
 
         removeAllListeners(nextButton);
         nextButton.addEventListener('click', showArrivalPhase, false);
@@ -491,7 +490,8 @@
         hideAllButtons();
         prevButton.style.visibility = "visible";
         nextButton.style.visibility = "visible";
-        description.style.display = "block";
+        descriptionBox.style.visibility = "visible";
+	closeDetails();
 
         removeAllListeners(prevButton);
         prevButton.addEventListener('click', showMarsAssist, false);
@@ -524,7 +524,8 @@
         orbitBButton.style.visibility = "visible";
         orbitCButton.style.visibility = "visible";
         orbitDButton.style.visibility = "visible";
-        description.style.display = "block";
+        descriptionBox.style.visibility = "visible";
+	closeDetails();
 
         removeAllListeners(prevButton);
         prevButton.addEventListener('click', showArrivalPhase, false);
@@ -996,8 +997,7 @@
     }
 
     function hideAllButtons()   {
-        description.style.display = "none";
-        details.style.display = "none";
+        descriptionBox.style.visibility = "hidden";
         beginButton.style.visibility = "hidden";
         backButton.style.visibility = "hidden";
         prevButton.style.visibility = "hidden";
