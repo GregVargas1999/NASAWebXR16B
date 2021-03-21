@@ -249,7 +249,7 @@
 
 <body>
     <section id="loading-screen">
-        <div id='loadText' top='160px'>Loading... 0%</div>
+        <div id='loadText'>Loading... 0%</div>
         <div id="loader"></div>
     </section>
 
@@ -444,9 +444,104 @@
         loadArrivalPhase();
         loadOrbitalPhase();
 
-        //showMainMenu();
-        showOrbitalPhase();
+        showMainMenu();
 	}
+
+    function showMainMenu() {
+        infoText.innerHTML = "The Psyche Asteroid Mission";
+
+        hideAllButtons();
+        beginButton.style.visibility = "visible";
+
+        camera.position.set(0, 0, 22);
+        camera.lookAt( new THREE.Vector3(0, 0, 0 ));
+        scene = menuScene;
+    }
+
+    function showMarsAssist()   {
+        infoText.innerHTML = "Phase #1 - Mars Gravity Assist"
+
+        hideAllButtons();
+        backButton.style.visibility = "visible";
+        playAnimation.style.visibility = "visible";
+        nextButton.style.visibility = "visible";
+        description.style.display = "block";
+
+        removeAllListeners(nextButton);
+        nextButton.addEventListener('click', showArrivalPhase, false);
+        nextButton.addEventListener('touchend', showArrivalPhase, false);
+
+        description.innerHTML = "After launching in August 2022, the spacecraft "+
+                                "flies by Mars and undergoes a gravitational slingshot";
+        details.innerHTML = "More detailed description goes here -->\n"+
+                            "####################\n####################\n"+
+                            "####################\n####################\n"+
+                            "####################\n####################\n"+
+                            "####################\n####################\n";
+        
+        camera.position.set(10, 50, 8);
+        camera.rotation.y += Math.PI;
+        camera.lookAt(10, 0, 8);
+        scene = marsScene;
+    }
+
+    function showArrivalPhase() {
+        infoText.innerHTML = "Phase #2 - Arrival at Psyche";
+
+        hideAllButtons();
+        prevButton.style.visibility = "visible";
+        nextButton.style.visibility = "visible";
+        description.style.display = "block";
+
+        removeAllListeners(prevButton);
+        prevButton.addEventListener('click', showMarsAssist, false);
+        prevButton.addEventListener('touchend', showMarsAssist, false);
+
+        removeAllListeners(nextButton);
+        nextButton.addEventListener('click', showOrbitalPhase, false);
+        nextButton.addEventListener('touchend', showOrbitalPhase, false);
+        
+        description.innerHTML = "After spending around 100 days in the approach phase, "+
+                                "the spacecraft begins to orbit the Psyche asteroid in January 2026";
+        details.innerHTML = "More detailed description goes here -->\n"+
+                            "####################\n####################\n"+
+                            "####################\n####################\n"+
+                            "####################\n####################\n"+
+                            "####################\n####################\n";
+        
+        camera.position.set(7, 0, 22);
+        camera.rotation.y += Math.PI;
+        camera.lookAt(5, 0, 12);
+        scene = arrivalScene;
+    }
+
+    function showOrbitalPhase() {
+        infoText.innerHTML = "Phase #3 - Orbiting Psyche";
+
+        hideAllButtons();
+        prevButton.style.visibility = "visible";
+        orbitAButton.style.visibility = "visible";
+        orbitBButton.style.visibility = "visible";
+        orbitCButton.style.visibility = "visible";
+        orbitDButton.style.visibility = "visible";
+        description.style.display = "block";
+
+        removeAllListeners(prevButton);
+        prevButton.addEventListener('click', showArrivalPhase, false);
+        prevButton.addEventListener('touchend', showArrivalPhase, false);
+
+        description.innerHTML = "In the final 100 days, the spacecraft will use a gamma ray and"+ 
+                                " neutron spectrometer to learn what elements make up Psyche.";
+        details.innerHTML = "More detailed description goes here -->\n"+
+                            "####################\n####################\n"+
+                            "####################\n####################\n"+
+                            "####################\n####################\n"+
+                            "####################\n####################\n";
+        
+        camera.position.set(0.5, 50, 0);
+        camera.lookAt( 0.5, 0, 0 );
+        scene = orbitalScene;
+    }
 
     function loadSkyBox()   {
         
@@ -535,27 +630,6 @@
         orbitalScene.add(mesh4);
     }
 
-    function showMainMenu() {
-
-        backButton.style.visibility = "hidden";
-        prevButton.style.visibility = "hidden";
-        nextButton.style.visibility = "hidden";
-        playAnimation.style.visibility = "hidden";
-        beginButton.style.visibility = "visible";
-        orbitAButton.style.visibility = "hidden";
-        orbitBButton.style.visibility = "hidden";
-        orbitCButton.style.visibility = "hidden";
-        orbitDButton.style.visibility = "hidden";
-
-
-        infoText.innerHTML = "The Psyche Asteroid Mission";
-
-        camera.position.set(0, 0, 22);
-        camera.lookAt( new THREE.Vector3(0, 0, 0 ));
-
-        scene = menuScene;
-    }
-
     function loadMainMenu() {
 
 		var ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.1);
@@ -568,43 +642,6 @@
             satellite.position.set(0,0,18);
             menuScene.add(satellite);
         });
-    }
-
-    function showMarsAssist()   {
-        infoText.innerHTML = "Phase #1 - Mars Gravity Assist"
-
-        //beginButton.replaceWith(beginButton.cloneNode(true));
-        beginButton.style.visibility = "hidden";
-        backButton.style.visibility = "visible";
-        playAnimation.style.visibility = "visible";
-        prevButton.style.visibility = "hidden";
-        nextButton.style.visibility = "visible";
-        orbitAButton.style.visibility = "hidden";
-        orbitBButton.style.visibility = "hidden";
-        orbitCButton.style.visibility = "hidden";
-        orbitDButton.style.visibility = "hidden";
-
-        removeAllListeners(nextButton);
-        nextButton.addEventListener('click', showArrivalPhase, false);
-        nextButton.addEventListener('touchend', showArrivalPhase, false);
-
-        description.innerHTML = "After launching in August 2022, the spacecraft "+
-                                "flies by Mars and undergoes a gravitational slingshot";
-        details.innerHTML = "More detailed description goes here -->\n"+
-                            "####################\n####################\n"+
-                            "####################\n####################\n"+
-                            "####################\n####################\n"+
-                            "####################\n####################\n";
-
-		descriptionBox.style.visibility = "visible";
-        
-        closeDetails();
-        
-        camera.position.set(10, 50, 8);
-        camera.rotation.y += Math.PI;
-        camera.lookAt(10, 0, 8);
-        
-        scene = marsScene;
     }
 
     function loadMarsAssist() {
@@ -730,47 +767,6 @@
         playAnimation.style.display = 'none';
     }
 
-    function showArrivalPhase() {
-        infoText.innerHTML = "Phase #2 - Arrival at Psyche";
-
-        //beginButton.replaceWith(beginButton.cloneNode(true));
-        beginButton.style.visibility = "hidden";
-        backButton.style.visibility = "hidden";
-        playAnimation.style.visibility = "hidden";
-        prevButton.style.visibility = "visible";
-        nextButton.style.visibility = "visible";
-        orbitAButton.style.visibility = "hidden";
-        orbitBButton.style.visibility = "hidden";
-        orbitCButton.style.visibility = "hidden";
-        orbitDButton.style.visibility = "hidden";
-
-        removeAllListeners(prevButton);
-        prevButton.addEventListener('click', showMarsAssist, false);
-        prevButton.addEventListener('touchend', showMarsAssist, false);
-
-        removeAllListeners(nextButton);
-        nextButton.addEventListener('click', showOrbitalPhase, false);
-        nextButton.addEventListener('touchend', showOrbitalPhase, false);
-        
-        description.innerHTML = "After spending around 100 days in the approach phase, "+
-                                "the spacecraft begins to orbit the Psyche asteroid in January 2026";
-        details.innerHTML = "More detailed description goes here -->\n"+
-                            "####################\n####################\n"+
-                            "####################\n####################\n"+
-                            "####################\n####################\n"+
-                            "####################\n####################\n";
-
-		descriptionBox.style.visibility = "visible";
-        
-        closeDetails();
-        
-        camera.position.set(7, 0, 22);
-        camera.rotation.y += Math.PI;
-        camera.lookAt(5, 0, 12);
-        
-        scene = arrivalScene;
-    }
-
     function loadArrivalPhase() {
         // This creates a soft light so that shadows are less harsh
         var ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.1);
@@ -790,32 +786,6 @@
             arrivalSatellite.position.set(0, 0, 12);
             arrivalScene.add(arrivalSatellite);
         });
-    }
-
-    function showOrbitalPhase() {
-        
-        backButton.style.visibility = "hidden";
-        prevButton.style.visibility = "visible";
-        nextButton.style.visibility = "hidden";
-        playAnimation.style.visibility = "hidden";
-        beginButton.style.visibility = "hidden";
-        orbitAButton.style.visibility = "visible";
-        orbitBButton.style.visibility = "visible";
-        orbitCButton.style.visibility = "visible";
-        orbitDButton.style.visibility = "visible";
-
-        //infoText.innerHTML = "Phase #3 - Orbiting Psyche";
-
-        removeAllListeners(prevButton);
-        prevButton.addEventListener('click', showArrivalPhase, false);
-        prevButton.addEventListener('touchend', showArrivalPhase, false);
-
-        camera.position.set(0.5, 50, 0);
-        camera.lookAt( 0.5, 0, 0 );
-
-        descriptionBox.style.visibility = "hidden";
-        
-        scene = orbitalScene;
     }
 
     function loadOrbitalPhase() {
@@ -846,7 +816,7 @@
         orbitPathC = makeOrbitPath(ringParams.ring2Inner, ringParams.ring2Outer, ringParams.orbitTiltX, 
                                    ringParams.orbitTiltY, ringParams.orbitTiltZ, ringParams.ringIdleColor);
 
-        orbitPathB = makeOrbitPath(ringParams.ring3Inner, ringParams.rin3Outer, ringParams.orbitTiltX, 
+        orbitPathB = makeOrbitPath(ringParams.ring3Inner, ringParams.ring3Outer, ringParams.orbitTiltX, 
                                    ringParams.orbitTiltY, ringParams.orbitTiltZ, ringParams.ringIdleColor);
 
         orbitPathA = makeOrbitPath(ringParams.ring4Inner, ringParams.ring4Outer, ringParams.orbitTiltX, 
@@ -897,20 +867,14 @@
         
         return ring;
     }
-    //intersects[0].object.material.color.set(ringParams.ringHighlightColor); 
+  
     function orbitA()   {
-        orbitContainer.remove(orbitPathA);
-        orbitContainer.remove(orbitPathB);
-        orbitContainer.remove(orbitPathC);
-        orbitContainer.remove(orbitPathD);
+        orbitPathB.material.color.set(ringParams.ringIdleColor);
+        orbitPathC.material.color.set(ringParams.ringIdleColor);
+        orbitPathD.material.color.set(ringParams.ringIdleColor);
 
-        orbitPathD = makeOrbitPath(5, 0xf47c33);
-
-        orbitPathC = makeOrbitPath(7.5, 0xf47c33);
-
-        orbitPathB = makeOrbitPath(10, 0xf47c33);
-
-        orbitPathA = makeOrbitPath(15, 0x592651);
+        orbitPathA.material.color.set(ringParams.ringHighlightColor); 
+        
         params.orbitDistance = 15;
         params.orbitSpeed = 1;
         orbitalSatellite.position.set(15, 0, 0);
@@ -918,92 +882,91 @@
         modifyOrbit(params.orbitDistance, params.orbitTiltX, params.orbitTiltY, 
                     params.orbitTiltZ, params.orbitSpeed);
 
-        orbitContainer.add(orbitPathA);
-        orbitContainer.add(orbitPathB);
-        orbitContainer.add(orbitPathC);
-        orbitContainer.add(orbitPathD);
-        orbitalScene.add(orbitContainer);
+        description.innerHTML = "In the final 100 days, the spacecraft will use a gamma ray and"+ 
+                                " neutron spectrometer to learn what elements make up Psyche.";
+        details.innerHTML = "More detailed description goes here -->\n"+
+                            "####################\n####################\n"+
+                            "####################\n####################\n"+
+                            "####################\n####################\n"+
+                            "####################\n####################\n";
+        
+        closeDetails();
     }
 
-        function orbitB()   {
-        orbitContainer.remove(orbitPathA);
-        orbitContainer.remove(orbitPathB);
-        orbitContainer.remove(orbitPathC);
-        orbitContainer.remove(orbitPathD);
+    function orbitB()   {
+        
+        orbitPathA.material.color.set(ringParams.ringIdleColor);
+        orbitPathC.material.color.set(ringParams.ringIdleColor);
+        orbitPathD.material.color.set(ringParams.ringIdleColor);
 
-        orbitPathD = makeOrbitPath(5, 0xf47c33);
-
-        orbitPathC = makeOrbitPath(7.5, 0xf47c33);
-
-        orbitPathB = makeOrbitPath(10, 0x592651);
-
-        orbitPathA = makeOrbitPath(15, 0xf47c33);
-        params.orbitDistance = 10;
+        orbitPathB.material.color.set(ringParams.ringHighlightColor); 
+        
+        params.orbitDistance = 12;
         params.orbitSpeed = 1.5;
-        orbitalSatellite.position.set(10, 0, 0);
+        orbitalSatellite.position.set(12, 0, 0);
 
         modifyOrbit(params.orbitDistance, params.orbitTiltX, params.orbitTiltY, 
                     params.orbitTiltZ, params.orbitSpeed);
 
-        orbitContainer.add(orbitPathA);
-        orbitContainer.add(orbitPathB);
-        orbitContainer.add(orbitPathC);
-        orbitContainer.add(orbitPathD);
-        orbitalScene.add(orbitContainer);
+        description.innerHTML = "During this 100 day orbit, the Psyche Spacecraft will measure"+ 
+                                " Psyche's gravity field to high precision.";
+        details.innerHTML = "More detailed description goes here -->\n"+
+                            "####################\n####################\n"+
+                            "####################\n####################\n"+
+                            "####################\n####################\n"+
+                            "####################\n####################\n";
+
+        closeDetails();
     }
 
     function orbitC()   {
-        orbitContainer.remove(orbitPathA);
-        orbitContainer.remove(orbitPathB);
-        orbitContainer.remove(orbitPathC);
-        orbitContainer.remove(orbitPathD);
+        orbitPathA.material.color.set(ringParams.ringIdleColor);
+        orbitPathB.material.color.set(ringParams.ringIdleColor);
+        orbitPathD.material.color.set(ringParams.ringIdleColor);
 
-        orbitPathD = makeOrbitPath(5, 0xf47c33);
-
-        orbitPathC = makeOrbitPath(7.5, 0x592651);
-
-        orbitPathB = makeOrbitPath(10, 0xf47c33);
-
-        orbitPathA = makeOrbitPath(15, 0xf47c33);
-        params.orbitDistance = 7.5;
+        orbitPathC.material.color.set(ringParams.ringHighlightColor); 
+        
+        params.orbitDistance = 8;
         params.orbitSpeed = 2;
-        orbitalSatellite.position.set(7.5, 0, 0);
+        orbitalSatellite.position.set(8, 0, 0);
 
         modifyOrbit(params.orbitDistance, params.orbitTiltX, params.orbitTiltY, 
                     params.orbitTiltZ, params.orbitSpeed);
+        
+        description.innerHTML = "The best lighting happens in this 80 day orbit, and the spacecraft"+
+                                " is able to map the surface of Psyche.";
+        details.innerHTML = "More detailed description goes here -->\n"+
+                            "####################\n####################\n"+
+                            "####################\n####################\n"+
+                            "####################\n####################\n"+
+                            "####################\n####################\n";
 
-        orbitContainer.add(orbitPathA);
-        orbitContainer.add(orbitPathB);
-        orbitContainer.add(orbitPathC);
-        orbitContainer.add(orbitPathD);
-        orbitalScene.add(orbitContainer);
+        closeDetails();
     }
 
     function orbitD()   {
-        orbitContainer.remove(orbitPathA);
-        orbitContainer.remove(orbitPathB);
-        orbitContainer.remove(orbitPathC);
-        orbitContainer.remove(orbitPathD);
+        orbitPathA.material.color.set(ringParams.ringIdleColor);
+        orbitPathB.material.color.set(ringParams.ringIdleColor);
+        orbitPathC.material.color.set(ringParams.ringIdleColor);
 
-        orbitPathD = makeOrbitPath(5, 0x592651);
-
-        orbitPathC = makeOrbitPath(7.5, 0xf47c33);
-
-        orbitPathB = makeOrbitPath(10, 0xf47c33);
-
-        orbitPathA = makeOrbitPath(15, 0xf47c33);
+        orbitPathD.material.color.set(ringParams.ringHighlightColor); 
+        
         params.orbitDistance = 5;
         params.orbitSpeed = 2.5;
         orbitalSatellite.position.set(5, 0, 0);
 
         modifyOrbit(params.orbitDistance, params.orbitTiltX, params.orbitTiltY, 
                     params.orbitTiltZ, params.orbitSpeed);
+        
+        description.innerHTML = "The Psyche Spacecraft will spend 56 days in this orbit to get"+
+                                " a reliable model of the gravity field for planning the next orbits.";
+        details.innerHTML = "More detailed description goes here -->\n"+
+                            "####################\n####################\n"+
+                            "####################\n####################\n"+
+                            "####################\n####################\n"+
+                            "####################\n####################\n";
 
-        orbitContainer.add(orbitPathA);
-        orbitContainer.add(orbitPathB);
-        orbitContainer.add(orbitPathC);
-        orbitContainer.add(orbitPathD);
-        orbitalScene.add(orbitContainer);
+        closeDetails();
     }
 
     function showDetails() {
@@ -1032,6 +995,19 @@
         descriptionBox.style.width = "45%";
     }
 
+    function hideAllButtons()   {
+        description.style.display = "none";
+        details.style.display = "none";
+        beginButton.style.visibility = "hidden";
+        backButton.style.visibility = "hidden";
+        prevButton.style.visibility = "hidden";
+        nextButton.style.visibility = "hidden";
+        playAnimation.style.visibility = "hidden";
+        orbitAButton.style.visibility = "hidden";
+        orbitBButton.style.visibility = "hidden";
+        orbitCButton.style.visibility = "hidden";
+        orbitDButton.style.visibility = "hidden";
+    }
     function removeAllListeners(button) {
         button.removeEventListener('click', showMarsAssist, false);
         button.removeEventListener('touchend', showMarsAssist, false);
@@ -1071,13 +1047,17 @@
         satellite.rotation.x += rotSpeed2;
         satellite.rotation.z += rotSpeed2;
 
-        //if (arrivalPhaseLoaded) {
-            arrivalSatellite.rotation.x += rotSpeed2;
-            arrivalSatellite.rotation.z += rotSpeed2;
+        arrivalSatellite.rotation.x += rotSpeed2;
+        arrivalSatellite.rotation.z += rotSpeed2;
 
-            arrivalAsteroid.rotation.x += rotSpeed2;
-            arrivalAsteroid.rotation.y += rotSpeed2;
-        //}
+        arrivalAsteroid.rotation.x += rotSpeed2;
+        arrivalAsteroid.rotation.y += rotSpeed2;
+
+        orbitalSatellite.rotation.x += rotSpeed2;
+        orbitalSatellite.rotation.z += rotSpeed2;
+
+        orbitalAsteroid.rotation.x += rotSpeed2;
+        orbitalAsteroid.rotation.y += rotSpeed2;
 
         TWEEN.update(time);
 		renderer.render(scene, camera);
