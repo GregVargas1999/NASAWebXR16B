@@ -78,6 +78,12 @@ canvas {
     color: #592651;
 }
 
+#backButton {
+    left: 0;
+    right: 40;
+    color: #592651;
+}
+
 #prevButton {
     left: 0;
     right: 30;
@@ -88,6 +94,45 @@ canvas {
     left: 30;
     right: 0;
     color: #592651;
+}
+
+#playAnimation {
+    color: #592651;
+    top: 35vmin;
+    width: 20vmax;
+    height: 5vmax;
+    font-size: 1.5vmax;
+}
+#orbitAButton {
+
+    color: #592651;
+    top: 35vmin;
+    width: 20vmax;
+    height: 5vmax;
+    font-size: 1.5vmax;
+}
+#orbitBButton {
+    right: 0;
+    color: #592651;
+    top: 35vmin;
+    width: 20vmax;
+    height: 5vmax;
+    font-size: 1.5vmax;
+}
+#orbitCButton {
+    color: #592651;
+    top: 50vmin;
+    width: 20vmax;
+    height: 5vmax;
+    font-size: 1.5vmax;
+}
+#orbitDButton {
+    right: 0;
+    color: #592651;
+    top: 50vmin;
+    width: 20vmax;
+    height: 5vmax;
+    font-size: 1.5vmax;
 }
 
 .tooltip {
@@ -146,6 +191,85 @@ canvas {
 
 .ml2 {
     font-family: 'Oswald', sans-serif;
-    font-size: 6vmax;
+    font-size: 5vmax;
     font-weight: 300;
   }
+
+#loading-screen {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(48, 33, 68);
+    opacity: 1;
+    transition: 1s opacity;
+}
+#loading-screen.fade-out {
+    opacity: 0;
+}
+#loader {
+    display: block;
+    position: relative;
+    left: 50%;
+    top: 50%;
+    width: 150px;
+    height: 150px;
+    margin: -75px 0 0 -75px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #a53f5b;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+#loader:before {
+    content: "";
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #592651;
+    -webkit-animation: spin 3s linear infinite;
+    animation: spin 3s linear infinite;
+}
+#loader:after {
+    content: "";
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #ef5966;
+    -webkit-animation: spin 1.5s linear infinite;
+    animation: spin 1.5s linear infinite;
+}
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+@keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
