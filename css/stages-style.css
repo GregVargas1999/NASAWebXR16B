@@ -4,15 +4,22 @@
 @media only screen and (orientation:portrait){
     body {
         margin: 0;
+        transform-origin: left top;
+        transform: rotate(90deg);   
         height: 100vw;
-        transform: rotate(90deg);
+        width: 100vh;
+        overflow-x: hidden;
+        position: absolute;
+        top: 0;
+        left: 100%;
     }
 }
 
 @media only screen and (orientation:landscape){
     body {
         margin: 0;
-        column-count: 2;
+        height: 100vh;
+        width: 100vw;
     }
 }
 
@@ -45,8 +52,8 @@ canvas {
     position: absolute;
     font-family: 'Roboto', sans-serif;
     margin: auto;
-    height: 40px;
-    font-size: 24px;
+    height: 5vmax;
+    font-size: 3vmax;
     background: #f47c33;
     /*height:  38px;
     line-height:  40px;*/
@@ -54,7 +61,7 @@ canvas {
     /*display:  inline-block;*/
     float: none;
     text-align: center;
-    width: 220px;
+    width: 25vmax;
     /*padding:  0px!important;
     /*font-size:  14px;*/
     color: #592651;
