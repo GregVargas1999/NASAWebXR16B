@@ -87,7 +87,7 @@ canvas {
     position: absolute;
     font-family: 'Roboto', sans-serif;
     margin: auto;
-    height: 10vmin;
+    height: 5vmax;
     font-size: 4vmin;
     background: #f47c33;
     /*height:  38px;
