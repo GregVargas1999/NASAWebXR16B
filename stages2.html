@@ -9,14 +9,17 @@
     <link rel="stylesheet" href="css/stages-style.css">
 </head>
 
+<audio id="buttonClick" src="sound/button_click.wav" autoplay="false" ></audio>
+
 <body>
+    <section id="transition-screen"></section>
     <section id="loading-screen">
         <div id='loadText'>Loading... 0%</div>
         <div id="loader"></div>
     </section>
 
     <div id='card'>
-        <div id='info' class="ml2">The Psyche Asteroid Mission</div>
+        <div id='info' class="ml2"></div>
         <button class="button" id='backButton'>&#128281 Main Menu</button>
         <div>
             <button class="button" id='beginButton'>Begin Journey</button>
@@ -70,7 +73,7 @@
         var beginButton, backButton, nextButton, prevButton, playAnimation;
         var infoText, loadingText, moreInfo, canvasCard, description, details, descriptionBox;
         var set2Idle = true;
-        var loader, loadingManager, loadingScreen;
+        var loader, loadingManager, loadingScreen, transitionScreen, buttonClick;
         const params = {
             povCameraActive: false,
             orbitPathActive: true,
@@ -128,7 +131,6 @@
             backButton = document.getElementById('backButton');
             prevButton = document.getElementById('prevButton');
             nextButton = document.getElementById('nextButton');
-            //orbitalButtons = document.getElementById('orbitalButtons');
             description = document.getElementById('description');
             descriptionBox = document.getElementById('descriptionBox');
             details = document.getElementById('details');
@@ -161,13 +163,32 @@
             document.getElementById("orbitDButton").addEventListener("touchend", orbitD);
 
             loadingScreen = document.getElementById('loading-screen');
+            transitionScreen = document.getElementById('transition-screen');
+            
+            buttonClick = document.getElementById('buttonClick');
+            
+            var buttons = document.getElementsByClassName('button');
+
+            for (var button of buttons) {
+                button.addEventListener("click", function () {
+                    buttonClick.play();
+                    buttonClick.currentTime = 0;});
+                button.addEventListener("touchend", function () {
+                    buttonClick.play();
+                    buttonClick.currentTime = 0;});
+            }
 
             loadingManager = new THREE.LoadingManager();
             loadingManager.onProgress = function (item, loaded, total) {
                 loadingText.innerHTML = 'Loading... ' + (loaded / total * 100).toFixed(0) + '%';
             };
             loadingManager.onLoad = function () {
-                loadingScreen.style.display = "none";
+                loadingScreen.classList.remove("fade-out");
+                loadingScreen.classList.add("fade-out");
+                setTimeout(function() {
+                    loadingScreen.style.display = "none";
+                }, 2000);
+                showMainMenu();
             };
 
             loader = new GLTFLoader(loadingManager).setPath('models/');
@@ -200,17 +221,28 @@
             pmremGenerator.compileEquirectangularShader();
 
             mouseVector = new THREE.Vector3();
+
+            hideAllButtons();
             loadSkyBox();
             loadMainMenu();
             loadMarsAssist();
             loadArrivalPhase();
             loadOrbitalPhase();
 
-            showMainMenu();
             textAnimate();
         }
 
+        function changeScene() {
+            // Trigger scene transition animation
+            transitionScreen.style.display = "block";
+            transitionScreen.classList.remove("screen-change");
+            transitionScreen.classList.add("screen-change");
+        }
+
         function showMainMenu() {
+            changeScene();
+            setTimeout(function() {
+            
             infoText.innerHTML = "The Psyche Asteroid Mission";
 
             textAnimate();
@@ -220,9 +252,18 @@
             camera.position.set(0, 0, 22);
             camera.lookAt(new THREE.Vector3(0, 0, 0));
             scene = menuScene;
+            
+            }, 800);
+
+            setTimeout(function() {
+                transitionScreen.style.display = "none";
+            }, 2000);
         }
 
         function showMarsAssist() {
+            changeScene();
+            setTimeout(function() {
+            
             infoText.innerHTML = "Phase #1 - Mars Gravity Assist"
 
             textAnimate();
@@ -249,9 +290,18 @@
             camera.rotation.y += Math.PI;
             camera.lookAt(10, 0, 8);
             scene = marsScene;
+
+            }, 800);
+
+            setTimeout(function() {
+                transitionScreen.style.display = "none";
+            }, 2000);
         }
 
         function showArrivalPhase() {
+            changeScene();
+            setTimeout(function() {
+
             infoText.innerHTML = "Phase #2 - Arrival at Psyche";
 
             textAnimate();
@@ -281,9 +331,19 @@
             camera.rotation.y += Math.PI;
             camera.lookAt(5, 0, 12);
             scene = arrivalScene;
+
+            }, 800);
+
+            setTimeout(function() {
+                transitionScreen.style.display = "none";
+            }, 2000);
         }
 
         function showOrbitalPhase() {
+            //buttonClick.play();
+            changeScene();
+            setTimeout(function() {
+
             infoText.innerHTML = "Phase #3 - Orbiting Psyche";
 
             textAnimate();
@@ -300,17 +360,17 @@
             prevButton.addEventListener('click', showArrivalPhase, false);
             prevButton.addEventListener('touchend', showArrivalPhase, false);
 
-            description.innerHTML = "In the final 100 days, the spacecraft will use a gamma ray and" +
-                " neutron spectrometer to learn what elements make up Psyche.";
-            details.innerHTML = "More detailed description goes here -->\n" +
-                "####################\n####################\n" +
-                "####################\n####################\n" +
-                "####################\n####################\n" +
-                "####################\n####################\n";
+            orbitA()
 
             camera.position.set(0.5, 50, 0);
             camera.lookAt(0.5, 0, 0);
             scene = orbitalScene;
+            
+            }, 800);
+
+            setTimeout(function() {
+                transitionScreen.style.display = "none";
+            }, 2000);
         }
 
         function loadSkyBox() {
