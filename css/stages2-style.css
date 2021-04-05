@@ -116,6 +116,13 @@ canvas {
   color: #592651;
 }
 
+#creditsButton {
+  left: 0;
+  right: 0;
+  top: 20vmax;
+  color: #592651;
+}
+
 #backButton {
   left: 0;
   right: 40;
