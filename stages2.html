@@ -99,7 +99,7 @@
 
     <div id='card'>
         <div id='info' class="ml2"></div>
-        <div id='suggestion' class='suggestion' style="margin: 5%;">View in Landscape Mode for the Best Experience</div>
+        <div id='suggestion' class='suggestion'>View in Landscape Mode for the Best Experience</div>
         <button class="button" id='backButton'>&#128281 Main Menu</button>
         <div>
             <button class="button" id='beginButton'>Begin Journey</button>
@@ -115,6 +115,10 @@
             <div id='description'></div>
             <div id='details'></div>
             <button id='moreInfo' alignment='center'>&#8505 More info
+        </div>
+
+        <div id='descriptionBox2'>
+            <div id='description2'></div>
         </div>
 
         <div>
@@ -152,7 +156,7 @@
         var raycaster, projector, mouseVector, intersects, intersection, obj;
         var asteroid, satellite, arrivalAsteroid, arrivalSatellite, marsSatellite, orbitalAsteroid, orbitalSatellite, mars, orbiter, newMin, mesh;
         var beginButton, backButton, creditsButton, xButton, nextButton, prevButton, playAnimation;
-        var infoText, loadingText, moreInfo, canvasCard, description, details, descriptionBox, suggestionText;
+        var infoText, loadingText, moreInfo, canvasCard, description, details, descriptionBox,descriptionBox2, suggestionText;
         var set2Idle = true;
         var loader, loadingManager, loadingScreen, transitionScreen, creditsScreen, buttonClick;
         const params = {
@@ -217,6 +221,7 @@
             nextButton = document.getElementById('nextButton');
             description = document.getElementById('description');
             descriptionBox = document.getElementById('descriptionBox');
+            descriptionBox2 = document.getElementById('descriptionBox2');
             details = document.getElementById('details');
             moreInfo = document.getElementById('moreInfo');
 
@@ -463,7 +468,7 @@
                 orbitBButton.style.visibility = "visible";
                 orbitCButton.style.visibility = "visible";
                 orbitDButton.style.visibility = "visible";
-                descriptionBox.style.visibility = "visible";
+                descriptionBox2.style.visibility = "visible";
                 closeDetails();
 
                 removeAllListeners(prevButton);
@@ -820,12 +825,8 @@
             modifyOrbit(params.orbitDistance, params.orbitTiltX, params.orbitTiltY,
                 params.orbitTiltZ, params.orbitSpeed);
 
-            description.innerHTML = "The Psyche Spacecraft will spend 56 days in this orbit to get a reliable model of the gravity field for planning the next orbits.";
+            description2.innerHTML = "The Psyche Spacecraft will spend 56 days in this orbit to get a reliable model of the gravity field for planning the next orbits.";
             details.innerHTML = "More detailed description goes here -->\n" +
-                "####################\n####################\n" +
-                "####################\n####################\n" +
-                "####################\n####################\n" +
-                "####################\n####################\n";
 
             closeDetails();
         }
@@ -845,12 +846,7 @@
             modifyOrbit(params.orbitDistance, params.orbitTiltX, params.orbitTiltY,
                 params.orbitTiltZ, params.orbitSpeed);
 
-            description.innerHTML = "The best lighting happens in this 80 day orbit, and the spacecraft is able to map the surface of Psyche.";
-            details.innerHTML = "More detailed description goes here -->\n" +
-                "####################\n####################\n" +
-                "####################\n####################\n" +
-                "####################\n####################\n" +
-                "####################\n####################\n";
+            description2.innerHTML = "The best lighting happens in this 80 day orbit, and the spacecraft is able to map the surface of Psyche.";
 
             closeDetails();
         }
@@ -869,12 +865,7 @@
             modifyOrbit(params.orbitDistance, params.orbitTiltX, params.orbitTiltY,
                 params.orbitTiltZ, params.orbitSpeed);
 
-            description.innerHTML = "During this 100 day orbit, the Psyche Spacecraft will measure Psyche's gravity field to high precision.";
-            details.innerHTML = "More detailed description goes here -->\n" +
-                "####################\n####################\n" +
-                "####################\n####################\n" +
-                "####################\n####################\n" +
-                "####################\n####################\n";
+            description2.innerHTML = "During this 100 day orbit, the Psyche Spacecraft will measure Psyche's gravity field to high precision.";
 
             closeDetails();
         }
@@ -893,12 +884,7 @@
             modifyOrbit(params.orbitDistance, params.orbitTiltX, params.orbitTiltY,
                 params.orbitTiltZ, params.orbitSpeed);
 
-            description.innerHTML = "In the final 100 days, the spacecraft will use a gamma ray and neutron spectrometer to learn what elements make up Psyche.";
-            details.innerHTML = "More detailed description goes here -->\n" +
-                "####################\n####################\n" +
-                "####################\n####################\n" +
-                "####################\n####################\n" +
-                "####################\n####################\n";
+            description2.innerHTML = "In the final 100 days, the spacecraft will use a gamma ray and neutron spectrometer to learn what elements make up Psyche.";
 
             closeDetails();
         }
@@ -930,6 +916,7 @@
         }
 
         function hideAllButtons() {
+            descriptionBox2.style.visibility = "hidden"
             descriptionBox.style.visibility = "hidden";
             beginButton.style.visibility = "hidden";
             creditsButton.style.visibility = "hidden";
