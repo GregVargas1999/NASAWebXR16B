@@ -171,7 +171,7 @@ canvas {
   font-size: 3vmin;
 }
 
-.tooltip {
+#moreInfo {
   opacity: 1;
   color: white;
   display: flex;
@@ -182,11 +182,6 @@ canvas {
   font-size: 1.5vmax;
   font-family: "roboto", sans-serif;
   justify-self: center;
-}
-
-.tooltip:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.2);
 }
 
 #descriptionBox {
