@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="css/stages2-style.css">
 </head>
 
-<audio id="buttonClick" src="sound/button_click.wav" autoplay="false" ></audio>
+<audio id="buttonClick" src="sound/button_click.wav" autoplay="false"></audio>
 
 <body>
     <section id="transition-screen"></section>
@@ -20,6 +20,7 @@
 
     <div id='card'>
         <div id='info' class="ml2"></div>
+        <div id='suggestion' class='suggestion'>View in Landscape Mode for the Best Experience</div>
         <button class="button" id='backButton'>&#128281 Main Menu</button>
         <div>
             <button class="button" id='beginButton'>Begin Journey</button>
@@ -71,7 +72,7 @@
         var raycaster, projector, mouseVector, intersects, intersection, obj;
         var asteroid, satellite, arrivalAsteroid, arrivalSatellite, marsSatellite, orbitalAsteroid, orbitalSatellite, mars, orbiter, newMin, mesh;
         var beginButton, backButton, nextButton, prevButton, playAnimation;
-        var infoText, loadingText, moreInfo, canvasCard, description, details, descriptionBox;
+        var infoText, loadingText, moreInfo, canvasCard, description, details, descriptionBox, suggestionText;
         var set2Idle = true;
         var loader, loadingManager, loadingScreen, transitionScreen, buttonClick;
         const params = {
@@ -126,6 +127,7 @@
 
             canvasCard = document.getElementById('card');
             infoText = document.getElementById('info');
+            suggestionText = document.getElementById('suggestion');
             loadingText = document.getElementById('loadText');
             beginButton = document.getElementById('beginButton');
             backButton = document.getElementById('backButton');
@@ -164,18 +166,20 @@
 
             loadingScreen = document.getElementById('loading-screen');
             transitionScreen = document.getElementById('transition-screen');
-            
+
             buttonClick = document.getElementById('buttonClick');
-            
+
             var buttons = document.getElementsByClassName('button');
 
             for (var button of buttons) {
                 button.addEventListener("click", function () {
                     buttonClick.play();
-                    buttonClick.currentTime = 0;});
+                    buttonClick.currentTime = 0;
+                });
                 button.addEventListener("touchend", function () {
                     buttonClick.play();
-                    buttonClick.currentTime = 0;});
+                    buttonClick.currentTime = 0;
+                });
             }
 
             loadingManager = new THREE.LoadingManager();
@@ -185,7 +189,7 @@
             loadingManager.onLoad = function () {
                 loadingScreen.classList.remove("fade-out");
                 loadingScreen.classList.add("fade-out");
-                setTimeout(function() {
+                setTimeout(function () {
                     loadingScreen.style.display = "none";
                 }, 2000);
                 showMainMenu();
@@ -241,100 +245,107 @@
 
         function showMainMenu() {
             changeScene();
-            setTimeout(function() {
-            
-            infoText.innerHTML = "The Psyche Asteroid Mission";
+            setTimeout(function () {
 
-            textAnimate();
-            hideAllButtons();
-            beginButton.style.visibility = "visible";
+                infoText.innerHTML = "The Psyche Asteroid Mission";
 
-            camera.position.set(0, 0, 22);
-            camera.lookAt(new THREE.Vector3(0, 0, 0));
-            scene = menuScene;
-            
+                textAnimate();
+                hideAllButtons();
+                beginButton.style.visibility = "visible";
+                if (window.innerHeight > window.innerWidth) {
+                    suggestionText.style.display = "block";
+                    animateSuggestion();
+                }
+
+
+                camera.position.set(0, 0, 22);
+                camera.lookAt(new THREE.Vector3(0, 0, 0));
+                scene = menuScene;
+
             }, 800);
 
-            setTimeout(function() {
+            setTimeout(function () {
                 transitionScreen.style.display = "none";
             }, 2000);
         }
 
         function showMarsAssist() {
             changeScene();
-            setTimeout(function() {
-            
-            infoText.innerHTML = "Phase #1 - Mars Gravity Assist"
+            setTimeout(function () {
 
-            textAnimate();
-            hideAllButtons();
-            backButton.style.visibility = "visible";
-            playAnimation.style.visibility = "visible";
-            nextButton.style.visibility = "visible";
-            descriptionBox.style.visibility = "visible";
-            closeDetails();
+                infoText.innerHTML = "Phase #1 - Mars Gravity Assist"
 
-            removeAllListeners(nextButton);
-            nextButton.addEventListener('click', showArrivalPhase, false);
-            nextButton.addEventListener('touchend', showArrivalPhase, false);
 
-            description.innerHTML = "After launching in August 2022, the spacecraft " +
-                "flies by Mars and undergoes a gravitational slingshot";
-            details.innerHTML = "More detailed description goes here -->\n" +
-                "####################\n####################\n" +
-                "####################\n####################\n" +
-                "####################\n####################\n" +
-                "####################\n####################\n";
+                textAnimate();
+                hideAllButtons();
+                backButton.style.visibility = "visible";
+                playAnimation.style.visibility = "visible";
+                nextButton.style.visibility = "visible";
+                descriptionBox.style.visibility = "visible";
+                suggestionText.style.display = "none";
+                closeDetails();
 
-            camera.position.set(10, 50, 8);
-            camera.rotation.y += Math.PI;
-            camera.lookAt(10, 0, 8);
-            scene = marsScene;
+                removeAllListeners(nextButton);
+                nextButton.addEventListener('click', showArrivalPhase, false);
+                nextButton.addEventListener('touchend', showArrivalPhase, false);
+
+                description.innerHTML = "After launching in August 2022, the spacecraft " +
+                    "flies by Mars and undergoes a gravitational slingshot";
+                details.innerHTML = "More detailed description goes here -->\n" +
+                    "####################\n####################\n" +
+                    "####################\n####################\n" +
+                    "####################\n####################\n" +
+                    "####################\n####################\n";
+
+                camera.position.set(10, 50, 8);
+                camera.rotation.y += Math.PI;
+                camera.lookAt(10, 0, 8);
+                scene = marsScene;
 
             }, 800);
 
-            setTimeout(function() {
+            setTimeout(function () {
                 transitionScreen.style.display = "none";
             }, 2000);
         }
 
         function showArrivalPhase() {
             changeScene();
-            setTimeout(function() {
+            setTimeout(function () {
 
-            infoText.innerHTML = "Phase #2 - Arrival at Psyche";
+                infoText.innerHTML = "Phase #2 - Arrival at Psyche";
 
-            textAnimate();
-            hideAllButtons();
-            prevButton.style.visibility = "visible";
-            nextButton.style.visibility = "visible";
-            descriptionBox.style.visibility = "visible";
-            closeDetails();
+                textAnimate();
+                hideAllButtons();
+                prevButton.style.visibility = "visible";
+                nextButton.style.visibility = "visible";
+                descriptionBox.style.visibility = "visible";
+                closeDetails();
 
-            removeAllListeners(prevButton);
-            prevButton.addEventListener('click', showMarsAssist, false);
-            prevButton.addEventListener('touchend', showMarsAssist, false);
+                removeAllListeners(prevButton);
+                prevButton.addEventListener('click', showMarsAssist, false);
+                prevButton.addEventListener('touchend', showMarsAssist, false);
 
-            removeAllListeners(nextButton);
-            nextButton.addEventListener('click', showOrbitalPhase, false);
-            nextButton.addEventListener('touchend', showOrbitalPhase, false);
+                removeAllListeners(nextButton);
+                nextButton.addEventListener('click', showOrbitalPhase, false);
+                nextButton.addEventListener('touchend', showOrbitalPhase, false);
 
-            description.innerHTML = "After spending around 100 days in the approach phase, " +
-                "the spacecraft begins to orbit the Psyche asteroid in January 2026";
-            details.innerHTML = "More detailed description goes here -->\n" +
-                "####################\n####################\n" +
-                "####################\n####################\n" +
-                "####################\n####################\n" +
-                "####################\n####################\n";
+                description.innerHTML = "After spending around 100 days in the approach phase, " +
+                    "the spacecraft begins to orbit the Psyche asteroid in January 2026";
+                details.innerHTML = "More detailed description goes here -->\n" +
+                    "####################\n####################\n" +
+                    "####################\n####################\n" +
+                    "####################\n####################\n" +
+                    "####################\n####################\n";
 
-            camera.position.set(7, 0, 22);
-            camera.rotation.y += Math.PI;
-            camera.lookAt(5, 0, 12);
-            scene = arrivalScene;
+                camera.position.set(7, 0, 22);
+                camera.rotation.y += Math.PI;
+                camera.lookAt(5, 0, 12);
+                scene = arrivalScene;
 
             }, 800);
 
-            setTimeout(function() {
+            setTimeout(function () {
                 transitionScreen.style.display = "none";
             }, 2000);
         }
@@ -342,33 +353,33 @@
         function showOrbitalPhase() {
             //buttonClick.play();
             changeScene();
-            setTimeout(function() {
+            setTimeout(function () {
 
-            infoText.innerHTML = "Phase #3 - Orbiting Psyche";
+                infoText.innerHTML = "Phase #3 - Orbiting Psyche";
 
-            textAnimate();
-            hideAllButtons();
-            prevButton.style.visibility = "visible";
-            orbitAButton.style.visibility = "visible";
-            orbitBButton.style.visibility = "visible";
-            orbitCButton.style.visibility = "visible";
-            orbitDButton.style.visibility = "visible";
-            descriptionBox.style.visibility = "visible";
-            closeDetails();
+                textAnimate();
+                hideAllButtons();
+                prevButton.style.visibility = "visible";
+                orbitAButton.style.visibility = "visible";
+                orbitBButton.style.visibility = "visible";
+                orbitCButton.style.visibility = "visible";
+                orbitDButton.style.visibility = "visible";
+                descriptionBox.style.visibility = "visible";
+                closeDetails();
 
-            removeAllListeners(prevButton);
-            prevButton.addEventListener('click', showArrivalPhase, false);
-            prevButton.addEventListener('touchend', showArrivalPhase, false);
+                removeAllListeners(prevButton);
+                prevButton.addEventListener('click', showArrivalPhase, false);
+                prevButton.addEventListener('touchend', showArrivalPhase, false);
 
-            orbitA()
+                orbitA()
 
-            camera.position.set(0.5, 50, 0);
-            camera.lookAt(0.5, 0, 0);
-            scene = orbitalScene;
-            
+                camera.position.set(0.5, 50, 0);
+                camera.lookAt(0.5, 0, 0);
+                scene = orbitalScene;
+
             }, 800);
 
-            setTimeout(function() {
+            setTimeout(function () {
                 transitionScreen.style.display = "none";
             }, 2000);
         }
@@ -895,6 +906,22 @@
                     easing: "easeOutQuad",
                     duration: 950,
                     delay: (el, i) => 70 * i
+                });
+        }
+
+        function animateSuggestion() {
+
+            anime.timeline({ loop: true })
+                .add({
+                    targets: '.suggestion',
+                    opacity: [0, 1],
+                    duration: 3000,
+                    delay: 2000
+                }).add({
+                    targets: '.suggestion',
+                    opacity: [1, 0],
+                    duration: 7000,
+                    easing: "easeInExpo"
                 });
         }
 
