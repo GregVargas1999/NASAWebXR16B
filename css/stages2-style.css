@@ -344,3 +344,13 @@ canvas {
     opacity: 0;
   }
 }
+#credits-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(48, 33, 68);
+  opacity: 0.8;
+  display: none;
+}
