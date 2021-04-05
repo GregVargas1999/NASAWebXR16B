@@ -1,0 +1,151 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+@media only screen and (orientation:portrait){
+    body {
+        margin: 0;
+        transform-origin: left top;
+        transform: rotate(90deg);   
+        height: 100vw;
+        width: 100vh;
+        overflow-x: hidden;
+        position: absolute;
+        top: 0;
+        left: 100%;
+    }
+}
+
+@media only screen and (orientation:landscape){
+    body {
+        margin: 0;
+        height: 100vh;
+        width: 100vw;
+    }
+}
+
+canvas {
+    display: block;
+    outline: none;
+    border: none;
+}
+
+#card {
+    background: transparent;
+    height: 100%;
+    width: 80%;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+#info {
+
+    margin-bottom: 10px;
+    color: #f47c33;
+    text-align: center;
+    word-break: keep-all;
+}
+
+.button {
+    position: absolute;
+    font-family: 'Roboto', sans-serif;
+    margin: auto;
+    height: 5vmax;
+    font-size: 3vmax;
+    background: #f47c33;
+    /*height:  38px;
+    line-height:  40px;*/
+    border: 3px solid #592651;
+    /*display:  inline-block;*/
+    float: none;
+    text-align: center;
+    width: 25vmax;
+    /*padding:  0px!important;
+    /*font-size:  14px;*/
+    color: #592651;
+}
+
+.button:hover {
+    color: #a53f5b;
+    background: #f9a000;
+}
+
+#beginButton {
+    left: 0;
+    right: 0;
+    color: #592651;
+}
+
+#prevButton {
+    left: 0;
+    right: 30;
+    color: #592651;
+}
+
+#nextButton {
+    left: 30;
+    right: 0;
+    color: #592651;
+}
+
+.tooltip {
+    opacity: 1;
+    color: white;
+    display: flex;
+    background: transparent;
+    /*height:  38px;
+    line-height:  40px;*/
+    border: 3px solid white;
+    font-size: 1.5vmax;
+    font-family: 'roboto', sans-serif;
+    justify-self: center;
+}
+
+.tooltip:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+#descriptionBox {
+    visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: fixed;
+    bottom: 5vmin;
+    right: 1vmax;
+    width: 40vmax;
+    border-radius: 5px;
+    background: linear-gradient(90deg, rgba(48, 33, 68, 1) 0%, rgba(18, 3, 29, 1) 100%);
+    padding: 1vmin 1vmin 1vmin 1vmin;
+    box-shadow: 0px 1px 5px #999;
+    opacity: 0.8;
+}
+
+#description {
+    opacity: 1;
+    font-size: 2vmax;
+    font-family: 'roboto', sans-serif;
+    color: #ef5966;
+    /*#a53f5b;*/
+    text-align: center;
+    margin-bottom: 2vmin;
+}
+
+#details {
+    opacity: 1;
+    font-size: 2vmax;
+    font-family: 'roboto', sans-serif;
+    color: #ef5966;
+    /*#a53f5b;*/
+    text-align: center;
+    margin-bottom: 2vmin;
+}
+
+.ml2 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 6vmax;
+    font-weight: 300;
+  }
