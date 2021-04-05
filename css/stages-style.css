@@ -4,14 +4,28 @@
 @media only screen and (orientation:portrait){
     body {
         margin: 0;
-        transform-origin: left top;
-        transform: rotate(90deg);   
-        height: 100vw;
-        width: 100vh;
-        overflow-x: hidden;
-        position: absolute;
-        top: 0;
-        left: 100%;
+        height: 100vh;
+        width: 100vw;
+    }
+    #orbitAButton {
+
+        
+        top: 50vmin;
+    }
+    #orbitBButton {
+
+        
+        top: 50vmin;
+    }
+    #orbitCButton {
+
+        
+        top: 65vmin;
+    }
+    #orbitDButton {
+
+        
+        top: 65vmin;
     }
 }
 
@@ -20,6 +34,27 @@
         margin: 0;
         height: 100vh;
         width: 100vw;
+    }
+
+    #orbitAButton {
+
+        
+        top: 35vmin;
+    }
+    #orbitBButton {
+
+        
+        top: 35vmin;
+    }
+    #orbitCButton {
+
+        
+        top: 50vmin;
+    }
+    #orbitDButton {
+
+        
+        top: 50vmin;
     }
 }
 
@@ -53,7 +88,7 @@ canvas {
     font-family: 'Roboto', sans-serif;
     margin: auto;
     height: 5vmax;
-    font-size: 3vmax;
+    font-size: 4vmin;
     background: #f47c33;
     /*height:  38px;
     line-height:  40px;*/
@@ -61,7 +96,7 @@ canvas {
     /*display:  inline-block;*/
     float: none;
     text-align: center;
-    width: 25vmax;
+    width: 40vmin;
     /*padding:  0px!important;
     /*font-size:  14px;*/
     color: #592651;
@@ -78,6 +113,12 @@ canvas {
     color: #592651;
 }
 
+#backButton {
+    left: 0;
+    right: 40;
+    color: #592651;
+}
+
 #prevButton {
     left: 0;
     right: 30;
@@ -88,6 +129,41 @@ canvas {
     left: 30;
     right: 0;
     color: #592651;
+}
+
+#playAnimation {
+    color: #592651;
+    top: 25vmax;
+    width: 35vmin;
+    height: 10vmin;
+    font-size: 3vmin;
+}
+#orbitAButton {
+
+    color: #592651;
+    width: 35vmin;
+    height: 5vmax;
+    font-size: 3vmin;
+}
+#orbitBButton {
+    right: 0;
+    color: #592651;
+    width: 35vmin;
+    height: 5vmax;
+    font-size: 3vmin;
+}
+#orbitCButton {
+    color: #592651;
+    width: 35vmin;
+    height: 5vmax;
+    font-size: 3vmin;
+}
+#orbitDButton {
+    right: 0;
+    color: #592651;
+    width: 35vmin;
+    height: 5vmax;
+    font-size: 3vmin;
 }
 
 .tooltip {
@@ -146,6 +222,115 @@ canvas {
 
 .ml2 {
     font-family: 'Oswald', sans-serif;
-    font-size: 6vmax;
+    font-size: 5vmax;
     font-weight: 300;
   }
+
+#loading-screen {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(48, 33, 68);
+    opacity: 1;
+    transition: 2s opacity;
+}
+#loadText   {
+    font-size: 40px;
+    font-weight: 600;
+    top:60;
+    font-style: "Lucida Console", Monaco, monospace;
+    line-height: 40px;
+    color: #f47c33;
+    text-align: center;
+    transform: translate
+}
+#loading-screen.fade-out {
+    opacity: 0;
+}
+#loader {
+    display: block;
+    position: relative;
+    left: 50%;
+    top: 50%;
+    width: 150px;
+    height: 150px;
+    margin: -75px 0 0 -75px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #a53f5b;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+#loader:before {
+    content: "";
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #592651;
+    -webkit-animation: spin 3s linear infinite;
+    animation: spin 3s linear infinite;
+}
+#loader:after {
+    content: "";
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #ef5966;
+    -webkit-animation: spin 1.5s linear infinite;
+    animation: spin 1.5s linear infinite;
+}
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+@keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+#transition-screen {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(0,0,0);
+    opacity: 0;
+}
+#transition-screen.screen-change {
+    animation-name: screen-change;
+    animation-duration: 2s;
+}
+@keyframes screen-change {
+    0% {opacity: 0;}
+    40% {opacity: 1;}
+    60% {opacity: 1;}
+    100% {opacity: 0;}
+}
