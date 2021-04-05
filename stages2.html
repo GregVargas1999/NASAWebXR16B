@@ -114,7 +114,7 @@
         <div id='descriptionBox'>
             <div id='description'></div>
             <div id='details'></div>
-            <button id='moreInfo' class="tooltip" alignment='center'>&#8505 More info
+            <button id='moreInfo' alignment='center'>&#8505 More info
         </div>
 
         <div>
@@ -588,7 +588,7 @@
             loader.load('compressed-spacecraft.glb', function (gltf) {
                 satellite = gltf.scene;
                 satellite.scale.set(0.007, 0.007, 0.007);
-                satellite.position.set(0, 0, 18);
+                satellite.position.set(0, -0.5, 18);
                 menuScene.add(satellite);
             });
         }
