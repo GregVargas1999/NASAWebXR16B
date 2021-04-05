@@ -12,6 +12,84 @@
 <audio id="buttonClick" src="sound/button_click.wav" autoplay="false"></audio>
 
 <body>
+    <section id="credits-screen">
+        <head>
+
+            <title>NASA WebXR - Team 16B</title>
+        
+            <link rel="preconnect" href="https://fonts.gstatic.com">
+            <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+            <link rel="stylesheet" href="fonts/icomoon/style.css">
+            <link rel="stylesheet" href="css/bootstrap.min.css">
+            <link rel="stylesheet" href="css/magnific-popup.css">
+            <link rel="stylesheet" href="css/jquery-ui.css">
+            <link rel="stylesheet" href="css/owl.carousel.min.css">
+            <link rel="stylesheet" href="css/owl.theme.default.min.css">
+            <link rel="stylesheet" href="css/bootstrap-datepicker.css">
+            <link rel="stylesheet" href="fonts/flaticon/font/flaticon.css">
+            <link rel="stylesheet" href="css/aos.css">
+        
+            <link rel="stylesheet" href="css/style.css">
+        
+        </head>
+        
+        <body>
+        
+            <br>
+            <div class="container">
+                <button id="xButton" class="btn" style="color: #b60303;">&#10006</button>
+                <div class="row justify-content-center">
+                    <div class="col-2 my-auto">
+                        <img style="width: auto; height: 7em;"
+                            src="https://psyche.asu.edu/wp-content/themes/psyche/static/img/nasa.svg"></img> </div>
+                    <div class="col-6 my-auto">
+                        <h2 style="text-align:center;color: #a53f5b;" class="center-block">
+                            Welcome to the Psyche mission timeline experience!<br>
+                            By: NASA Psyche WebXR - Team 16B
+                        </h2>
+                        <br>
+                        <h3 style="text-align:center;color: #f47c33;" class="center-block">
+                            Programmers:<br>
+                            Fareed Osman, Greg Vargas,<br>Joshua Holloway, Rushil Popat
+                        </h3>
+                    </div>
+                    <div class="col-2 my-auto">
+                        <img style="width: auto; height: 7em;"
+                            src="https://psyche.asu.edu/wp-content/themes/psyche/static/img/psyche.svg"></img>
+                    </div>
+                </div><br>
+            </div>
+            <br>
+            <footer class="site-footer"><div class="container"><div class="row"><div class="col-md-12 my-auto">
+                <p>
+                    *The following 3D environments are for educational purposes only and are not to scale.*
+                </p>
+                <p>
+                    This work was created in partial fulfillment of Arizona State University Capstone Course
+                    “CSE423/CSE424/CSE485/CSE486″. The work is a result of the Psyche Student Collaborations
+                    component of NASA’s Psyche Mission (<a
+                        href="https://psyche.asu.edu">https://psyche.asu.edu</a>). “Psyche: A Journey to a Metal
+                    World” [Contract number NNM16AA09C] is part of the NASA Discovery Program mission to solar
+                    system targets. Trade names and trademarks of ASU and NASA are used in this work for
+                    identification only. Their usage does not constitute an official endorsement, either
+                    expressed or implied, by Arizona State University or National Aeronautics and Space
+                    Administration. Content is solely the responsibility of the authors and does not
+                    necessarily represent official views of ASU or NASA.
+                </p>
+                <p>
+                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                    Copyright &copy;
+                    <script>document.write(new Date().getFullYear());</script> All rights reserved | This
+                    template is made with <i class="icon-heart text-primary" aria-hidden="true"></i> by <a
+                        href="https://colorlib.com" target="_blank">Colorlib</a>
+                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                </p>
+            </div></div></div></footer>
+        
+        </body>
+
+    </section>
+    
     <section id="transition-screen"></section>
     <section id="loading-screen">
         <div id='loadText'>Loading... 0%</div>
@@ -71,10 +149,10 @@
         var camera, povCamera, scene, renderer, tween;
         var raycaster, projector, mouseVector, intersects, intersection, obj;
         var asteroid, satellite, arrivalAsteroid, arrivalSatellite, marsSatellite, orbitalAsteroid, orbitalSatellite, mars, orbiter, newMin, mesh;
-        var beginButton, backButton, nextButton, prevButton, playAnimation;
+        var beginButton, backButton, creditsButton, xButton, nextButton, prevButton, playAnimation;
         var infoText, loadingText, moreInfo, canvasCard, description, details, descriptionBox, suggestionText;
         var set2Idle = true;
-        var loader, loadingManager, loadingScreen, transitionScreen, buttonClick;
+        var loader, loadingManager, loadingScreen, transitionScreen, creditsScreen, buttonClick;
         const params = {
             povCameraActive: false,
             orbitPathActive: true,
@@ -130,6 +208,8 @@
             suggestionText = document.getElementById('suggestion');
             loadingText = document.getElementById('loadText');
             beginButton = document.getElementById('beginButton');
+            creditsButton = document.getElementById('creditsButton');
+            xButton = document.getElementById('xButton');
             backButton = document.getElementById('backButton');
             prevButton = document.getElementById('prevButton');
             nextButton = document.getElementById('nextButton');
@@ -144,6 +224,10 @@
             beginButton.addEventListener('touchend', showMarsAssist, false);
             backButton.addEventListener('click', showMainMenu, false);
             backButton.addEventListener('touchend', showMainMenu, false);
+            creditsButton.addEventListener('click', showCredits, false);
+            creditsButton.addEventListener('touchend', showCredits, false);
+            xButton.addEventListener('click', closeCredits, false);
+            xButton.addEventListener('touchend', closeCredits, false);
 
             playAnimation = document.getElementById('playAnimation');
             playAnimation.addEventListener('click', playGravityAssist, false);
@@ -166,6 +250,7 @@
 
             loadingScreen = document.getElementById('loading-screen');
             transitionScreen = document.getElementById('transition-screen');
+            creditsScreen = document.getElementById('credits-screen');
 
             buttonClick = document.getElementById('buttonClick');
 
@@ -190,6 +275,8 @@
                 loadingScreen.classList.remove("fade-out");
                 loadingScreen.classList.add("fade-out");
                 setTimeout(function () {
+                    showCredits();
+                    buttonClick.play();
                     loadingScreen.style.display = "none";
                 }, 2000);
                 showMainMenu();
@@ -220,6 +307,12 @@
             renderer.toneMappingExposure = 1;
             renderer.outputEncoding = THREE.sRGBEncoding;
             container.appendChild(renderer.domElement);
+            
+            // Checking initial load orientation
+            window.addEventListener('load', function() {onWindowResize(window.orientation)}, false);
+
+            // Resizing window on demand and sending orientation
+            window.addEventListener('resize', function() {onWindowResize(window.orientation)}, false);
 
             var pmremGenerator = new THREE.PMREMGenerator(renderer);
             pmremGenerator.compileEquirectangularShader();
@@ -252,6 +345,7 @@
                 textAnimate();
                 hideAllButtons();
                 beginButton.style.visibility = "visible";
+                creditsButton.style.visibility = "visible";
                 if (window.innerHeight > window.innerWidth) {
                     suggestionText.style.display = "block";
                     animateSuggestion();
@@ -267,6 +361,19 @@
             setTimeout(function () {
                 transitionScreen.style.display = "none";
             }, 2000);
+        }
+        
+        function showCredits() {
+            infoText.innerHTML = "";
+            hideAllButtons();
+            creditsScreen.style.display = "block";
+        }
+
+        function closeCredits() {
+            infoText.innerHTML = "The Psyche Asteroid Mission";
+            beginButton.style.visibility = "visible";
+            creditsButton.style.visibility = "visible";
+            creditsScreen.style.display = "none";
         }
 
         function showMarsAssist() {
@@ -833,6 +940,7 @@
         function hideAllButtons() {
             descriptionBox.style.visibility = "hidden";
             beginButton.style.visibility = "hidden";
+            creditsButton.style.visibility = "hidden";
             backButton.style.visibility = "hidden";
             prevButton.style.visibility = "hidden";
             nextButton.style.visibility = "hidden";
