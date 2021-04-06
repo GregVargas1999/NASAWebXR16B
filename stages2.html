@@ -40,10 +40,10 @@
             <div class="container">
                 <button id="xButton" style="color: #b60303;">&#10006</button>
                 <div class="row justify-content-center">
-                    <div class="col-2 my-auto">
+                    <div class="my-auto">
                         <img style="width: auto; height: 4em;"
                             src="https://psyche.asu.edu/wp-content/themes/psyche/static/img/nasa.svg"></img> </div>
-                    <div class="col-6 my-auto">
+                    <div class="col-7 my-auto">
                         <p style="text-align:center;font-size: 1.8vmax;color: #a53f5b;" class="center-block">
                             Welcome to the Psyche mission timeline experience!<br>
                             By: NASA Psyche WebXR - Team 16B
@@ -54,7 +54,7 @@
                             Fareed Osman, Greg Vargas,<br>Joshua Holloway, Rushil Popat
                         </p>
                     </div>
-                    <div class="col-2 my-auto">
+                    <div class="col-0 my-auto">
                         <img style="width: auto; height: 4em;"
                             src="https://psyche.asu.edu/wp-content/themes/psyche/static/img/psyche.svg"></img>
                     </div>
@@ -373,6 +373,7 @@
             infoText.innerHTML = "";
             hideAllButtons();
             creditsScreen.style.display = "block";
+            suggestionText.style.display = "none";
         }
 
         function closeCredits() {
