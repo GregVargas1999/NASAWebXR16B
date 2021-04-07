@@ -620,7 +620,11 @@
                     camera.aspect = window.innerWidth / window.innerHeight;
                     camera.updateProjectionMatrix();
 
+                    // update the size of the renderer AND the canvas
                     renderer.setSize(window.innerWidth, window.innerHeight);
+
+                    // set the pixel ratio (for mobile devices)
+                    renderer.setPixelRatio(window.devicePixelRatio);
 
                     portrait = false;
                     break; 
@@ -630,7 +634,11 @@
                     camera.aspect = window.innerHeight / window.innerWidth;
                     camera.updateProjectionMatrix();
 
+                    // update the size of the renderer AND the canvas
                     renderer.setSize(window.innerHeight, window.innerWidth);
+
+                    // set the pixel ratio (for mobile devices)
+                    renderer.setPixelRatio(window.devicePixelRatio);
 
                     portrait = true;
                     break;
