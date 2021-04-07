@@ -14,15 +14,19 @@
         <div id='info' class="ml2">The Psyche Asteroid Mission
         </div>
         <button class="button" id='beginButton'>Begin Journey</button>
+        <button class="aboutbutton" id='aboutButton'>About</button>
         <div>
+            <button class="button" id='mainButton' style='visibility: hidden;'>Main Menu</button>
             <button class="button" id='prevButton' style='visibility: hidden;'>Previous Stage</button>
             <button class="button" id='nextButton' style='visibility: hidden;'>Next Stage</button>
         </div>
 
         <div id='descriptionBox'>
             <div id='description'></div>
-            <div id='details'></div>
-            <button id='moreInfo' class="tooltip" alignment='center'>&#8505 More Info
+        </div>
+
+        <div id='aboutDescriptionBox'>
+            <div id='aboutDescription'></div>
         </div>
 
     </div>
@@ -46,7 +50,7 @@
         var raycaster = new THREE.Raycaster();
         var targetPosition = new THREE.Vector3();
         var position = new THREE.Vector3();
-        var beginButton, nextButton, prevButton, infoText, moreInfo, canvasCard, description, details, descriptionBox;
+        var beginButton, aboutButton, mainButton, nextButton, prevButton, infoText, moreInfo, canvasCard, description, aboutDescription, descriptionBox, aboutDescriptionBox;
         var set2Idle = true;
         const params = {
             orbitDistance: 5,
@@ -87,16 +91,18 @@
             canvasCard = document.getElementById('card');
             infoText = document.getElementById('info');
             beginButton = document.getElementById('beginButton');
+            aboutButton = document.getElementById('aboutButton');
+            mainButton = document.getElementById('mainButton');
             prevButton = document.getElementById('prevButton');
             nextButton = document.getElementById('nextButton');
             description = document.getElementById('description');
             descriptionBox = document.getElementById('descriptionBox');
-            details = document.getElementById('details');
-            moreInfo = document.getElementById('moreInfo');
+            aboutDescription = document.getElementById('aboutDescription');
+            aboutDescriptionBox = document.getElementById('aboutDescriptionBox');
             beginButton.addEventListener('click', marsAssist, false);
             beginButton.addEventListener('touchend', marsAssist, false);
-            moreInfo.addEventListener('click', showDetails, false);
-            moreInfo.addEventListener('touchend', showDetails, false);
+            aboutButton.addEventListener('click', about, false);
+            aboutButton.addEventListener('touchend', about, false);
             orbitContainer = new THREE.Object3D();
 
             container = document.createElement('div');
@@ -186,7 +192,8 @@
             loader.load('compressed-spacecraft.glb', function (gltf) {
                 satellite = gltf.scene;
                 satellite.scale.set(0.01, 0.01, 0.01);
-                satellite.position.set(-296, 0, 18);
+                satellite.position.set(-297, 0, 19);
+                satellite.rotation.x = 3.5;
                 scene.add(satellite);
             });
             // ----------------------------------------------------------- //
@@ -194,15 +201,16 @@
             // Mars Scene - Phase 1
             loader.load('mars-compressed.glb', function (gltf) {
                 mars = gltf.scene;
-                mars.scale.set(0.01, 0.01, 0.01);
-                mars.position.set(-200, 0, -50);
+                mars.scale.set(0.04, 0.04, 0.04);
+                mars.position.set(-205, -3, -50);
                 scene.add(mars);
             });
 
             loader.load('compressed-spacecraft.glb', function (gltf) {
                 satellite2 = gltf.scene;
                 satellite2.scale.set(0.01, 0.01, 0.01);
-                satellite2.position.set(-596, 0, 18);
+                satellite2.position.set(-210, 0, 19);
+                satellite2.rotation.x = 3.5;
                 scene.add(satellite2);
             });
             // ----------------------------------------------------------- //
@@ -210,8 +218,8 @@
             // Arrival Scene - Phase 2
             loader.load('asteroid-compressed.glb', function (gltf) {
                 asteroid = gltf.scene;
-                asteroid.scale.set(2, 2, 2);
-                asteroid.position.set(-100, 0, -50);
+                asteroid.scale.set(15, 15, 15);
+                asteroid.position.set(-100, -3, -50);
                 scene.add(asteroid);
             });
             // ----------------------------------------------------------- //
@@ -220,7 +228,7 @@
             loader.load('asteroid-compressed.glb', function (gltf) {
                 asteroid2 = gltf.scene;
                 asteroid2.scale.set(2, 2, 2);
-                asteroid2.position.set(-500, 0, -50);
+                asteroid2.position.set(0, 0, 0);
                 scene.add(asteroid2);
             });
 
@@ -307,7 +315,7 @@
             // find intersections
 
             // create a Ray with origin at the mouse position
-            //   and direction into the scene (camera direction)
+            // and direction into the scene (camera direction)
             raycaster.setFromCamera(mouse, camera);
 		    intersects = raycaster.intersectObjects(targetList);
             
@@ -323,25 +331,21 @@
                     case 14:
                         orbitAnimation(orbiter, (ringParams.ring1Outer + ringParams.ring1Inner) / 2, ringParams.orbitTiltX, ringParams.orbitTiltY, ringParams.orbitTiltZ, ringParams.orbitSpeed);
                         description.innerHTML = "In the final 100 days, the spacecraft will use a gamma ray and neutron spectrometer to learn what elements make up Psyche.";
-                        details.innerHTML = "1"
                         break;
 
                     case 15:
                         orbitAnimation(orbiter, (ringParams.ring2Outer + ringParams.ring2Inner) / 2, ringParams.orbitTiltX, ringParams.orbitTiltY, ringParams.orbitTiltZ, ringParams.orbitSpeed);
                         description.innerHTML = "During this 100 day orbit, the Psyche Spacecraft will measure Psyche's gravity field to high precision.";
-                        details.innerHTML = "2"
                         break;
 
                     case 16:
                         orbitAnimation(orbiter, (ringParams.ring3Outer + ringParams.ring3Inner) / 2, ringParams.orbitTiltX, ringParams.orbitTiltY, ringParams.orbitTiltZ, ringParams.orbitSpeed);
                         description.innerHTML = "The best lighting happens in this 80 day orbit, and the spacecraft is able to map the surface of Psyche.";
-                        details.innerHTML = "3"
                         break;
 
                     case 17:
                         orbitAnimation(orbiter, (ringParams.ring4Outer + ringParams.ring4Inner) / 2, ringParams.orbitTiltX, ringParams.orbitTiltY, ringParams.orbitTiltZ, ringParams.orbitSpeed);
                         description.innerHTML = "The Psyche Spacecraft will spend 56 days in this orbit to get a reliable model of the gravity field for planning the next orbits.";
-                        details.innerHTML = "4"
                         break;
 
                     default:
@@ -366,41 +370,85 @@
 
         function toString(v) { return "[ " + v.x + ", " + v.y + ", " + v.z + " ]"; }
 
-        function showDetails() {
-            description.style.display = "none";
-            details.style.display = "block";
-            moreInfo.innerHTML = "Close";
-            moreInfo.removeEventListener('click', showDetails, false);
-            moreInfo.removeEventListener('touchend', showDetails, false);
-            moreInfo.addEventListener('click', closeDetails, false);
-            moreInfo.addEventListener('touchend', closeDetails, false);
-            descriptionBox.style.margintop = "20%";
-            descriptionBox.style.marginleft = "55%";
-            descriptionBox.style.width = "55%";
+        function about() {
+        canvasCard.style.display = "none";
+
+        targetPosition.x = -350;
+        targetPosition.y = 0;
+        targetPosition.z = 22;
+
+        tween = new TWEEN.Tween(position)
+            .to(targetPosition, 2500)
+            .easing(TWEEN.Easing.Sinusoidal.InOut)
+            .onUpdate(function () {
+                camera.position.copy(position);
+            })
+            .onComplete(function () {
+                infoText.innerHTML = "About / Disclaimer";
+                textAnimate();
+                beginButton.style.visibility = "hidden";
+                aboutButton.style.visibility = "hidden";
+                mainButton.style.visibility = "visible";
+                prevButton.style.visibility = "hidden";
+                nextButton.style.visibility = "hidden";
+                aboutDescription.innerHTML = "This work was created in partial fulfillment of Arizona State University Capstone Course " +
+                "“CSE423/CSE424/CSE485/CSE486″. The work is a result of the Psyche Student Collaborations component of NASA’s Psyche Mission (https://psyche.asu.edu)." +
+                "“Psyche: A Journey to a Metal World” [Contract number NNM16AA09C] is part of the NASA Discovery Program mission to solar system targets." +
+                "Trade names and trademarks of ASU and NASA are used in this work for identification only." +
+                "Their usage does not constitute an official endorsement, either expressed or implied, by Arizona State University or National Aeronautics and Space Administration." +
+                "The content is solely the responsibility of the authors and does not necessarily represent the official views of ASU or NASA.";
+                canvasCard.style.display = "block";
+                aboutButton.removeEventListener('click', about, false);
+                mainButton.addEventListener('click', mainMenu, false);
+                descriptionBox.style.visibility = "hidden";
+                aboutDescriptionBox.style.visibility = "visible";
+                aboutButton.removeEventListener('touchend', about, false);
+                mainButton.addEventListener('touchend', mainMenu, false);
+            })
+            .start();
         }
 
-        function closeDetails() {
-            description.style.display = "block";
-            details.style.display = "none";
-            moreInfo.innerHTML = "&#8505 More Info"
-            moreInfo.removeEventListener('click', closeDetails, false);
-            moreInfo.removeEventListener('touchend', closeDetails, false);
-            moreInfo.addEventListener('click', showDetails, false);
-            moreInfo.addEventListener('touchend', showDetails, false);
-            descriptionBox.style.margintop = "30%";
-            descriptionBox.style.marginleft = "65%";
-            descriptionBox.style.width = "45%";
+        function mainMenu() {
+        canvasCard.style.display = "none";
+
+        targetPosition.x = -297;
+        targetPosition.y = 0;
+        targetPosition.z = 22;
+
+        tween = new TWEEN.Tween(position)
+            .to(targetPosition, 2500)
+            .easing(TWEEN.Easing.Sinusoidal.InOut)
+            .onUpdate(function () {
+                camera.position.copy(position);
+            })
+            .onComplete(function () {
+                infoText.innerHTML = "About / Disclaimer";
+                textAnimate();
+                beginButton.style.visibility = "visible";
+                aboutButton.style.visibility = "visible";
+                mainButton.style.visibility = "hidden";
+                prevButton.style.visibility = "hidden";
+                nextButton.style.visibility = "hidden";
+                canvasCard.style.display = "block";
+                mainButton.removeEventListener('click', mainMenu, false);
+                aboutButton.addEventListener('click', about, false);
+                descriptionBox.style.visibility = "hidden";
+                aboutDescriptionBox.style.visibility = "hidden";
+                mainButton.removeEventListener('touchend', mainMenu, false);
+                aboutButton.addEventListener('touchend', about, false);
+            })
+            .start();
         }
 
         function marsAssist() {
 
             canvasCard.style.display = "none";
             if (set2Idle) {
-                satellite2.position.set(-200, -1, 10);
+                satellite2.position.set(-200, -1, 15);
                 set2Idle = false;
             }
             else {
-                satellite.position.set(-200, -1, 10);
+                satellite.position.set(-200, -1, 15);
                 set2Idle = true;
             }
 
@@ -418,22 +466,18 @@
                     infoText.innerHTML = "Phase #1 - Mars Gravity Assist";
                     textAnimate();
                     beginButton.style.visibility = "hidden";
+                    aboutButton.style.visibility = "hidden";
+                    mainButton.style.visibility = "hidden";
                     prevButton.style.visibility = "hidden";
                     nextButton.style.visibility = "visible";
                     description.innerHTML = "After launching in August 2022, the spacecraft " +
                         "flies by Mars and undergoes a gravitational slingshot";
-                    details.innerHTML = "More detailed description goes here -->\n" +
-                        "####################\n####################\n" +
-                        "####################\n####################\n" +
-                        "####################\n####################\n" +
-                        "####################\n####################\n";
                     canvasCard.style.display = "block";
                     prevButton.removeEventListener('click', marsAssist, false);
                     nextButton.addEventListener('click', arrivalPhase, false);
                     descriptionBox.style.visibility = "visible";
                     prevButton.removeEventListener('touchend', marsAssist, false);
                     nextButton.addEventListener('touchend', arrivalPhase, false);
-                    closeDetails();
                 })
                 .start();
 
@@ -444,13 +488,13 @@
             canvasCard.style.display = "none";
 
             if (set2Idle) {
-                satellite2.position.set(-100, 0, 12);
-                asteroid2.position.set(-100, 0, -50);
+                satellite2.position.set(-100, -1, 15);
+                asteroid2.position.set(-100, -5, -50);
                 set2Idle = false;
             }
             else {
-                satellite.position.set(-100, 0, 12);
-                asteroid.position.set(-100, 0, -50);
+                satellite.position.set(-100, -1, 15);
+                asteroid.position.set(-100, -5, -50);
                 set2Idle = true;
             }
 
@@ -468,6 +512,8 @@
                     infoText.innerHTML = "Phase #2 - Arrival at Psyche"
                     textAnimate();
                     beginButton.style.visibility = "hidden";
+                    aboutButton.style.visibility = "hidden";
+                    mainButton.style.visibility = "hidden";
                     prevButton.style.visibility = "visible";
                     nextButton.style.visibility = "visible";
                     description.innerHTML = "After spending around 100 days in the approach phase, " +
@@ -485,7 +531,6 @@
 
                     prevButton.addEventListener('touchend', marsAssist, false);
                     nextButton.addEventListener('touchend', orbitalPhase, false);
-                    closeDetails();
                 })
                 .start();
         }
@@ -493,15 +538,6 @@
         function orbitalPhase() {
 
             canvasCard.style.display = "none";
-
-            if (set2Idle) {
-                asteroid2.position.set(0, 0, 0);
-                set2Idle = false;
-            }
-            else {
-                asteroid.position.set(0, 0, 0);
-                set2Idle = true;
-            }
 
             targetPosition.x = 5;
             targetPosition.y = 0;
@@ -527,7 +563,6 @@
                     description.innerHTML = "The spacecraft will orbit Psyche until October 2027 (21 months!)," +
                         " where it will take measurements and send data back to Earth";
                     canvasCard.style.display = "block";
-                    closeDetails();
                 })
                 .start();
         }

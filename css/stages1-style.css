@@ -61,7 +61,26 @@ canvas {
     /*display:  inline-block;*/
     float: none;
     text-align: center;
-    width: 25vmax;
+    width: 23vmax;
+    /*padding:  0px!important;
+    /*font-size:  14px;*/
+    color: #592651;
+}
+
+.aboutbutton {
+    position: absolute;
+    font-family: 'Roboto', sans-serif;
+    margin: auto;
+    height: 3vmax;
+    font-size: 2vmax;
+    background: #f47c33;
+    /*height:  38px;
+    line-height:  40px;*/
+    border: 3px solid #592651;
+    /*display:  inline-block;*/
+    float: none;
+    text-align: center;
+    width: 10vmax;
     /*padding:  0px!important;
     /*font-size:  14px;*/
     color: #592651;
@@ -72,7 +91,26 @@ canvas {
     background: #f9a000;
 }
 
+.aboutbutton:hover {
+    color: #a53f5b;
+    background: #f9a000;
+}
+
 #beginButton {
+    left: 0;
+    right: 0;
+    color: #592651;
+}
+
+#aboutButton {
+    top: 0%;
+    bottom: 55%;
+    left: 0;
+    right: 1;
+    color: #592651;
+}
+
+#mainButton {
     left: 0;
     right: 0;
     color: #592651;
@@ -80,12 +118,12 @@ canvas {
 
 #prevButton {
     left: 0;
-    right: 30;
+    right: 1;
     color: #592651;
 }
 
 #nextButton {
-    left: 30;
+    left: 1;
     right: 0;
     color: #592651;
 }
@@ -114,9 +152,9 @@ canvas {
     flex-direction: column;
     align-items: center;
     position: fixed;
-    bottom: 5vmin;
+    bottom: 2vmin;
     right: 1vmax;
-    width: 40vmax;
+    width: 30vmax;
     border-radius: 5px;
     background: linear-gradient(90deg, rgba(48, 33, 68, 1) 0%, rgba(18, 3, 29, 1) 100%);
     padding: 1vmin 1vmin 1vmin 1vmin;
@@ -126,22 +164,37 @@ canvas {
 
 #description {
     opacity: 1;
-    font-size: 2vmax;
+    font-size: 2.5vmax;
     font-family: 'roboto', sans-serif;
     color: #ef5966;
     /*#a53f5b;*/
     text-align: center;
-    margin-bottom: 2vmin;
 }
 
-#details {
+#aboutDescriptionBox {
+    visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: fixed;
+    top: 18vmax;
+    bottom: 2vmin;
+    right: 1vmax;
+    width: 97vmax;
+    border-radius: 5px;
+    background: linear-gradient(90deg, rgba(48, 33, 68, 1) 0%, rgba(18, 3, 29, 1) 100%);
+    padding: 1vmin 1vmin 1vmin 1vmin;
+    box-shadow: 0px 1px 5px #999;
+    opacity: 0.8;
+}
+
+#aboutDescription {
     opacity: 1;
-    font-size: 2vmax;
+    font-size: 4vmin;
     font-family: 'roboto', sans-serif;
     color: #ef5966;
     /*#a53f5b;*/
     text-align: center;
-    margin-bottom: 2vmin;
 }
 
 .ml2 {
