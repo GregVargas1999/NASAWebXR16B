@@ -111,9 +111,9 @@
         </div>
 
         <div id='descriptionBox'>
+            <button id='moreInfo' alignment='center'>&#8505 More info</button>
             <div id='description'></div>
             <div id='details'></div>
-            <button id='moreInfo' alignment='center'>&#8505 More info
         </div>
 
         <div id='descriptionBox2'>
@@ -726,7 +726,7 @@
             loader.load('compressed-spacecraft.glb', function (gltf) {
                 arrivalSatellite = gltf.scene;
                 arrivalSatellite.scale.multiplyScalar(1 / 100);
-                arrivalSatellite.position.set(0, 0, 12);
+                arrivalSatellite.position.set(2, 0, 12);
                 arrivalScene.add(arrivalSatellite);
             });
         }
@@ -892,7 +892,7 @@
         function showDetails() {
             description.style.display = "none";
             details.style.display = "block";
-            moreInfo.innerHTML = "Close";
+            moreInfo.innerHTML = "Show less";
             moreInfo.removeEventListener('click', showDetails, false);
             moreInfo.removeEventListener('touchend', showDetails, false);
             moreInfo.addEventListener('click', closeDetails, false);
