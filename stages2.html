@@ -35,11 +35,10 @@
         </head>
         
         <body>
-            <br>
             <button class="btn" id="xButton" style="color: #b60303;">&#10006</button>
             <div class="row justify-content-center">
                 <div class="col-6 my-auto">
-                    <p style="text-align:center;font-size: 1.8vmax;color: #a53f5b;" class="center-block">
+                    <p style="text-align:center;font-size: 2vmax;color: #ff6f16;" class="center-block">
                         Welcome to the Psyche mission timeline experience!<br>
                         By: NASA Psyche WebXR - Team 16B
                     </p>
@@ -49,9 +48,13 @@
                         src="https://psyche.asu.edu/wp-content/themes/psyche/static/img/nasa.svg"></img> 
                 </div>
             </div>
+            <p style="text-align:center;font-size: 1.9vmax;color: #ff6f16;" class="center-block">
+                Learn about three of the main phases of the Psyche mission<br>
+                following its launch in 2022
+            </p>
             <div class="row justify-content-center">
                 <div class="col-6 my-auto">
-                    <p style="text-align:center;font-size: 1.5vmax;color: #f47c33;" class="center-block">
+                    <p style="text-align:center;font-size: 1.7vmax;color: #ff6f16;" class="center-block">
                         Programmers:<br>
                         Fareed Osman, Greg Vargas,<br>Joshua Holloway, Rushil Popat
                     </p>
@@ -104,37 +107,23 @@
             <button class="button" id='beginButton'>Begin Journey</button>
             <button class="button" id='creditsButton'>Credits</button>
         </div>
-
         <div>
             <button class="button" id='prevButton'>Previous Stage</button>
             <button class="button" id='nextButton'>Next Stage</button>
         </div>
-
         <div id='descriptionBox'>
             <button id='moreInfo' alignment='center'>&#8505 More info</button>
             <div id='description'></div>
             <div id='details'></div>
         </div>
-
         <div id='descriptionBox2'>
             <div id='description2'></div>
         </div>
-
-        <div>
-            <button class="button" id='playAnimation'>Play Animation</button>
-        </div>
-        <div>
-            <button class="button" id='orbitAButton'>Orbit A: Characterization</button>
-        </div>
-        <div>
-            <button class="button" id='orbitBButton'>Orbit B: Topography</button>
-        </div>
-        <div>
-            <button class="button" id='orbitCButton'>Orbit C: Gravity Science</button>
-        </div>
-        <div>
-            <button class="button" id='orbitDButton'>Orbit D: Elemental Mapping</button>
-        </div>
+        <button class="button" id='playAnimation'>Play Animation</button>
+        <button class="button" id='orbitAButton'>Orbit A: Characterization</button>
+        <button class="button" id='orbitBButton'>Orbit B: Topography</button>
+        <button class="button" id='orbitCButton'>Orbit C: Gravity Science</button>
+        <button class="button" id='orbitDButton'>Orbit D: Elemental Mapping</button>
 
     </div>
 
@@ -147,6 +136,7 @@
         import { Raycaster } from 'https://unpkg.com/three@0.121.1/src/core/Raycaster.js';
         import { GLTFLoader } from 'https://unpkg.com/three@0.121.1/examples/jsm/loaders/GLTFLoader.js';
         import { DRACOLoader } from 'https://unpkg.com/three@0.122.0/examples/jsm/loaders/DRACOLoader.js';
+        import { OrbitControls } from 'https://unpkg.com/three@0.121.1/examples/jsm/controls/OrbitControls.js';
 
         import TWEEN from 'https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@18.5.0/dist/tween.esm.js';
 
@@ -312,7 +302,7 @@
             renderer.toneMappingExposure = 1;
             renderer.outputEncoding = THREE.sRGBEncoding;
             container.appendChild(renderer.domElement);
-            
+		
             // Checking initial load orientation
             window.addEventListener('load', function() {onWindowResize(window.orientation)}, false);
 
@@ -360,7 +350,6 @@
                 camera.position.set(0, 0, 22);
                 camera.lookAt(new THREE.Vector3(0, 0, 0));
                 scene = menuScene;
-
             }, 800);
 
             setTimeout(function () {
