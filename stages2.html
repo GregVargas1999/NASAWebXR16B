@@ -102,11 +102,13 @@
 
     <div id='card'>
         <div id='info' class="ml2"></div>
-        <div id='suggestion' class='suggestion'>View in Landscape Mode for the Best Experience</div>
         <button class="button" id='backButton'>&#128281 Main Menu</button>
         <div>
             <button class="button" id='beginButton'>Begin Journey</button>
             <button class="button" id='creditsButton'>Credits</button>
+        </div>
+        <div id='suggestion' class='suggestion' style="padding-top: 10vmax;">View in Landscape Mode for the Best
+            Experience
         </div>
         <div>
             <button class="button" id='prevButton'>Previous Stage</button>
@@ -341,10 +343,10 @@
                 hideAllButtons();
                 beginButton.style.visibility = "visible";
                 creditsButton.style.visibility = "visible";
-                /*if (window.innerHeight > window.innerWidth) {
+                if (window.innerHeight > window.innerWidth) {
                     suggestionText.style.display = "block";
                     animateSuggestion();
-                }*/
+                }
 
 
                 camera.position.set(0, 0, 22);
