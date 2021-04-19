@@ -143,6 +143,7 @@
 
         import TWEEN from 'https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@18.5.0/dist/tween.esm.js';
 
+        // define variables
         var container, controls;
         var camera, povCamera, scene, renderer, tween;
         var raycaster, projector, mouseVector, intersects, intersection, obj;
@@ -201,6 +202,7 @@
 
         function init() {
 
+            // create variables for DOM elements
             canvasCard = document.getElementById('card');
             infoText = document.getElementById('info');
             suggestionText = document.getElementById('suggestion');
@@ -217,6 +219,7 @@
             details = document.getElementById('details');
             moreInfo = document.getElementById('moreInfo');
 
+            // add event listeners for buttons
             moreInfo.addEventListener('click', showDetails, false);
             moreInfo.addEventListener('touchend', showDetails, false);
             beginButton.addEventListener('click', showMarsAssist, false);
@@ -266,6 +269,7 @@
                 });
             }
 
+            // JavaScript for loading screen
             loadingManager = new THREE.LoadingManager();
             loadingManager.onProgress = function (item, loaded, total) {
                 loadingText.innerHTML = 'Loading... ' + (loaded / total * 100).toFixed(0) + '%';
@@ -281,6 +285,7 @@
 
             loader = new GLTFLoader(loadingManager).setPath('models/');
 
+            // define dracoloader for decoding compressed draco textures
             var dracoLoader = new DRACOLoader();
             dracoLoader.setDecoderPath('js/draco/');
             loader.setDRACOLoader(dracoLoader);
@@ -288,9 +293,11 @@
             container = document.createElement('div');
             document.body.appendChild(container);
 
+            // create camera
             camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
             orbitContainer = new THREE.Object3D();
 
+            // define scenes
             scene = new THREE.Scene();
             menuScene = new THREE.Scene();
             marsScene = new THREE.Scene();
@@ -316,6 +323,7 @@
 
             mouseVector = new THREE.Vector3();
 
+            // call functions to load initial scene
             hideAllButtons();
             loadSkyBox();
             loadMainMenu();
@@ -323,7 +331,7 @@
             loadArrivalPhase();
             loadOrbitalPhase();
 
-            textAnimate();
+            textAnimate(); // animate the title text
         }
 
         function changeScene() {
@@ -333,16 +341,19 @@
             transitionScreen.classList.add("screen-change");
         }
 
+        // call this to show the main menu scene
         function showMainMenu() {
             changeScene();
             setTimeout(function () {
 
                 infoText.innerHTML = "The Psyche Asteroid Mission";
 
-                textAnimate();
+                textAnimate(); // animate the title text
                 hideAllButtons();
                 beginButton.style.visibility = "visible";
                 creditsButton.style.visibility = "visible";
+
+                // if in portrait mode, animate the suggestion to switch to landscape
                 if (window.innerHeight > window.innerWidth) {
                     suggestionText.style.display = "block";
                     animateSuggestion();
@@ -359,6 +370,7 @@
             }, 2000);
         }
 
+        // show the popup credits page
         function showCredits() {
             infoText.innerHTML = "";
             hideAllButtons();
@@ -366,6 +378,7 @@
             suggestionText.style.display = "none";
         }
 
+        // close the credits page
         function closeCredits() {
             infoText.innerHTML = "The Psyche Asteroid Mission";
             beginButton.style.visibility = "visible";
@@ -373,6 +386,7 @@
             creditsScreen.style.display = "none";
         }
 
+        // transition to the mars gravity assist scene
         function showMarsAssist() {
             changeScene();
             setTimeout(function () {
@@ -380,7 +394,7 @@
                 infoText.innerHTML = "Phase #1 - Mars Gravity Assist"
 
 
-                textAnimate();
+                textAnimate(); // animate the title text
                 hideAllButtons();
                 backButton.style.visibility = "visible";
                 playAnimation.style.visibility = "visible";
@@ -409,13 +423,14 @@
             }, 2000);
         }
 
+        // transition to the arrival phase
         function showArrivalPhase() {
             changeScene();
             setTimeout(function () {
 
                 infoText.innerHTML = "Phase #2 - Arrival at Psyche";
 
-                textAnimate();
+                textAnimate(); // animate the title text
                 hideAllButtons();
                 prevButton.style.visibility = "visible";
                 nextButton.style.visibility = "visible";
@@ -446,13 +461,14 @@
             }, 2000);
         }
 
+        // transition to the orbits phase
         function showOrbitalPhase() {
             changeScene();
             setTimeout(function () {
 
                 infoText.innerHTML = "Phase #3 - Orbiting Psyche";
 
-                textAnimate();
+                textAnimate(); // animate the title text
                 hideAllButtons();
                 prevButton.style.visibility = "visible";
                 orbitAButton.style.visibility = "visible";
@@ -694,6 +710,7 @@
             satelliteTween2.chain(marsTween, satelliteTween, satelliteTweenZ);
         }
 
+        // play gravity assist animation
         function playGravityAssist() {
 
             satelliteTween.start();
@@ -930,6 +947,7 @@
             button.removeEventListener('click', showOrbitalPhase, false);
             button.removeEventListener('touchend', showOrbitalPhase, false);
         }
+
         function getRandom(number) {
             let rand = (Math.random() - 0.5);
             newMin = number;
@@ -971,6 +989,7 @@
             renderer.render(scene, camera);
         }
 
+        // used to animate heading text
         function textAnimate() { // Wrap every letter in a span
             var textWrapper = document.querySelector('.ml2');
             textWrapper.innerHTML = textWrapper.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
@@ -987,6 +1006,7 @@
                 });
         }
 
+        // used to animate suggestion text
         function animateSuggestion() {
 
             anime.timeline({ loop: true })
