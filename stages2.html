@@ -14,10 +14,11 @@
 
 <body>
     <section id="credits-screen">
+
         <head>
 
             <title>NASA WebXR - Team 16B</title>
-        
+
             <link rel="preconnect" href="https://fonts.gstatic.com">
             <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
             <link rel="stylesheet" href="fonts/icomoon/style.css">
@@ -29,11 +30,11 @@
             <link rel="stylesheet" href="css/bootstrap-datepicker.css">
             <link rel="stylesheet" href="fonts/flaticon/font/flaticon.css">
             <link rel="stylesheet" href="css/aos.css">
-        
+
             <link rel="stylesheet" href="css/style.css">
-        
+
         </head>
-        
+
         <body>
             <button class="btn" id="xButton" style="color: #b60303;">&#10006</button>
             <div class="row justify-content-center">
@@ -45,7 +46,7 @@
                 </div>
                 <div>
                     <img style="width: auto; height: 4em;"
-                        src="https://psyche.asu.edu/wp-content/themes/psyche/static/img/nasa.svg"></img> 
+                        src="https://psyche.asu.edu/wp-content/themes/psyche/static/img/nasa.svg"></img>
                 </div>
             </div>
             <p style="text-align:center;font-size: 1.9vmax;color: #ff6f16;" class="center-block">
@@ -64,15 +65,15 @@
                         src="https://psyche.asu.edu/wp-content/themes/psyche/static/img/psyche.svg"></img>
                 </div>
             </div>
-            <div class="my-auto justify-content-center"  style="width: 100%;">
+            <div class="my-auto justify-content-center" style="width: 100%;">
                 <p style="text-align:center;font-size: 1.4vmax;">
                     *The following 3D environments are for educational purposes only and are not to scale.*
                 </p>
                 <p style="text-align:center;font-size: 1.4vmax;">
                     This work was created in partial fulfillment of Arizona State University Capstone Course
                     “CSE423/CSE424/CSE485/CSE486″. The work is a result of the Psyche Student Collaborations
-                    component of NASA’s Psyche Mission (<a
-                        href="https://psyche.asu.edu">https://psyche.asu.edu</a>). “Psyche: A Journey to a Metal
+                    component of NASA’s Psyche Mission (<a href="https://psyche.asu.edu">https://psyche.asu.edu</a>).
+                    “Psyche: A Journey to a Metal
                     World” [Contract number NNM16AA09C] is part of the NASA Discovery Program mission to solar
                     system targets. Trade names and trademarks of ASU and NASA are used in this work for
                     identification only. Their usage does not constitute an official endorsement, either
@@ -92,7 +93,7 @@
         </body>
 
     </section>
-    
+
     <section id="transition-screen"></section>
     <section id="loading-screen">
         <div id='loadText'>Loading... 0%</div>
@@ -145,7 +146,7 @@
         var raycaster, projector, mouseVector, intersects, intersection, obj;
         var asteroid, satellite, arrivalAsteroid, arrivalSatellite, marsSatellite, orbitalAsteroid, orbitalSatellite, mars, orbiter, newMin, mesh;
         var beginButton, backButton, creditsButton, xButton, nextButton, prevButton, playAnimation;
-        var infoText, loadingText, moreInfo, canvasCard, description, details, descriptionBox,descriptionBox2, suggestionText;
+        var infoText, loadingText, moreInfo, canvasCard, description, details, descriptionBox, descriptionBox2, suggestionText;
         var set2Idle = true;
         var loader, loadingManager, loadingScreen, transitionScreen, creditsScreen, buttonClick;
         const params = {
@@ -271,7 +272,6 @@
                 loadingScreen.classList.remove("fade-out");
                 loadingScreen.classList.add("fade-out");
                 setTimeout(function () {
-                    showCredits();
                     loadingScreen.style.display = "none";
                 }, 2000);
                 showMainMenu();
@@ -302,12 +302,12 @@
             renderer.toneMappingExposure = 1;
             renderer.outputEncoding = THREE.sRGBEncoding;
             container.appendChild(renderer.domElement);
-		
+
             // Checking initial load orientation
-            window.addEventListener('load', function() {onWindowResize(window.orientation)}, false);
+            window.addEventListener('load', function () { onWindowResize(window.orientation) }, false);
 
             // Resizing window on demand and sending orientation
-            window.addEventListener('resize', function() {onWindowResize(window.orientation)}, false);
+            window.addEventListener('resize', function () { onWindowResize(window.orientation) }, false);
 
             var pmremGenerator = new THREE.PMREMGenerator(renderer);
             pmremGenerator.compileEquirectangularShader();
@@ -356,7 +356,7 @@
                 transitionScreen.style.display = "none";
             }, 2000);
         }
-        
+
         function showCredits() {
             infoText.innerHTML = "";
             hideAllButtons();
@@ -817,7 +817,7 @@
             description2.innerHTML = "The Psyche Spacecraft will spend 56 days in this orbit to get a reliable model of the gravity field for planning the next orbits.";
             details.innerHTML = "More detailed description goes here -->\n" +
 
-            closeDetails();
+                closeDetails();
         }
 
         function orbitB() {
