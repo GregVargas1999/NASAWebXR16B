@@ -14,11 +14,10 @@
 
 <body>
     <section id="credits-screen">
-
         <head>
 
             <title>NASA WebXR - Team 16B</title>
-
+        
             <link rel="preconnect" href="https://fonts.gstatic.com">
             <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
             <link rel="stylesheet" href="fonts/icomoon/style.css">
@@ -30,11 +29,13 @@
             <link rel="stylesheet" href="css/bootstrap-datepicker.css">
             <link rel="stylesheet" href="fonts/flaticon/font/flaticon.css">
             <link rel="stylesheet" href="css/aos.css">
-
+        
             <link rel="stylesheet" href="css/style.css">
-
+        
         </head>
-
+        
+        <!---Begin Initial Popup/credits
+        Contains information about the experience, as well as the disclaimer needed-->
         <body>
             <button class="btn" id="xButton" style="color: #b60303;">&#10006</button>
             <div class="row justify-content-center">
@@ -46,7 +47,7 @@
                 </div>
                 <div>
                     <img style="width: auto; height: 4em;"
-                        src="https://psyche.asu.edu/wp-content/themes/psyche/static/img/nasa.svg"></img>
+                        src="https://psyche.asu.edu/wp-content/themes/psyche/static/img/nasa.svg"></img> 
                 </div>
             </div>
             <p style="text-align:center;font-size: 1.9vmax;color: #ff6f16;" class="center-block">
@@ -65,15 +66,15 @@
                         src="https://psyche.asu.edu/wp-content/themes/psyche/static/img/psyche.svg"></img>
                 </div>
             </div>
-            <div class="my-auto justify-content-center" style="width: 100%;">
+            <div class="my-auto justify-content-center"  style="width: 100%;">
                 <p style="text-align:center;font-size: 1.4vmax;">
                     *The following 3D environments are for educational purposes only and are not to scale.*
                 </p>
                 <p style="text-align:center;font-size: 1.4vmax;">
                     This work was created in partial fulfillment of Arizona State University Capstone Course
                     “CSE423/CSE424/CSE485/CSE486″. The work is a result of the Psyche Student Collaborations
-                    component of NASA’s Psyche Mission (<a href="https://psyche.asu.edu">https://psyche.asu.edu</a>).
-                    “Psyche: A Journey to a Metal
+                    component of NASA’s Psyche Mission (<a
+                        href="https://psyche.asu.edu">https://psyche.asu.edu</a>). “Psyche: A Journey to a Metal
                     World” [Contract number NNM16AA09C] is part of the NASA Discovery Program mission to solar
                     system targets. Trade names and trademarks of ASU and NASA are used in this work for
                     identification only. Their usage does not constitute an official endorsement, either
@@ -91,24 +92,25 @@
                 </p>
             </div>
         </body>
+        <!---End initial popup/credits-->
 
     </section>
-
+    
+    <!---Loading screen info-->
     <section id="transition-screen"></section>
     <section id="loading-screen">
         <div id='loadText'>Loading... 0%</div>
         <div id="loader"></div>
     </section>
 
+    <!---Button info-->
     <div id='card'>
         <div id='info' class="ml2"></div>
+        <div id='suggestion' class='suggestion'>View in Landscape Mode for the Best Experience</div>
         <button class="button" id='backButton'>&#128281 Main Menu</button>
         <div>
             <button class="button" id='beginButton'>Begin Journey</button>
             <button class="button" id='creditsButton'>Credits</button>
-        </div>
-        <div id='suggestion' class='suggestion' style="padding-top: 10vmax;">View in Landscape Mode for the Best
-            Experience
         </div>
         <div>
             <button class="button" id='prevButton'>Previous Stage</button>
@@ -131,6 +133,7 @@
     </div>
 
     </div>
+    <!---Script info-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script type='module'>
 
@@ -143,13 +146,12 @@
 
         import TWEEN from 'https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@18.5.0/dist/tween.esm.js';
 
-        // define variables
         var container, controls;
         var camera, povCamera, scene, renderer, tween;
         var raycaster, projector, mouseVector, intersects, intersection, obj;
         var asteroid, satellite, arrivalAsteroid, arrivalSatellite, marsSatellite, orbitalAsteroid, orbitalSatellite, mars, orbiter, newMin, mesh;
         var beginButton, backButton, creditsButton, xButton, nextButton, prevButton, playAnimation;
-        var infoText, loadingText, moreInfo, canvasCard, description, details, descriptionBox, descriptionBox2, suggestionText;
+        var infoText, loadingText, moreInfo, canvasCard, description, details, descriptionBox,descriptionBox2, suggestionText;
         var set2Idle = true;
         var loader, loadingManager, loadingScreen, transitionScreen, creditsScreen, buttonClick;
         const params = {
@@ -162,6 +164,8 @@
             orbitTiltZ: 0,
             cameraFOV: 45
         };
+
+        //Set sizes for orbit rings
         const ringParams = {
             ring1Inner: 4.8,
             ring1Outer: 5.2,
@@ -175,10 +179,13 @@
             ring4Inner: 14.8,
             ring4Outer: 15.2,
 
+            //move orbits so that it is seen from birds eye view
             orbitSpeed: 1,
             orbitTiltX: 1.5,
             orbitTiltY: 0,
             orbitTiltZ: 0,
+
+            //ring colors based on which orbit is active
             ringHighlightColor: 0x3B0158,
             ringIdleColor: 0x6A6A6A
         }
@@ -202,7 +209,6 @@
 
         function init() {
 
-            // create variables for DOM elements
             canvasCard = document.getElementById('card');
             infoText = document.getElementById('info');
             suggestionText = document.getElementById('suggestion');
@@ -219,7 +225,6 @@
             details = document.getElementById('details');
             moreInfo = document.getElementById('moreInfo');
 
-            // add event listeners for buttons
             moreInfo.addEventListener('click', showDetails, false);
             moreInfo.addEventListener('touchend', showDetails, false);
             beginButton.addEventListener('click', showMarsAssist, false);
@@ -269,7 +274,6 @@
                 });
             }
 
-            // JavaScript for loading screen
             loadingManager = new THREE.LoadingManager();
             loadingManager.onProgress = function (item, loaded, total) {
                 loadingText.innerHTML = 'Loading... ' + (loaded / total * 100).toFixed(0) + '%';
@@ -278,6 +282,7 @@
                 loadingScreen.classList.remove("fade-out");
                 loadingScreen.classList.add("fade-out");
                 setTimeout(function () {
+                    showCredits();
                     loadingScreen.style.display = "none";
                 }, 2000);
                 showMainMenu();
@@ -285,7 +290,6 @@
 
             loader = new GLTFLoader(loadingManager).setPath('models/');
 
-            // define dracoloader for decoding compressed draco textures
             var dracoLoader = new DRACOLoader();
             dracoLoader.setDecoderPath('js/draco/');
             loader.setDRACOLoader(dracoLoader);
@@ -293,11 +297,9 @@
             container = document.createElement('div');
             document.body.appendChild(container);
 
-            // create camera
             camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
             orbitContainer = new THREE.Object3D();
 
-            // define scenes
             scene = new THREE.Scene();
             menuScene = new THREE.Scene();
             marsScene = new THREE.Scene();
@@ -311,19 +313,18 @@
             renderer.toneMappingExposure = 1;
             renderer.outputEncoding = THREE.sRGBEncoding;
             container.appendChild(renderer.domElement);
-
+		
             // Checking initial load orientation
-            window.addEventListener('load', function () { onWindowResize(window.orientation) }, false);
+            window.addEventListener('load', function() {onWindowResize(window.orientation)}, false);
 
             // Resizing window on demand and sending orientation
-            window.addEventListener('resize', function () { onWindowResize(window.orientation) }, false);
+            window.addEventListener('resize', function() {onWindowResize(window.orientation)}, false);
 
             var pmremGenerator = new THREE.PMREMGenerator(renderer);
             pmremGenerator.compileEquirectangularShader();
 
             mouseVector = new THREE.Vector3();
 
-            // call functions to load initial scene
             hideAllButtons();
             loadSkyBox();
             loadMainMenu();
@@ -331,7 +332,7 @@
             loadArrivalPhase();
             loadOrbitalPhase();
 
-            textAnimate(); // animate the title text
+            textAnimate();
         }
 
         function changeScene() {
@@ -341,23 +342,20 @@
             transitionScreen.classList.add("screen-change");
         }
 
-        // call this to show the main menu scene
         function showMainMenu() {
             changeScene();
             setTimeout(function () {
 
                 infoText.innerHTML = "The Psyche Asteroid Mission";
 
-                textAnimate(); // animate the title text
+                textAnimate();
                 hideAllButtons();
                 beginButton.style.visibility = "visible";
                 creditsButton.style.visibility = "visible";
-
-                // if in portrait mode, animate the suggestion to switch to landscape
-                if (window.innerHeight > window.innerWidth) {
+                /*if (window.innerHeight > window.innerWidth) {
                     suggestionText.style.display = "block";
                     animateSuggestion();
-                }
+                }*/
 
 
                 camera.position.set(0, 0, 22);
@@ -369,8 +367,7 @@
                 transitionScreen.style.display = "none";
             }, 2000);
         }
-
-        // show the popup credits page
+        
         function showCredits() {
             infoText.innerHTML = "";
             hideAllButtons();
@@ -378,7 +375,6 @@
             suggestionText.style.display = "none";
         }
 
-        // close the credits page
         function closeCredits() {
             infoText.innerHTML = "The Psyche Asteroid Mission";
             beginButton.style.visibility = "visible";
@@ -386,7 +382,6 @@
             creditsScreen.style.display = "none";
         }
 
-        // transition to the mars gravity assist scene
         function showMarsAssist() {
             changeScene();
             setTimeout(function () {
@@ -394,7 +389,7 @@
                 infoText.innerHTML = "Phase #1 - Mars Gravity Assist"
 
 
-                textAnimate(); // animate the title text
+                textAnimate();
                 hideAllButtons();
                 backButton.style.visibility = "visible";
                 playAnimation.style.visibility = "visible";
@@ -423,14 +418,13 @@
             }, 2000);
         }
 
-        // transition to the arrival phase
         function showArrivalPhase() {
             changeScene();
             setTimeout(function () {
 
                 infoText.innerHTML = "Phase #2 - Arrival at Psyche";
 
-                textAnimate(); // animate the title text
+                textAnimate();
                 hideAllButtons();
                 prevButton.style.visibility = "visible";
                 nextButton.style.visibility = "visible";
@@ -461,14 +455,15 @@
             }, 2000);
         }
 
-        // transition to the orbits phase
+        //phase 3 orbit phase
         function showOrbitalPhase() {
             changeScene();
             setTimeout(function () {
 
                 infoText.innerHTML = "Phase #3 - Orbiting Psyche";
 
-                textAnimate(); // animate the title text
+                //set active scene buttons
+                textAnimate();
                 hideAllButtons();
                 prevButton.style.visibility = "visible";
                 orbitAButton.style.visibility = "visible";
@@ -482,6 +477,7 @@
                 prevButton.addEventListener('click', showArrivalPhase, false);
                 prevButton.addEventListener('touchend', showArrivalPhase, false);
 
+                //show initial orbit
                 orbitA()
 
                 camera.position.set(0.5, 50, 0);
@@ -710,7 +706,6 @@
             satelliteTween2.chain(marsTween, satelliteTween, satelliteTweenZ);
         }
 
-        // play gravity assist animation
         function playGravityAssist() {
 
             satelliteTween.start();
@@ -739,6 +734,7 @@
             });
         }
 
+        //Load orbit phase
         function loadOrbitalPhase() {
 
             var ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.1);
@@ -761,6 +757,7 @@
                     params.orbitTiltZ, params.orbitSpeed);
             });
 
+            //create all four orbits and make them visible
             orbitPathD = makeOrbitPath(ringParams.ring1Inner, ringParams.ring1Outer, ringParams.orbitTiltX,
                 ringParams.orbitTiltY, ringParams.orbitTiltZ, ringParams.ringIdleColor);
 
@@ -775,6 +772,7 @@
 
             params.orbitDistance = 15
 
+            //add orbits to scene
             orbitContainer.add(orbitPathA);
             orbitContainer.add(orbitPathB);
             orbitContainer.add(orbitPathC);
@@ -782,6 +780,7 @@
             orbitalScene.add(orbitContainer);
         }
 
+        //move satellite to active orbit
         function modifyOrbit(distance, xTilt, yTilt, zTilt, speed) {
             orbitContainer = new THREE.Object3D();
             orbitContainer.rotation.x = xTilt;
@@ -803,6 +802,7 @@
             return orbitContainer;
         }
 
+        //Set ring size
         function makeOrbitPath(innerRadius, outerRadius, xTilt, yTilt, zTilt, inputColor) {
             const ringGeometry = new THREE.RingGeometry(innerRadius, outerRadius, 64);
             const ringMaterial = new THREE.MeshBasicMaterial(
@@ -819,6 +819,7 @@
             return ring;
         }
 
+        //Set orbit A info
         function orbitA() {
             orbitPathB.material.color.set(ringParams.ringIdleColor);
             orbitPathC.material.color.set(ringParams.ringIdleColor);
@@ -836,9 +837,10 @@
             description2.innerHTML = "The Psyche Spacecraft will spend 56 days in this orbit to get a reliable model of the gravity field for planning the next orbits.";
             details.innerHTML = "More detailed description goes here -->\n" +
 
-                closeDetails();
+            closeDetails();
         }
 
+        //Set orbit B info
         function orbitB() {
 
             orbitPathA.material.color.set(ringParams.ringIdleColor);
@@ -859,6 +861,7 @@
             closeDetails();
         }
 
+        //Set orbit C info
         function orbitC() {
             orbitPathA.material.color.set(ringParams.ringIdleColor);
             orbitPathB.material.color.set(ringParams.ringIdleColor);
@@ -878,6 +881,7 @@
             closeDetails();
         }
 
+        //Set orbit D info
         function orbitD() {
             orbitPathA.material.color.set(ringParams.ringIdleColor);
             orbitPathB.material.color.set(ringParams.ringIdleColor);
@@ -947,7 +951,6 @@
             button.removeEventListener('click', showOrbitalPhase, false);
             button.removeEventListener('touchend', showOrbitalPhase, false);
         }
-
         function getRandom(number) {
             let rand = (Math.random() - 0.5);
             newMin = number;
@@ -989,7 +992,6 @@
             renderer.render(scene, camera);
         }
 
-        // used to animate heading text
         function textAnimate() { // Wrap every letter in a span
             var textWrapper = document.querySelector('.ml2');
             textWrapper.innerHTML = textWrapper.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
@@ -1006,7 +1008,6 @@
                 });
         }
 
-        // used to animate suggestion text
         function animateSuggestion() {
 
             anime.timeline({ loop: true })
