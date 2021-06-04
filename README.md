@@ -31,7 +31,7 @@ Visual Studio Code. A plugin called 'Live Server' allows for launching the
 website using the local device as a server. Simply right-click on Visual
 Studio Code and select "Open with Live Server."
 
-![image](https://user-images.githubusercontent.com/51924553/120755390-c56ebb00-c4c2-11eb-9cf6-24a4892030a3.png)
+![image](https://user-images.githubusercontent.com/51924553/120755390-c56ebb00-c4c2-11eb-9cf6-24a4892030a3.png =100x20)
 
 
 ## Usage
@@ -40,7 +40,7 @@ Once the website is launched, the user will be directed to a homepage, where
 they can select between 2 different implementations of the website. Once a
 version is selected, it will load the main menu screen.
 
-![image](https://user-images.githubusercontent.com/51924553/120755668-20081700-c4c3-11eb-9664-b66cca46473a.png)
+![image](https://user-images.githubusercontent.com/51924553/120755668-20081700-c4c3-11eb-9664-b66cca46473a.png =100x20)
 
 'Begin Journey' takes the user to the first phase of the mission, while the 
 'Next Stage' and 'Previous Stage' buttons are used to transition between phases.
