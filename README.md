@@ -21,7 +21,7 @@ For animating the 3D objects, we used the 'tween.js' API. The API is compatible
 with 'three.js' and allows for animating movement using 3D vectors. More info
 can be found here: https://github.com/tweenjs/tween.js/blob/master/docs/user_guide.md
 
-![image](https://user-images.githubusercontent.com/51924553/120755568-fe0e9480-c4c2-11eb-8dad-42b4b182da20.png) ![image](https://user-images.githubusercontent.com/51924553/120756788-90636800-c4c4-11eb-9e93-47e418ae419f.png)
+![image](https://user-images.githubusercontent.com/51924553/120756788-90636800-c4c4-11eb-9e93-47e418ae419f.png) ![image](https://user-images.githubusercontent.com/51924553/120755568-fe0e9480-c4c2-11eb-8dad-42b4b182da20.png) 
 
 
 
