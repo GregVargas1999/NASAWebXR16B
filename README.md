@@ -3,11 +3,16 @@ CS/CSE Capstone Project for NASA Web XR Group 16B - NASA Psyche Mission Timeline
 Team Members: Fareed Osman, Greg Vargas, Rushil Popat, Joshua Holloway
 Arizona State University
 
+
 ## Summary
 
 The NASA Psyche Mission Timeline is an interactive website where users can view
 and learn about the major phases of the Psyche mission. Different phases are
-represented in a 3D environment and animated.
+represented in a 3D environment and animated, with some phases also including
+interactive features. Users can navigate between the different phases in their
+chronoligcal order, while learning about how they each contribute to the
+goals of the Psyche mission.
+
 
 ## Programming Languages and APIs
 
@@ -33,6 +38,7 @@ website using the local device as a server. Simply right-click on Visual
 Studio Code and select "Open with Live Server."
 
 <img src="https://user-images.githubusercontent.com/51924553/120755390-c56ebb00-c4c2-11eb-9cf6-24a4892030a3.png" width="400" height="300">
+
 
 ## Usage
 
