@@ -31,7 +31,7 @@ Visual Studio Code. A plugin called 'Live Server' allows for launching the
 website using the local device as a server. Simply right-click on Visual
 Studio Code and select "Open with Live Server."
 
-![image](https://user-images.githubusercontent.com/51924553/120755390-c56ebb00-c4c2-11eb-9cf6-24a4892030a3.png=100x20)
+![image](https://user-images.githubusercontent.com/51924553/120755390-c56ebb00-c4c2-11eb-9cf6-24a4892030a3.png){:height="50%" width="50%"}
 
 
 ## Usage
