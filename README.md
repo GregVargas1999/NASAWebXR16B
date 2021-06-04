@@ -1,4 +1,4 @@
-# NASAWebXR16B
+# NASA Psyche Mission Timeline
 CS/CSE Capstone Project for NASA Web XR Group 16B - NASA Psyche Mission Timeline
 Team Members: Fareed Osman, Greg Vargas, Rushil Popat, Joshua Holloway
 Arizona State University
